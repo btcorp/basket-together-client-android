@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">Basket Together</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_user_id">아이디(이메일)</string>
+    <string name="prompt_password">비밀번호</string>
+    <string name="prompt_password_re">비밀번호 재입력</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="title_activity_join">JoinActivity</string>
+    <string name="prompt_nickname">닉네임</string>
+    <string name="action_sign_up_short">가입</string>
+
+    <string name="title_activity_intro">IntroActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="action_sign_up">회원가입</string>
+    <string name="prompt_mobile_no">휴대폰 번호</string>
+    <string name="error_not_input_id">아이디를 입력해 주세요.</string>
+    <string name="error_not_input_pwd">비밀번호를 입력해 주세요.</string>
+    <string name="error_not_input_pwd_re">비밀번호를 한번 더 입력해 주세요.</string>
+    <string name="error_not_input_nickname">닉네임을 입력해 주세요.</string>
+    <string name="error_not_input_mobile_no">휴대폰 번호를 입력해 주세요.</string>
+    <string name="error_not_equal_pw_re">비밀번호 확인이 일치하지 않습니다.</string>
+    <string name="action_login">로그인</string>
+</resources>
