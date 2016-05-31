@@ -1,8 +1,18 @@
-package com.angel.black.baskettogether.signup;
+package com.angel.black.baskettogether.post;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatImageButton;
+import android.support.v7.widget.AppCompatSpinner;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -17,6 +27,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.core.BaseActivity;
 import com.angel.black.baskettogether.core.MyApplication;
+import com.angel.black.baskettogether.util.CalendarUtil;
 import com.angel.black.baskettogether.util.MyLog;
 import com.angel.black.baskettogether.util.StringUtil;
 
@@ -24,30 +35,40 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SignUpActivity extends BaseActivity {
-    private EditText mEditId;
-    private EditText mEditPw;
-    private EditText mEditPwRe;
-    private EditText mEditNickName;
-    private EditText mEditMobileNo;
+public class PostRecruitActivity extends BaseActivity {
+    private EditText mEditTitle;
+    private EditText mEditContent;
+    private AppCompatImageButton mBtnPickDate;
+    private AppCompatImageButton mBtnPickPlace;
+    private TextView mTxtRecruitDate;
+    private TextView mTxtRecruitPlace;
+    private AppCompatSpinner mSpinPeopleNum;
+
+    private int recruitDateYear;
+    private int recruitDateMonth;
+    private int recruitDateDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_join);
+        setContentView(R.layout.activity_post_recruit);
         initToolbar();
 
-        mEditId = (EditText) findViewById(R.id.user_id);
-        mEditPw = (EditText) findViewById(R.id.password);
-        mEditPwRe = (EditText) findViewById(R.id.password_re);
-        mEditNickName = (EditText) findViewById(R.id.nickname);
-        mEditMobileNo = (EditText) findViewById(R.id.mobile_no);
+        mEditTitle = (EditText) findViewById(R.id.post_recruit_title);
+        mEditContent = (EditText) findViewById(R.id.post_recruit_content);
+        mTxtRecruitDate = (TextView) findViewById(R.id.txt_recruit_date);
+        mTxtRecruitPlace = (TextView) findViewById(R.id.txt_recruit_place);
 
-//        UserHelper.authToDjangoServer();
+        mSpinPeopleNum = (AppCompatSpinner) findViewById(R.id.spin_post_recruit_people_num);
+        mSpinPeopleNum.setAdapter(new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, getResources().getTextArray(R.array.recruit_people_nums)));
 
+        Calendar c = Calendar.getInstance();
+
+        //TODO 날짜 초기화
     }
 
     private void authToDjangoServer(String username, String password1, String password2, String email) throws JSONException{
@@ -59,7 +80,7 @@ public class SignUpActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(JSONObject response) {
-                        Toast.makeText(SignUpActivity.this, "response >> " + response.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(PostRecruitActivity.this, "response >> " + response.toString(), Toast.LENGTH_LONG).show();
                         MyLog.d("response >> " + response.toString());
                     }
                 },
@@ -68,7 +89,7 @@ public class SignUpActivity extends BaseActivity {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(SignUpActivity.this, "error >> " + error.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(PostRecruitActivity.this, "error >> " + error.toString(), Toast.LENGTH_LONG).show();
                         error.printStackTrace();
                         MyLog.e("response >> " + error.toString());
                     }
@@ -90,7 +111,7 @@ public class SignUpActivity extends BaseActivity {
 
             @Override
             protected void deliverResponse(JSONObject response) {
-                Toast.makeText(SignUpActivity.this, "response >> " + response.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(PostRecruitActivity.this, "response >> " + response.toString(), Toast.LENGTH_LONG).show();
                 MyLog.d("response >> " + response.toString());
             }
 
@@ -158,30 +179,35 @@ public class SignUpActivity extends BaseActivity {
     @Override
     protected void initToolbar() {
         super.initToolbar();
+
+//        mToolbar.inflateMenu(R.menu.post_recruit);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.post_recruit, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        if(item.getItemId() == R.id.menu_post_regist) {
+            MyLog.d("글 등록 완료버튼 클릭!");
+            return true;
+        }
+        return false;
     }
 
     public void onClick(View v) {
-        if(v.getId() == R.id.btn_sign_up) {
-            String id = mEditId.getText().toString().trim();
-            String pwd = mEditPw.getText().toString().trim();
-            String pwdRe = mEditPwRe.getText().toString().trim();
-            String nickname = mEditNickName.getText().toString().trim();
-            String mobileNo = mEditMobileNo.getText().toString().trim();
-
-            if(isValidateForm(id, pwd, pwdRe, nickname, mobileNo)) {
-                try {
-                    authToDjangoServer(id, pwd, pwdRe, "");
-                } catch(JSONException e) {
-                    e.printStackTrace();
-                }
-
-//                try {
-//                    requestSignUp(id, pwd, nickname, mobileNo);
-//                } catch(JSONException e) {
-//                    e.printStackTrace();
-//                }
-            }
+        if(v.getId() == R.id.btn_pick_date) {
+            MyLog.d("글등록 메뉴 버튼 클릭");
+            showDatePickerDialog();
         }
+    }
+
+    public void showDatePickerDialog() {
+        DatePickerFragment newFragment = DatePickerFragment.newInstance(recruitDateYear, recruitDateMonth, recruitDateDay);
+        newFragment.show(getFragmentManager(), "datePicker");
     }
 
     private void requestSignUp(String id, String pwd, String nickname, String mobileNo) throws JSONException{
@@ -194,7 +220,7 @@ public class SignUpActivity extends BaseActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(SignUpActivity.this, "error >> " + error.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(PostRecruitActivity.this, "error >> " + error.toString(), Toast.LENGTH_LONG).show();
                 error.printStackTrace();
                 MyLog.e("response >> " + error.toString());
             }
@@ -206,7 +232,7 @@ public class SignUpActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(JSONObject response) {
-                        Toast.makeText(SignUpActivity.this, "response >> " + response.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(PostRecruitActivity.this, "response >> " + response.toString(), Toast.LENGTH_LONG).show();
                         MyLog.d("response >> " + response.toString());
                     }
                 },
@@ -215,7 +241,7 @@ public class SignUpActivity extends BaseActivity {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(SignUpActivity.this, "error >> " + error.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(PostRecruitActivity.this, "error >> " + error.toString(), Toast.LENGTH_LONG).show();
                         error.printStackTrace();
                         MyLog.e("response >> " + error.toString());
                     }
@@ -238,25 +264,66 @@ public class SignUpActivity extends BaseActivity {
 
     private boolean isValidateForm(String id, String pwd, String pwdRe, String nickname, String mobileNo) {
         if(StringUtil.isEmptyString(id)) {
-            mEditId.setError(getString(R.string.error_not_input_id));
+            mEditTitle.setError(getString(R.string.error_not_input_id));
             return false;
         } else if(StringUtil.isEmptyString(pwd)) {
-            mEditPw.setError(getString(R.string.error_not_input_pwd));
-            return false;
-        } else if(StringUtil.isEmptyString(pwdRe)) {
-            mEditPwRe.setError(getString(R.string.error_not_input_pwd_re));
-            return false;
-        } else if(StringUtil.isEmptyString(nickname)) {
-            mEditNickName.setError(getString(R.string.error_not_input_nickname));
-            return false;
-        } else if(StringUtil.isEmptyString(mobileNo)) {
-            mEditMobileNo.setError(getString(R.string.error_not_input_mobile_no));
-            return false;
-        } else if(!pwd.equals(pwdRe)) {
-            showOkDialog(R.string.error_not_equal_pw_re);
+            mEditContent.setError(getString(R.string.error_not_input_pwd));
             return false;
         }
+//          else if(StringUtil.isEmptyString(pwdRe)) {
+//            mEditPwRe.setError(getString(R.string.error_not_input_pwd_re));
+//            return false;
+//        } else if(StringUtil.isEmptyString(nickname)) {
+//            mEditNickName.setError(getString(R.string.error_not_input_nickname));
+//            return false;
+//        } else if(StringUtil.isEmptyString(mobileNo)) {
+//            mEditMobileNo.setError(getString(R.string.error_not_input_mobile_no));
+//            return false;
+//        } else if(!pwd.equals(pwdRe)) {
+//            showOkDialog(R.string.error_not_equal_pw_re);
+//            return false;
+//        }
 
         return true;
+    }
+
+    public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+        private int year;
+        private int month;
+        private int day;
+
+        /**
+         * Create a new instance of MyDialogFragment, providing "num"
+         * as an argument.
+         */
+        public static DatePickerFragment newInstance(int year, int month, int day) {
+            DatePickerFragment f = new DatePickerFragment();
+
+            // Supply num input as an argument.
+            Bundle args = new Bundle();
+            args.putInt("year", year);
+            args.putInt("month", month);
+            args.putInt("day", day);
+            f.setArguments(args);
+
+            return f;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Calendar c = Calendar.getInstance();
+
+            c.set(savedInstanceState.getInt("year"), savedInstanceState.getInt("month"), savedInstanceState.getInt("day"));
+
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            ((PostRecruitActivity)getActivity()).mTxtRecruitDate.setText(CalendarUtil.getDateString(year, month, day));
+        }
     }
 }

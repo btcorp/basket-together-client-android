@@ -31,4 +31,9 @@
     <string name="error_not_input_mobile_no">휴대폰 번호를 입력해 주세요.</string>
     <string name="error_not_equal_pw_re">비밀번호 확인이 일치하지 않습니다.</string>
     <string name="action_login">로그인</string>
+    <string name="post_title">글 제목</string>
+    <string name="post_content">내용을 입력하세요.</string>
+    <string name="complete">완료</string>
+    <string name="regist">등록</string>
+    <string name="title_activity_post_recruit">모집 글 등록</string>
 </resources>

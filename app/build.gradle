@@ -4,6 +4,8 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
 
+    useLibrary  'org.apache.http.legacy'
+
     defaultConfig {
         applicationId "com.angel.black.baskettogether"
         minSdkVersion 15
@@ -26,4 +28,6 @@ dependencies {
     compile 'com.android.support:design:23.2.1'
     compile 'com.android.support:support-v4:23.2.1'
     compile "com.google.android.gms:play-services-gcm:8.4.0"
+    compile 'org.apache.httpcomponents:httpcore:4.4.1'
+    compile 'org.apache.httpcomponents:httpclient:4.5'
 }

@@ -23,17 +23,14 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.core.BaseActivity;
 import com.angel.black.baskettogether.core.MyApplication;
-import com.angel.black.baskettogether.signup.SignUpActivity;
-import com.angel.black.baskettogether.util.MyLog;
+import com.angel.black.baskettogether.post.PostRecruitActivity;
+import com.angel.black.baskettogether.user.UserHelper;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -45,7 +42,7 @@ import static android.Manifest.permission.READ_CONTACTS;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends BaseActivity implements LoaderCallbacks<Cursor> {
-
+    private String djangoAuthToken = "6752d3a5adad11c85034fa3275f65d03c8361f82";
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -73,6 +70,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        initToolbar();
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -100,7 +98,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 testRequestTaewoo();
                 break;
             case R.id.btn_sign_up_at_login:
-                startActivity(SignUpActivity.class);
+//                startActivity(SignUpActivity.class);
+                startActivity(PostRecruitActivity.class);
                 break;
         }
     }
@@ -148,26 +147,40 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     }
 
     private void testRequestTaewoo() {
-        JsonObjectRequest request = new JsonObjectRequest(MyApplication.serverUrl, null,
-                new Response.Listener<JSONObject>() {
+//        JsonObjectRequest request = new JsonObjectRequest(MyApplication.serverUrl, null,
+//                new Response.Listener<JSONObject>() {
+//
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        Toast.makeText(LoginActivity.this, "response >> " + response.toString(), Toast.LENGTH_LONG).show();
+//                        MyLog.d("response >> " + response.toString());
+//                    }
+//                },
+//
+//                new Response.ErrorListener() {
+//
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        Toast.makeText(LoginActivity.this, "error >> " + error.toString(), Toast.LENGTH_LONG).show();
+//                        MyLog.e("error >> " + error.toString());
+//                    }
+//                }
+//        );
+//        MyApplication.getInstance().getRequestQueue().add(request);
+        try {
+            UserHelper.POST(MyApplication.serverUrl + "/rest-auth/login/", buildRequestLoginData());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Toast.makeText(LoginActivity.this, "response >> " + response.toString(), Toast.LENGTH_LONG).show();
-                        MyLog.d("response >> " + response.toString());
-                    }
-                },
+    }
 
-                new Response.ErrorListener() {
+    private JSONObject buildRequestLoginData() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("username", "KJH123");
+        json.put("password", "123456");
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(LoginActivity.this, "error >> " + error.toString(), Toast.LENGTH_LONG).show();
-                        MyLog.e("error >> " + error.toString());
-                    }
-                }
-        );
-        MyApplication.getInstance().getRequestQueue().add(request);
+        return json;
     }
 
     /**

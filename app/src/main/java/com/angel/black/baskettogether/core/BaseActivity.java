@@ -5,15 +5,41 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.view.View;
+
+import com.angel.black.baskettogether.R;
 
 /**
  * Created by KimJeongHun on 2016-05-19.
  */
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener {
+    protected Toolbar mToolbar;
 
     @Override
     public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
+    }
+
+    protected void initToolbar() {
+        this.initToolbar(R.drawable.ic_arrow_back_white_24dp, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+    }
+
+    protected void initToolbar(int naviDrawableResId, View.OnClickListener naviClick) {
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        if(mToolbar != null) {
+            setSupportActionBar(mToolbar);
+            mToolbar.setNavigationIcon(naviDrawableResId);
+            mToolbar.setNavigationOnClickListener(naviClick);
+            mToolbar.setOnMenuItemClickListener(this);
+        }
+
     }
 
     protected void startActivity(Class clazz) {
@@ -26,5 +52,10 @@ public class BaseActivity extends AppCompatActivity {
                 .setMessage(strResId)
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        return false;
     }
 }
