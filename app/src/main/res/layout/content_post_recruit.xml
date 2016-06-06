@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".post.PostRecruitActivity"
+    tools:context=".post.RecruitPostRegistActivity"
     tools:showIn="@layout/activity_post_recruit">
 
     <ScrollView
@@ -98,7 +98,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:spinnerMode="dropdown"
-                    android:prompt="@string/title_activity_post_recruit"
                     />
 
             </LinearLayout>

@@ -26,10 +26,14 @@ import android.widget.TextView;
 
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.core.BaseActivity;
-import com.angel.black.baskettogether.core.MyApplication;
-import com.angel.black.baskettogether.post.PostRecruitActivity;
+import com.angel.black.baskettogether.core.network.HttpAPIRequester;
+import com.angel.black.baskettogether.core.network.ServerInfo;
+import com.angel.black.baskettogether.post.get.RecruitPostListActivity;
+import com.angel.black.baskettogether.signup.SignUpActivity;
 import com.angel.black.baskettogether.user.UserHelper;
+import com.angel.black.baskettogether.util.StringUtil;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -61,7 +65,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     private UserLoginTask mAuthTask = null;
 
     // UI references.
-    private AutoCompleteTextView mEmailView;
+    private AutoCompleteTextView mIdView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
@@ -72,7 +76,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         setContentView(R.layout.activity_login);
         initToolbar();
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mIdView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -94,15 +98,65 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.btn_login:
-//                attemptLogin();
-                testRequestTaewoo();
+                mIdView.setError(null);
+                mPasswordView.setError(null);
+
+                String id = mIdView.getText().toString();
+                String password = mPasswordView.getText().toString();
+
+                if(isValidateForm(id, password)) {
+                    try {
+                        requestLogin(id, password);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        showOkDialog("로그인 실패");
+                    }
+                }
+
                 break;
             case R.id.btn_sign_up_at_login:
-//                startActivity(SignUpActivity.class);
-                startActivity(PostRecruitActivity.class);
+                startActivity(SignUpActivity.class);
+//                startActivity(RecruitPostRegistActivity.class);
                 break;
         }
     }
+
+    private void requestLogin(String id, String pwd) throws JSONException{
+        JSONObject loginData = buildRequestLoginData(id, pwd);
+        new HttpAPIRequester(this, ServerInfo.API_USER_LOGIN, "POST", new HttpAPIRequester.OnAPIResponseListener() {
+            @Override
+            public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
+                try {
+                    String key = response.getString("key");
+                    UserHelper.userAccessToken = key;
+
+                    showToast("로그인 성공");
+                    startActivity(RecruitPostListActivity.class);
+                } catch (JSONException e) {
+                    showOkDialog(response.toString());
+                }
+            }
+
+            @Override
+            public void onResponse(String APIUrl, int retCode, JSONArray response) throws JSONException {
+
+            }
+
+            @Override
+            public void onErrorResponse(String APIUrl, String message, Throwable cause) {
+
+            }
+        }).execute(loginData);
+    }
+
+    private JSONObject buildRequestLoginData(String id, String pwd) throws JSONException{
+        JSONObject json = new JSONObject();
+        json.put("username", id);
+        json.put("password", pwd);
+
+        return json;
+    }
+
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
@@ -119,7 +173,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             return true;
         }
         if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
+            Snackbar.make(mIdView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
                     .setAction(android.R.string.ok, new View.OnClickListener() {
                         @Override
                         @TargetApi(Build.VERSION_CODES.M)
@@ -146,35 +200,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         }
     }
 
-    private void testRequestTaewoo() {
-//        JsonObjectRequest request = new JsonObjectRequest(MyApplication.serverUrl, null,
-//                new Response.Listener<JSONObject>() {
-//
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//                        Toast.makeText(LoginActivity.this, "response >> " + response.toString(), Toast.LENGTH_LONG).show();
-//                        MyLog.d("response >> " + response.toString());
-//                    }
-//                },
-//
-//                new Response.ErrorListener() {
-//
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        Toast.makeText(LoginActivity.this, "error >> " + error.toString(), Toast.LENGTH_LONG).show();
-//                        MyLog.e("error >> " + error.toString());
-//                    }
-//                }
-//        );
-//        MyApplication.getInstance().getRequestQueue().add(request);
-        try {
-            UserHelper.POST(MyApplication.serverUrl + "/rest-auth/login/", buildRequestLoginData());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
-
     private JSONObject buildRequestLoginData() throws JSONException {
         JSONObject json = new JSONObject();
         json.put("username", "KJH123");
@@ -194,11 +219,11 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         }
 
         // Reset errors.
-        mEmailView.setError(null);
+        mIdView.setError(null);
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
+        String email = mIdView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
@@ -213,12 +238,12 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
+            mIdView.setError(getString(R.string.error_field_required));
+            focusView = mIdView;
             cancel = true;
         } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
+            mIdView.setError(getString(R.string.error_invalid_email));
+            focusView = mIdView;
             cancel = true;
         }
 
@@ -243,6 +268,21 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
         return password.length() > 4;
+    }
+
+    private boolean isValidateForm(String id, String pwd) {
+        if(StringUtil.isEmptyString(id)) {
+            mIdView.setError(getString(R.string.error_not_input_id));
+            return false;
+        } else if(StringUtil.isEmptyString(pwd)) {
+            mPasswordView.setError(getString(R.string.error_not_input_pwd));
+            return false;
+        } else if(pwd.length() < 6) {
+            mPasswordView.setError(getString(R.string.error_pwd_minimun_6));
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -321,7 +361,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 new ArrayAdapter<>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
-        mEmailView.setAdapter(adapter);
+        mIdView.setAdapter(adapter);
     }
 
 

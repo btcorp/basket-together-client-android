@@ -12,7 +12,14 @@ public class StringUtil {
     }
 
     public static boolean isEmptyString(String str) {
-        if(str == null || str.equals("null") || str.trim().equals("")) {
+        if(str == null || str.equals("null") || str.equals("")) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isEmptyInputString(String str) {
+        if(str == null || str.trim().equals("")) {
             return true;
         }
         return false;

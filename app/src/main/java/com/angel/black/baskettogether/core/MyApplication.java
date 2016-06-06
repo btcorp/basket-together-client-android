@@ -40,4 +40,8 @@ public class MyApplication extends Application {
     public RequestQueue getRequestQueue() {
         return mRequestQueue;
     }
+
+    public ImageLoader getImageLoader() {
+        return mImageLoader;
+    }
 }

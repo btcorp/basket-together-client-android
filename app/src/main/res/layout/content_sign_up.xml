@@ -10,7 +10,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".signup.SignUpActivity"
-    tools:showIn="@layout/activity_join">
+    tools:showIn="@layout/activity_sign_up">
 
     <LinearLayout
         android:id="@+id/join_form"
@@ -27,6 +27,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/prompt_user_id"
+                android:imeOptions="actionNext"
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
                 android:singleLine="true" />
@@ -60,39 +61,6 @@
                 android:hint="@string/prompt_password_re"
                 android:imeOptions="actionNext"
                 android:inputType="textPassword"
-                android:maxLines="1"
-                android:singleLine="true" />
-
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/nickname"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/prompt_nickname"
-                android:inputType="textPersonName"
-                android:maxLines="1"
-                android:singleLine="true" />
-
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/mobile_no"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/prompt_mobile_no"
-                android:imeActionId="@+id/sign_up"
-                android:imeActionLabel="@string/action_sign_up_short"
-                android:imeOptions="actionUnspecified"
-                android:inputType="phone"
                 android:maxLines="1"
                 android:singleLine="true" />
 
