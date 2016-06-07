@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.core.BaseActivity;
 import com.angel.black.baskettogether.core.network.HttpAPIRequester;
-import com.angel.black.baskettogether.core.network.ServerInfo;
+import com.angel.black.baskettogether.core.network.ServerURLInfo;
 import com.angel.black.baskettogether.util.CalendarUtil;
 import com.angel.black.baskettogether.util.MyLog;
 
@@ -96,7 +96,7 @@ public class RecruitPostRegistActivity extends BaseActivity {
         try {
             JSONObject data = buildRegistPostData();
 
-            new HttpAPIRequester(this, ServerInfo.API_RECRUIT_POST_REGIST, "POST", new HttpAPIRequester.OnAPIResponseListener() {
+            new HttpAPIRequester(this, ServerURLInfo.API_RECRUIT_POST_REGIST, "POST", new HttpAPIRequester.OnAPIResponseListener() {
                 @Override
                 public void onResponse(String APIUrl, int retCode, JSONObject response) {
                     showToast("글등록 성공");

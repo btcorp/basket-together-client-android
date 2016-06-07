@@ -6,7 +6,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.angel.black.baskettogether.BuildConfig;
-import com.angel.black.baskettogether.core.network.ServerInfo;
+import com.angel.black.baskettogether.core.network.ServerURLInfo;
 import com.angel.black.baskettogether.image.LruBitmapCache;
 
 /**
@@ -26,7 +26,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        serverUrl = debug ? ServerInfo.DEV_SERVER_URL : ServerInfo.PRODUCT_SERVER_URL;
+        serverUrl = debug ? ServerURLInfo.DEV_SERVER_URL : ServerURLInfo.PRODUCT_SERVER_URL;
 
         mRequestQueue = Volley.newRequestQueue(this);
         mImageLoader = new ImageLoader(mRequestQueue, new LruBitmapCache(8388608));

@@ -22,16 +22,16 @@
             android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".signup.SignUpActivity"
-            android:label="@string/title_activity_join" />
-        <activity
             android:name=".login.LoginActivity"
             android:label="@string/title_activity_login" />
+        <activity
+            android:name=".signup.SignUpActivity"
+            android:label="@string/title_activity_join"
+            android:parentActivityName=".login.LoginActivity"/>
         <activity
             android:name=".post.get.RecruitPostListActivity"
             android:label="@string/title_activity_recruit_post_list" />
@@ -41,7 +41,7 @@
         <activity
             android:name=".post.get.RecruitPostDetailActivity"
             android:label="@string/title_activity_recruit_post_detail"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:parentActivityName=".post.get.RecruitPostListActivity"/>
     </application>
 
 </manifest>

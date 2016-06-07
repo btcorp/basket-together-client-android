@@ -27,7 +27,7 @@ import android.widget.TextView;
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.core.BaseActivity;
 import com.angel.black.baskettogether.core.network.HttpAPIRequester;
-import com.angel.black.baskettogether.core.network.ServerInfo;
+import com.angel.black.baskettogether.core.network.ServerURLInfo;
 import com.angel.black.baskettogether.post.get.RecruitPostListActivity;
 import com.angel.black.baskettogether.signup.SignUpActivity;
 import com.angel.black.baskettogether.user.UserHelper;
@@ -123,7 +123,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
     private void requestLogin(String id, String pwd) throws JSONException{
         JSONObject loginData = buildRequestLoginData(id, pwd);
-        new HttpAPIRequester(this, ServerInfo.API_USER_LOGIN, "POST", new HttpAPIRequester.OnAPIResponseListener() {
+        new HttpAPIRequester(this, ServerURLInfo.API_USER_LOGIN, "POST", new HttpAPIRequester.OnAPIResponseListener() {
             @Override
             public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
                 try {

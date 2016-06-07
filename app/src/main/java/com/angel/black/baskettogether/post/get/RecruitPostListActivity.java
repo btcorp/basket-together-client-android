@@ -16,7 +16,7 @@ import com.angel.black.baskettogether.core.BaseActivity;
 import com.angel.black.baskettogether.core.MyApplication;
 import com.angel.black.baskettogether.core.intent.IntentConst;
 import com.angel.black.baskettogether.core.network.HttpAPIRequester;
-import com.angel.black.baskettogether.core.network.ServerInfo;
+import com.angel.black.baskettogether.core.network.ServerURLInfo;
 import com.angel.black.baskettogether.util.MyLog;
 
 import org.json.JSONArray;
@@ -43,7 +43,7 @@ public class RecruitPostListActivity extends BaseActivity implements AdapterView
     }
 
     private void requestPostList() {
-        new HttpAPIRequester(this, ServerInfo.API_RECRUIT_POSTS_GET, "GET", new HttpAPIRequester.OnAPIResponseListener() {
+        new HttpAPIRequester(this, ServerURLInfo.API_RECRUIT_POSTS_GET, "GET", new HttpAPIRequester.OnAPIResponseListener() {
             @Override
             public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
                 populatePostList(response.getJSONArray("results"));

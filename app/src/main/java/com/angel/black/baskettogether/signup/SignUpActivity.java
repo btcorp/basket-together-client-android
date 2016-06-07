@@ -7,7 +7,7 @@ import android.widget.EditText;
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.core.BaseActivity;
 import com.angel.black.baskettogether.core.network.HttpAPIRequester;
-import com.angel.black.baskettogether.core.network.ServerInfo;
+import com.angel.black.baskettogether.core.network.ServerURLInfo;
 import com.angel.black.baskettogether.post.RecruitPostRegistActivity;
 import com.angel.black.baskettogether.user.UserHelper;
 import com.angel.black.baskettogether.util.StringUtil;
@@ -59,7 +59,7 @@ public class SignUpActivity extends BaseActivity {
 
     private void requestSignUp(final String id, final String pwd) throws JSONException{
         JSONObject joinData = buildRequestJoinData(id, pwd);
-        new HttpAPIRequester(this, ServerInfo.API_USER_REGIST, "POST", new HttpAPIRequester.OnAPIResponseListener() {
+        new HttpAPIRequester(this, ServerURLInfo.API_USER_REGIST, "POST", new HttpAPIRequester.OnAPIResponseListener() {
             @Override
             public void onResponse(String APIUrl, int retCode, JSONObject response) {
                 try {
@@ -86,7 +86,7 @@ public class SignUpActivity extends BaseActivity {
 
     private void requestLogin(String id, String pwd) throws JSONException{
         JSONObject loginData = buildRequestLoginData(id, pwd);
-        new HttpAPIRequester(this, ServerInfo.API_USER_LOGIN, "POST", new HttpAPIRequester.OnAPIResponseListener() {
+        new HttpAPIRequester(this, ServerURLInfo.API_USER_LOGIN, "POST", new HttpAPIRequester.OnAPIResponseListener() {
             @Override
             public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
                 showToast("로그인 성공");

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v4.widget.ContentLoadingProgressBar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -26,23 +27,26 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
     protected void initToolbar() {
-        this.initToolbar(R.drawable.ic_arrow_back_white_24dp, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        if(mToolbar != null) {
+            setSupportActionBar(mToolbar);
+
+            ActionBar actionBar = getSupportActionBar();
+
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            mToolbar.setOnMenuItemClickListener(this);
+        }
     }
 
     protected void initToolbar(int naviDrawableResId, View.OnClickListener naviClick) {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         if(mToolbar != null) {
             setSupportActionBar(mToolbar);
+
             mToolbar.setNavigationIcon(naviDrawableResId);
             mToolbar.setNavigationOnClickListener(naviClick);
             mToolbar.setOnMenuItemClickListener(this);
         }
-
     }
 
     protected void startActivity(Class clazz) {
