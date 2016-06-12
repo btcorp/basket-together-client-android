@@ -1,4 +1,4 @@
-package com.angel.black.baskettogether.post.get;
+package com.angel.black.baskettogether.recruit.get;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,8 +30,7 @@ public class RecruitPostDetailActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recruit_post_detail);
-        initToolbar();
+        setContentView(R.layout.content_recruit_post_detail);
 
         mList = (ListViewCompat) findViewById(R.id.comment_list);
         mTitle = (TextView) findViewById(R.id.post_title);
@@ -53,7 +52,7 @@ public class RecruitPostDetailActivity extends BaseActivity {
     }
 
     private void requestGetPostDetail() {
-        new HttpAPIRequester(this, ServerURLInfo.API_GET_RECRUIT_POST_DETAIL + mPostId + "/", "GET", new HttpAPIRequester.OnAPIResponseListener() {
+        new HttpAPIRequester(this, true, ServerURLInfo.API_GET_RECRUIT_POST_DETAIL + mPostId + "/", "GET", new HttpAPIRequester.OnAPIResponseListener() {
             @Override
             public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
                 setData(response);

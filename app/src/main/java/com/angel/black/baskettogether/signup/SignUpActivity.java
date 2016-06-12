@@ -8,7 +8,7 @@ import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.core.BaseActivity;
 import com.angel.black.baskettogether.core.network.HttpAPIRequester;
 import com.angel.black.baskettogether.core.network.ServerURLInfo;
-import com.angel.black.baskettogether.post.RecruitPostRegistActivity;
+import com.angel.black.baskettogether.recruit.RecruitPostRegistActivity;
 import com.angel.black.baskettogether.user.UserHelper;
 import com.angel.black.baskettogether.util.StringUtil;
 
@@ -24,17 +24,11 @@ public class SignUpActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up);
-        initToolbar();
+        setContentView(R.layout.content_sign_up);
 
         mEditId = (EditText) findViewById(R.id.user_id);
         mEditPw = (EditText) findViewById(R.id.password);
         mEditPwRe = (EditText) findViewById(R.id.password_re);
-    }
-
-    @Override
-    protected void initToolbar() {
-        super.initToolbar();
     }
 
     public void onClick(View v) {
@@ -59,7 +53,7 @@ public class SignUpActivity extends BaseActivity {
 
     private void requestSignUp(final String id, final String pwd) throws JSONException{
         JSONObject joinData = buildRequestJoinData(id, pwd);
-        new HttpAPIRequester(this, ServerURLInfo.API_USER_REGIST, "POST", new HttpAPIRequester.OnAPIResponseListener() {
+        new HttpAPIRequester(this, true, ServerURLInfo.API_USER_REGIST, "POST", new HttpAPIRequester.OnAPIResponseListener() {
             @Override
             public void onResponse(String APIUrl, int retCode, JSONObject response) {
                 try {
@@ -86,7 +80,7 @@ public class SignUpActivity extends BaseActivity {
 
     private void requestLogin(String id, String pwd) throws JSONException{
         JSONObject loginData = buildRequestLoginData(id, pwd);
-        new HttpAPIRequester(this, ServerURLInfo.API_USER_LOGIN, "POST", new HttpAPIRequester.OnAPIResponseListener() {
+        new HttpAPIRequester(this, true, ServerURLInfo.API_USER_LOGIN, "POST", new HttpAPIRequester.OnAPIResponseListener() {
             @Override
             public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
                 showToast("로그인 성공");

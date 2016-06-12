@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -28,7 +29,7 @@ import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.core.BaseActivity;
 import com.angel.black.baskettogether.core.network.HttpAPIRequester;
 import com.angel.black.baskettogether.core.network.ServerURLInfo;
-import com.angel.black.baskettogether.post.get.RecruitPostListActivity;
+import com.angel.black.baskettogether.recruit.get.RecruitPostListActivity;
 import com.angel.black.baskettogether.signup.SignUpActivity;
 import com.angel.black.baskettogether.user.UserHelper;
 import com.angel.black.baskettogether.util.StringUtil;
@@ -74,7 +75,10 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        initToolbar();
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(false);
+
         // Set up the login form.
         mIdView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -98,21 +102,28 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.btn_login:
-                mIdView.setError(null);
-                mPasswordView.setError(null);
+                //TODO 테스트
+                if(true) {
+                    startActivity(RecruitPostListActivity.class);
+                } else {
+                    mIdView.setError(null);
+                    mPasswordView.setError(null);
 
-                String id = mIdView.getText().toString();
-                String password = mPasswordView.getText().toString();
+                    String id = mIdView.getText().toString();
+                    String password = mPasswordView.getText().toString();
 
-                if(isValidateForm(id, password)) {
-                    try {
-                        requestLogin(id, password);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        showOkDialog("로그인 실패");
+                    if (isValidateForm(id, password)) {
+                        hideSoftKeyboard();
+//                    try {
+//                        requestLogin(id, password);
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                        showOkDialog("로그인 실패");
+//                    }
+                        startActivity(RecruitPostListActivity.class);
+
                     }
                 }
-
                 break;
             case R.id.btn_sign_up_at_login:
                 startActivity(SignUpActivity.class);
@@ -123,7 +134,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
     private void requestLogin(String id, String pwd) throws JSONException{
         JSONObject loginData = buildRequestLoginData(id, pwd);
-        new HttpAPIRequester(this, ServerURLInfo.API_USER_LOGIN, "POST", new HttpAPIRequester.OnAPIResponseListener() {
+        new HttpAPIRequester(this, true, ServerURLInfo.API_USER_LOGIN, "POST", new HttpAPIRequester.OnAPIResponseListener() {
             @Override
             public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
                 try {

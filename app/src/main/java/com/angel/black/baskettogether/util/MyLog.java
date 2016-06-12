@@ -35,6 +35,12 @@ public class MyLog {
     }
 
     /** Log Level Information **/
+    public static void i() {
+        if (MyApplication.debug)
+            Log.i(LOG_TAG, buildLogMsg(""));
+    }
+
+    /** Log Level Information **/
     public static final void i(String message) {
         if (MyApplication.debug)
             Log.i(LOG_TAG, buildLogMsg(message));
@@ -89,4 +95,5 @@ public class MyLog {
 
         return sb.toString();
     }
+
 }

@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.core.BaseActivity;
+import com.angel.black.baskettogether.core.BaseListActivity;
 import com.angel.black.baskettogether.core.MyApplication;
 import com.angel.black.baskettogether.core.network.util.NetworkUtil;
 import com.angel.black.baskettogether.user.UserHelper;
@@ -16,6 +17,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
@@ -33,13 +35,16 @@ import java.util.Vector;
  * Created by KimJeongHun on 2016-06-06.
  */
 public class HttpAPIRequester extends AsyncTask<JSONObject, Void, String> {
+    private final String NOT_CONNECTED_NETWORK = "NotConnectNetwork";
     private BaseActivity activity;
+    private boolean showCenterLoading;
     private String APIUrl;
     private String method;
     private OnAPIResponseListener onAPIResponseListener;
 
-    public HttpAPIRequester(BaseActivity activity, String APIUrl, String method, OnAPIResponseListener onAPIResponseListener) {
+    public HttpAPIRequester(BaseActivity activity, boolean showCenterLoading, String APIUrl, String method, OnAPIResponseListener onAPIResponseListener) {
         this.activity = activity;
+        this.showCenterLoading = showCenterLoading;
         this.APIUrl = APIUrl;
         this.method = method;
         this.onAPIResponseListener = onAPIResponseListener;
@@ -52,7 +57,11 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, String> {
             activity.showOkDialog(R.string.not_connected_network);
             this.cancel(true);
         } else {
-            activity.showProgress();
+            if(activity instanceof BaseListActivity && !showCenterLoading) {
+                ((BaseListActivity) activity).showLoadingFooter();
+            } else if(activity instanceof BaseActivity && showCenterLoading) {
+                activity.showProgress();
+            }
         }
     }
 
@@ -109,10 +118,10 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, String> {
 
                 return result;
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             onAPIResponseListener.onErrorResponse(APIUrl, e.getMessage(), e.getCause());
+            return e.getClass().getSimpleName();
         }
 
         return null;
@@ -124,15 +133,20 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, String> {
         if (isNeedUserAuthToken()) {
             httpRequestBase.setHeader("Authorization", "Token " + UserHelper.userAccessToken);
         }
-
     }
 
     @Override
     protected void onPostExecute(String result) {
-        activity.hideProgress();
+        if(activity instanceof BaseListActivity && !showCenterLoading) {
+            ((BaseListActivity) activity).hideLoadingFooter();
+        } else if(activity instanceof BaseActivity && showCenterLoading) {
+            activity.hideProgress();
+        }
 
-        if (result == null) {
-            onAPIResponseListener.onErrorResponse(APIUrl, "result is null", null);
+        if (HttpHostConnectException.class.getSimpleName().equals(result)) {
+            if(!activity.isFinishing()) {
+                activity.showOkDialog(R.string.not_responsed_server);
+            }
             return;
         }
 

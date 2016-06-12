@@ -15,7 +15,6 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="title_activity_join">JoinActivity</string>
     <string name="prompt_nickname">닉네임</string>
     <string name="action_sign_up_short">가입</string>
 
@@ -38,8 +37,9 @@
     <string name="title_activity_recruit_post_regist">모집 글 등록</string>
     <string name="error_pwd_minimun_6">비밀번호는 최소 6자리여야 합니다.</string>
     <string name="title_activity_recruit_post_list">팀 모집글 목록</string>
-    <string name="title_activity_login">로그인</string>
+    <string name="login">로그인</string>
     <string name="not_connected_network">네트워크 연결을 확인해주세요.</string>
-    <string name="title_activity_recruit_post_detail">RecruitPostDetailActivity</string>
+    <string name="title_activity_recruit_post_detail">팀 모집글 상세</string>
     <string name="attender_count">모집인원</string>
+    <string name="not_responsed_server">서버가 응답하지 않습니다.\n잠시후 다시 시도해 주세요.</string>
 </resources>

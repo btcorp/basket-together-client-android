@@ -1,4 +1,4 @@
-package com.angel.black.baskettogether.post;
+package com.angel.black.baskettogether.recruit;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -96,7 +96,7 @@ public class RecruitPostRegistActivity extends BaseActivity {
         try {
             JSONObject data = buildRegistPostData();
 
-            new HttpAPIRequester(this, ServerURLInfo.API_RECRUIT_POST_REGIST, "POST", new HttpAPIRequester.OnAPIResponseListener() {
+            new HttpAPIRequester(this, true, ServerURLInfo.API_RECRUIT_POST_REGIST, "POST", new HttpAPIRequester.OnAPIResponseListener() {
                 @Override
                 public void onResponse(String APIUrl, int retCode, JSONObject response) {
                     showToast("글등록 성공");

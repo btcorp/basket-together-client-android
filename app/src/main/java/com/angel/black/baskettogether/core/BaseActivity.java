@@ -1,29 +1,48 @@
 package com.angel.black.baskettogether.core;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.v4.widget.ContentLoadingProgressBar;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.angel.black.baskettogether.R;
+import com.angel.black.baskettogether.util.MyLog;
 
 /**
  * Created by KimJeongHun on 2016-05-19.
  */
 public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener {
+    protected final String TAG = this.getClass().getSimpleName();
+
     protected Toolbar mToolbar;
-    protected ContentLoadingProgressBar mProgress;
+    protected ProgressBar mLoadingProgress;
+    protected ViewGroup mContentsLayout;
 
     @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    protected void onCreate(Bundle savedInstanceState) {
+        MyLog.i(TAG, "onCreate");
+        super.onCreate(savedInstanceState);
+        super.setContentView(R.layout.activity_base);
+        initToolbar();
+
+        mContentsLayout = (ViewGroup) findViewById(R.id.layout_activity_contents);
+    }
+
+    @Override
+    public void setContentView(@LayoutRes int layoutResID) {
+        getLayoutInflater().inflate(layoutResID, mContentsLayout);
     }
 
     protected void initToolbar() {
@@ -38,11 +57,14 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         }
     }
 
-    protected void initToolbar(int naviDrawableResId, View.OnClickListener naviClick) {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+    protected void hideToolbar() {
         if(mToolbar != null) {
-            setSupportActionBar(mToolbar);
+            mToolbar.setVisibility(View.GONE);
+        }
+    }
 
+    protected void initToolbar(int naviDrawableResId, View.OnClickListener naviClick) {
+        if(mToolbar != null) {
             mToolbar.setNavigationIcon(naviDrawableResId);
             mToolbar.setNavigationOnClickListener(naviClick);
             mToolbar.setOnMenuItemClickListener(this);
@@ -55,30 +77,25 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
     public void showProgress() {
-        if(mProgress == null) {
-            mProgress = new ContentLoadingProgressBar(this);
+        if(mLoadingProgress == null) {
+            mLoadingProgress = (ProgressBar) findViewById(R.id.loading_progress);
         }
-        mProgress.show();
+        mLoadingProgress.setVisibility(View.VISIBLE);
     }
 
     public void hideProgress() {
-        if(mProgress != null && mProgress.isShown()) {
-            mProgress.hide();
+        if(mLoadingProgress != null && mLoadingProgress.isShown()) {
+            mLoadingProgress.setVisibility(View.GONE);
         }
     }
 
     public void showOkDialog(int strResId) {
-        new AlertDialog.Builder(this)
-                .setMessage(strResId)
-                .setPositiveButton(android.R.string.ok, null)
-                .show();
+        this.showOkDialog(getString(strResId));
     }
 
     protected void showOkDialog(String message) {
-        new AlertDialog.Builder(this)
-                .setMessage(message)
-                .setPositiveButton(android.R.string.ok, null)
-                .show();
+        AlertDialogFragment dialogFragment = AlertDialogFragment.newInstance(null, message);
+        dialogFragment.show(getSupportFragmentManager(), "okDialog");
     }
 
     public void showToast(String message) {
@@ -90,4 +107,42 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         return false;
     }
 
+    protected void hideSoftKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+    }
+
+    public static class AlertDialogFragment extends DialogFragment {
+        private static final String ARG_TITLE = "title";
+        private static final String ARG_MESSAGE = "message";
+
+        public static AlertDialogFragment newInstance(String title, String message) {
+            AlertDialogFragment dialogFragment = new AlertDialogFragment();
+
+            Bundle args = new Bundle();
+            if(title != null) args.putString(ARG_TITLE, title);
+            args.putString(ARG_MESSAGE, message);
+            dialogFragment.setArguments(args);
+
+            return dialogFragment;
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+            String title = getArguments().getString(ARG_TITLE);
+            String message = getArguments().getString(ARG_MESSAGE);
+
+            if(title != null)
+                builder.setTitle(title);
+
+            builder.setMessage(message)
+                    .setPositiveButton(android.R.string.ok, null);
+            return builder.create();
+        }
+
+
+    }
 }
