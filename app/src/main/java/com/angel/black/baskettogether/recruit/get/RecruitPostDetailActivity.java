@@ -2,9 +2,9 @@ package com.angel.black.baskettogether.recruit.get;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.ListViewCompat;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.angel.black.baskettogether.R;
@@ -20,7 +20,7 @@ import org.json.JSONObject;
 public class RecruitPostDetailActivity extends BaseActivity {
     private long mPostId;
 
-    private ListViewCompat mList;
+    private ListView mList;
     private TextView mTitle;
     private TextView mContent;
     private TextView mAuthor;
@@ -32,7 +32,7 @@ public class RecruitPostDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_recruit_post_detail);
 
-        mList = (ListViewCompat) findViewById(R.id.comment_list);
+        mList = (ListView) findViewById(R.id.comment_list);
         mTitle = (TextView) findViewById(R.id.post_title);
         mContent = (TextView) findViewById(R.id.post_content);
         mAuthor = (TextView) findViewById(R.id.post_author);

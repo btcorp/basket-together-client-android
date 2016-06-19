@@ -4,14 +4,14 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatImageButton;
-import android.support.v7.widget.AppCompatSpinner;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.angel.black.baskettogether.R;
@@ -20,23 +20,22 @@ import com.angel.black.baskettogether.core.network.HttpAPIRequester;
 import com.angel.black.baskettogether.core.network.ServerURLInfo;
 import com.angel.black.baskettogether.util.CalendarUtil;
 import com.angel.black.baskettogether.util.MyLog;
+import com.angel.black.baskettogether.util.StringUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 public class RecruitPostRegistActivity extends BaseActivity {
     private EditText mEditTitle;
     private EditText mEditContent;
-    private AppCompatImageButton mBtnPickDate;
-    private AppCompatImageButton mBtnPickPlace;
+    private ImageButton mBtnPickDate;
+    private ImageButton mBtnPickPlace;
     private TextView mTxtRecruitDate;
     private TextView mTxtRecruitPlace;
-    private AppCompatSpinner mSpinPeopleNum;
+    private Spinner mSpinPeopleNum;
 
     private int recruitDateYear;
     private int recruitDateMonth;
@@ -45,15 +44,14 @@ public class RecruitPostRegistActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_post_recruit);
-        initToolbar();
+        setContentView(R.layout.content_recruit_post_regist);
 
         mEditTitle = (EditText) findViewById(R.id.post_recruit_title);
         mEditContent = (EditText) findViewById(R.id.post_recruit_content);
         mTxtRecruitDate = (TextView) findViewById(R.id.txt_recruit_date);
         mTxtRecruitPlace = (TextView) findViewById(R.id.txt_recruit_place);
 
-        mSpinPeopleNum = (AppCompatSpinner) findViewById(R.id.spin_post_recruit_people_num);
+        mSpinPeopleNum = (Spinner) findViewById(R.id.spin_post_recruit_people_num);
         mSpinPeopleNum.setAdapter(new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, getResources().getTextArray(R.array.recruit_people_nums)));
 
         Calendar c = Calendar.getInstance();
@@ -63,11 +61,6 @@ public class RecruitPostRegistActivity extends BaseActivity {
         recruitDateDay = c.get(Calendar.DAY_OF_MONTH);
 
         mTxtRecruitDate.setText(CalendarUtil.getDateString(c));
-    }
-
-    @Override
-    protected void initToolbar() {
-        super.initToolbar();
     }
 
     @Override
@@ -81,16 +74,28 @@ public class RecruitPostRegistActivity extends BaseActivity {
         if(item.getItemId() == R.id.menu_post_regist) {
             MyLog.d("글 등록 완료버튼 클릭!");
 
+            String title = mEditTitle.getText().toString().trim();
+            String content = mEditContent.getText().toString().trim();
 
-
-
-
-            requestRegistPost();
-            return true;
+            if(isValidateForm(title, content)) {
+                requestRegistPost();
+                return true;
+            }
         }
         return false;
     }
 
+    private boolean isValidateForm(String title, String content) {
+        if(StringUtil.isEmptyString(title)) {
+            mEditTitle.setError(getString(R.string.error_not_input_id));
+            return false;
+        } else if(StringUtil.isEmptyString(content)) {
+            mEditContent.setError(getString(R.string.error_not_input_pwd));
+            return false;
+        }
+
+        return true;
+    }
 
     private void requestRegistPost() {
         try {
@@ -122,15 +127,15 @@ public class RecruitPostRegistActivity extends BaseActivity {
     private JSONObject buildRegistPostData() throws JSONException{
         JSONObject jsonObject = new JSONObject();
 
-        jsonObject.put("author", "http://localhost:8000/users/1/");
+//        jsonObject.put("author_id", "1");
         jsonObject.put("title", mEditTitle.getText().toString().trim());
         jsonObject.put("content", mEditContent.getText().toString().trim());
         jsonObject.put("recruit_count", mSpinPeopleNum.getSelectedItemPosition() + 1);
-        jsonObject.put("gps_x", "123.356");
-        jsonObject.put("gps_y", "452.952");
-        jsonObject.put("address1", "경기도 양주시 백석읍");
-        jsonObject.put("address2", "백석 체육공원 농구장");
-        jsonObject.put("meeting_date", new SimpleDateFormat("yyyy-mm-dd hh:mm").format(new Date(System.currentTimeMillis())));
+//        jsonObject.put("gps_x", "123.356");
+//        jsonObject.put("gps_y", "452.952");
+//        jsonObject.put("address1", "경기도 양주시 백석읍");
+//        jsonObject.put("address2", "백석 체육공원 농구장");
+//        jsonObject.put("meeting_date", new SimpleDateFormat("yyyy-mm-dd hh:mm").format(new Date(System.currentTimeMillis())));
 
         return jsonObject;
     }

@@ -1,14 +1,16 @@
 package com.angel.black.baskettogether.recruit.get;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,7 +22,9 @@ import com.angel.black.baskettogether.core.network.HttpAPIRequester;
 import com.angel.black.baskettogether.core.network.ServerURLInfo;
 import com.angel.black.baskettogether.core.view.recyclerview.AbsRecyclerViewHolder;
 import com.angel.black.baskettogether.core.view.recyclerview.RecyclerViewAdapterData;
+import com.angel.black.baskettogether.recruit.RecruitPostRegistActivity;
 import com.angel.black.baskettogether.util.MyLog;
+import com.angel.black.baskettogether.util.ScreenUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,13 +35,26 @@ import org.json.JSONObject;
  */
 public class RecruitPostListActivity extends BaseListActivity implements RecyclerViewAdapterData,
         View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
+    private static final String TAG_FAB = "fab";
+    private static final String TAG_LIST_ROW = "listRow";
+
     private ImageLoader mImageLoader;
     private DrawerLayout mDrawerLayout;
     private NavigationView mNaviView;
 
+    private Drawable mDefaultProfileImageDrawable;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mDrawerLayout = (DrawerLayout) getLayoutInflater().inflate(R.layout.base_drawer_layout, null);
+        FrameLayout layoutContent = (FrameLayout) mDrawerLayout.findViewById(R.id.content_frame);
+
+        ((ViewGroup) mRootLayout.getParent()).removeView(mRootLayout);
+        layoutContent.addView(mRootLayout);
+        setContentView(mDrawerLayout);
+
         initToolbar(R.drawable.ic_menu_white_24dp, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -45,25 +62,44 @@ public class RecruitPostListActivity extends BaseListActivity implements Recycle
             }
         });
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNaviView = (NavigationView) mDrawerLayout.findViewById(R.id.navigation);
+        mNaviView.inflateHeaderView(R.layout.recruit_post_list_drawer_header);
+        mNaviView.inflateMenu(R.menu.recruit_post_list_drawer_items);
+
         mNaviView.setNavigationItemSelectedListener(this);
         mNaviView.setItemBackgroundResource(R.drawable.base_list_item_selector);
+
+        addFloatingActionButton();
         requestList();
     }
 
-    @Override
-    public void setContentView(@LayoutRes int layoutResID) {
-        super.setContentView(R.layout.activity_recruit_post_list);
+    private void addFloatingActionButton() {
+        FloatingActionButton fab = new FloatingActionButton(this);
+        fab.setImageResource(R.drawable.ic_add_white_24dp);
+        fab.setRippleColor(getResources().getColor(R.color.colorPrimaryDark));
+        fab.setOnClickListener(this);
+        fab.setTag(TAG_FAB);
+        int size = (int) ScreenUtil.convertDpToPixel(this, 48);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(size, size, Gravity.RIGHT|Gravity.BOTTOM);
+
+        params.bottomMargin = size/3;
+        params.rightMargin = size/3;
+
+        mContentsLayout.addView(fab, params);
     }
 
     @Override
     public void onClick(View v) {
         MyLog.i();
-        int position = mRecyclerView.getChildAdapterPosition(v);
-        long id = mRecyclerViewAdapter.getItemId(position);
 
-        goDetail(position, id);
+        if(v.getTag().equals(TAG_FAB)) {
+            startActivity(RecruitPostRegistActivity.class);
+        } else if(v.getTag().equals(TAG_LIST_ROW)) {
+            int position = mRecyclerView.getChildAdapterPosition(v);
+            long id = mRecyclerViewAdapter.getItemId(position);
+
+            goDetail(position, id);
+        }
     }
 
     @Override
@@ -115,6 +151,7 @@ public class RecruitPostListActivity extends BaseListActivity implements Recycle
     @Override
     public AbsRecyclerViewHolder createViewHolder(ViewGroup parent) {
         View v = getLayoutInflater().inflate(R.layout.adapter_recruit_post_list, parent, false);
+        v.setTag(TAG_LIST_ROW);
         TextView postTitle = (TextView) v.findViewById(R.id.post_title);
         TextView postContent = (TextView) v.findViewById(R.id.post_content);
         TextView postAuthor = (TextView) v.findViewById(R.id.post_author);
@@ -131,8 +168,13 @@ public class RecruitPostListActivity extends BaseListActivity implements Recycle
 
         ((ViewHolder) holder).mPostTitle.setText(rowData.optString("title"));
         ((ViewHolder) holder).mPostContent.setText(rowData.optString("content"));
-        ((ViewHolder) holder).mPostAuthor.setText(rowData.optString("author"));
-        ((ViewHolder) holder).mPostAuthorImage.setImageResource(R.drawable.ic_person_white_24dp);
+        ((ViewHolder) holder).mPostAuthor.setText(rowData.optString("author_name"));
+//        if(mDefaultProfileImageDrawable == null) {
+//            mDefaultProfileImageDrawable = RoundedBitmapDrawableFactory.create(getResources(),
+//                    BitmapFactory.decodeResource(getResources(), R.drawable.ic_person_white_24dp));
+//            ((RoundedBitmapDrawable) mDefaultProfileImageDrawable).setCornerRadius(ScreenUtil.convertDpToPixel(this, 4));
+//        }
+        ((ViewHolder) holder).mPostAuthorImage.setImageResource(R.drawable.ic_account_circle_black_24dp);
     }
 
     @Override
@@ -171,12 +213,16 @@ public class RecruitPostListActivity extends BaseListActivity implements Recycle
         new HttpAPIRequester(this, showLoading, ServerURLInfo.API_RECRUIT_POSTS_GET, "GET", new HttpAPIRequester.OnAPIResponseListener() {
             @Override
             public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
+                MyLog.i("retCode=" + retCode + ", response=" + response);
                 populatePostList(response.getJSONArray("results"));
+                refreshComplete(true);
             }
 
             @Override
             public void onResponse(String APIUrl, int retCode, JSONArray response) throws JSONException {
+                MyLog.i("retCode=" + retCode + ", response=" + response);
                 populatePostList(response);
+                refreshComplete(true);
             }
 
             @Override
@@ -189,6 +235,7 @@ public class RecruitPostListActivity extends BaseListActivity implements Recycle
                         isCanLoadMore = true;
                     }
                 }, 1000);
+                refreshComplete(false);
             }
         }).execute((JSONObject) null);
     }
@@ -199,7 +246,11 @@ public class RecruitPostListActivity extends BaseListActivity implements Recycle
             mRecyclerViewAdapter = new MyRecyclerViewAdapter(this);
             mRecyclerView.setAdapter(mRecyclerViewAdapter);
         } else {
-            mRecyclerViewAdapter.addDataset(response);
+            if(mCurPage > 1) {
+                mRecyclerViewAdapter.addDataset(response);
+            } else {
+                mRecyclerViewAdapter.setDataset(response);
+            }
         }
 
         mTotalItemCount += response.length();

@@ -28,6 +28,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     protected Toolbar mToolbar;
     protected ProgressBar mLoadingProgress;
+    protected ViewGroup mRootLayout;    // 액티비티의 루트 레이아웃
     protected ViewGroup mContentsLayout;
 
     @Override
@@ -37,6 +38,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         super.setContentView(R.layout.activity_base);
         initToolbar();
 
+        mRootLayout = (ViewGroup) findViewById(R.id.layout_activity_root);
         mContentsLayout = (ViewGroup) findViewById(R.id.layout_activity_contents);
     }
 
@@ -72,8 +74,13 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
     protected void startActivity(Class clazz) {
+        this.startActivity(clazz, false);
+    }
+
+    protected void startActivity(Class clazz, boolean finish) {
         Intent intent = new Intent(this, clazz);
         startActivity(intent);
+        if(finish) finish();
     }
 
     public void showProgress() {

@@ -19,8 +19,6 @@
         android:id="@+id/navigation"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
-        app:headerLayout="@layout/recruit_post_list_drawer_header"
-        app:menu="@menu/recruit_post_list_drawer_items" />
+        android:layout_gravity="start" />
 
 </android.support.v4.widget.DrawerLayout>

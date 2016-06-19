@@ -7,7 +7,6 @@ import com.angel.black.baskettogether.core.BaseActivity;
 import com.angel.black.baskettogether.core.BaseListActivity;
 import com.angel.black.baskettogether.core.MyApplication;
 import com.angel.black.baskettogether.core.network.util.NetworkUtil;
-import com.angel.black.baskettogether.user.UserHelper;
 import com.angel.black.baskettogether.util.MyLog;
 
 import org.apache.http.HttpResponse;
@@ -90,7 +89,7 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, String> {
                 StringEntity se = new StringEntity(json);
                 httpPost.setEntity(se);
 
-                MyLog.w("request " + APIUrl + " POST, jsonParams >> " + json);
+                MyLog.w("request " + MyApplication.serverUrl + APIUrl + " POST, jsonParams >> " + json);
 
                 httpResponse = httpClient.execute((HttpUriRequest) httpPost);
                 MyLog.i("retCode >> " + httpResponse.getStatusLine().getStatusCode());
@@ -99,7 +98,7 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, String> {
                 HttpGet httpGet = makeHttpGet(MyApplication.serverUrl + APIUrl);
                 setHeader(httpGet);
 
-                MyLog.w("request " + APIUrl + " GET");
+                MyLog.w("request " + MyApplication.serverUrl + APIUrl + " GET");
 
                 httpResponse = httpClient.execute(httpGet);
                 MyLog.i("retCode >> " + httpResponse.getStatusLine().getStatusCode());
@@ -130,9 +129,9 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, String> {
     private void setHeader(HttpRequestBase httpRequestBase) {
         httpRequestBase.setHeader("Accept", "application/json");
         httpRequestBase.setHeader("Content-type", "application/json");
-        if (isNeedUserAuthToken()) {
-            httpRequestBase.setHeader("Authorization", "Token " + UserHelper.userAccessToken);
-        }
+//        if (isNeedUserAuthToken()) {
+//            httpRequestBase.setHeader("Authorization", "Token " + UserHelper.userAccessToken);
+//        }
     }
 
     @Override
@@ -161,7 +160,10 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, String> {
 
         } catch (JSONException e) {
             e.printStackTrace();
-            onAPIResponseListener.onErrorResponse(APIUrl, "result is not valid JSON", null);
+            onAPIResponseListener.onErrorResponse(APIUrl, "result is not valid JSON", e.getCause());
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            onAPIResponseListener.onErrorResponse(APIUrl, "result is null", e.getCause());
         }
     }
 

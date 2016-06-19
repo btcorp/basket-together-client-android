@@ -47,7 +47,6 @@ import static android.Manifest.permission.READ_CONTACTS;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends BaseActivity implements LoaderCallbacks<Cursor> {
-    private String djangoAuthToken = "6752d3a5adad11c85034fa3275f65d03c8361f82";
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -103,7 +102,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         switch(v.getId()) {
             case R.id.btn_login:
                 //TODO 테스트
-                if(true) {
+                if(false) {
                     startActivity(RecruitPostListActivity.class);
                 } else {
                     mIdView.setError(null);
@@ -114,13 +113,13 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
                     if (isValidateForm(id, password)) {
                         hideSoftKeyboard();
-//                    try {
-//                        requestLogin(id, password);
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                        showOkDialog("로그인 실패");
-//                    }
-                        startActivity(RecruitPostListActivity.class);
+                        try {
+                            requestLogin(id, password);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            showOkDialog("로그인 실패");
+                        }
+//                        startActivity(RecruitPostListActivity.class);
 
                     }
                 }
@@ -142,7 +141,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                     UserHelper.userAccessToken = key;
 
                     showToast("로그인 성공");
-                    startActivity(RecruitPostListActivity.class);
+                    startActivity(RecruitPostListActivity.class, true);
                 } catch (JSONException e) {
                     showOkDialog(response.toString());
                 }

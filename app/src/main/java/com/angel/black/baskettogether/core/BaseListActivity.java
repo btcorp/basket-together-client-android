@@ -55,7 +55,23 @@ public abstract class BaseListActivity extends BaseActivity implements SwipeRefr
 
     @Override
     public void onRefresh() {
-        MyLog.i("mCurPage=" + mCurPage);
+        MyLog.i("before mCurPage=" + mCurPage);
+        mCurPage = 1;
+        requestList();
+    }
+
+    protected void refreshComplete(boolean success) {
+        if(mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(false);
+
+            if(success) {
+                isCanLoadMore = true;
+            }
+        }
+    }
+
+    protected void showEmptyLayout() {
+
     }
 
     class MyScrollListener extends RecyclerView.OnScrollListener {
@@ -124,6 +140,12 @@ public abstract class BaseListActivity extends BaseActivity implements SwipeRefr
 
         public RecyclerViewAdapterData.RecyclerViewColletionData getDataset() {
             return mDataset;
+        }
+
+        public void setDataset(Object dataset) {
+            MyLog.i();
+            mDataset.setDataset(dataset);
+            notifyDataSetChanged();
         }
 
         public class ProgressViewHolder extends AbsRecyclerViewHolder {

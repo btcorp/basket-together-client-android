@@ -38,7 +38,8 @@
             android:label="@string/title_activity_recruit_post_list" />
         <activity
             android:name=".recruit.RecruitPostRegistActivity"
-            android:label="@string/title_activity_recruit_post_regist" />
+            android:label="@string/title_activity_recruit_post_regist"
+            android:parentActivityName=".recruit.get.RecruitPostListActivity"/>
         <activity
             android:name=".recruit.get.RecruitPostDetailActivity"
             android:label="@string/title_activity_recruit_post_detail"

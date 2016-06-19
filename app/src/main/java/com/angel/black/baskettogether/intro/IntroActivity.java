@@ -6,7 +6,7 @@ import android.view.View;
 
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.core.BaseActivity;
-import com.angel.black.baskettogether.login.LoginActivity;
+import com.angel.black.baskettogether.recruit.get.RecruitPostListActivity;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -20,7 +20,8 @@ public class IntroActivity extends BaseActivity {
     private final Runnable mIntroRunnable = new Runnable() {
         @Override
         public void run() {
-            startActivity(LoginActivity.class);
+//            startActivity(LoginActivity.class);
+            startActivity(RecruitPostListActivity.class);
         }
     };
 

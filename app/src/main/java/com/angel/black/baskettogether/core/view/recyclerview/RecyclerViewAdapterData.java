@@ -30,6 +30,8 @@ public interface RecyclerViewAdapterData {
         void addData(Object data);
 
         void removeData(int position);
+
+        void setDataset(Object dataset);
     }
 
     class JSONRecyclerViewCollectionData implements RecyclerViewColletionData {
@@ -88,6 +90,14 @@ public interface RecyclerViewAdapterData {
         @Override
         public void removeData(int position) {
             mDataset.remove(position);
+        }
+
+        @Override
+        public void setDataset(Object dataset) {
+            mDataset = null;
+            if(dataset instanceof JSONArray) {
+                mDataset = (JSONArray) dataset;
+            }
         }
     }
 }
