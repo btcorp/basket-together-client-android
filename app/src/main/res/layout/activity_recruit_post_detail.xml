@@ -14,10 +14,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <fragment
-        android:id="@+id/recruit_post_detail_comment_list_fragment"
-        android:name="com.angel.black.baskettogether.recruit.fragment.RecruitPostDetailCommentListFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
 </android.support.design.widget.CoordinatorLayout>

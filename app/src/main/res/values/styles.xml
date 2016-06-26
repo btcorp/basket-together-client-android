@@ -55,4 +55,10 @@
         <item name="android:textSize">18sp</item>
     </style>
 
+    <style name="comment_content"></style>
+
+    <style name="comment_reg_date"></style>
+
+    <style name="comment_author"></style>
+
 </resources>

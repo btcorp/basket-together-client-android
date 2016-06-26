@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentManager;
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.core.BaseActivity;
 import com.angel.black.baskettogether.core.intent.IntentConst;
-import com.angel.black.baskettogether.recruit.fragment.RecruitPostDetailCommentListFragment;
 import com.angel.black.baskettogether.recruit.fragment.RecruitPostDetailFragment;
 
 public class RecruitPostDetailActivity extends BaseActivity {
@@ -29,9 +28,7 @@ public class RecruitPostDetailActivity extends BaseActivity {
 
         FragmentManager fm = getSupportFragmentManager();
         RecruitPostDetailFragment fragment1 = (RecruitPostDetailFragment) fm.findFragmentById(R.id.recruit_post_detail_fragment);
-        RecruitPostDetailCommentListFragment fragment2 = (RecruitPostDetailCommentListFragment) fm.findFragmentById(R.id.recruit_post_detail_comment_list_fragment);
 
         fragment1.setPostId(mPostId);
-        fragment2.setPostId(mPostId);
     }
 }

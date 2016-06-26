@@ -11,48 +11,47 @@ import org.json.JSONObject;
 /**
  * Created by KimJeongHun on 2016-06-12.
  */
-public interface RecyclerViewAdapterData {
+public interface RecyclerViewAdapterData<T1 extends Object, T2 extends Object> {
     AbsRecyclerViewHolder createViewHolder(ViewGroup parent);
 
-    void onBindViewHolder(AbsRecyclerViewHolder holder, int position, Object data);
+    void onBindViewHolder(AbsRecyclerViewHolder holder, int position, T2 data);
 
     RecyclerViewColletionData provideData();
 
-    interface RecyclerViewColletionData {
-        int addDataset(Object dataset);
+    void populateList(T1 dataset);
 
-        int length();
+    abstract class RecyclerViewColletionData<T1 extends Object, T2 extends Object> {
+        public abstract int addDataset(T1 dataset);
 
-        long getItemId(int position);
+        public abstract int length();
 
-        Object getData(int position);
+        public abstract long getItemId(int position);
 
-        void addData(Object data);
+        public abstract T2 getData(int position);
 
-        void removeData(int position);
+        public abstract void addData(T2 data);
 
-        void setDataset(Object dataset);
+        public abstract void removeData(int position);
+
+        public abstract void setDataset(T1 dataset);
     }
 
-    class JSONRecyclerViewCollectionData implements RecyclerViewColletionData {
+    class JSONRecyclerViewCollectionData extends RecyclerViewColletionData<JSONArray, JSONObject> {
         private JSONArray mDataset = new JSONArray();
 
         @Override
-        public int addDataset(Object dataset) {
-            if(dataset instanceof JSONArray) {
-                JSONArray jsonArray = (JSONArray) dataset;
-                int count = 0;
-                try {
-                    for (int i = 0; i < jsonArray.length(); i++, count++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        mDataset.put(jsonObject);
-                        MyLog.d("addDataset >> " + jsonObject);
-                    }
-
-                    return count;
-                } catch (JSONException e) {
-                    e.printStackTrace();
+        public int addDataset(JSONArray dataset) {
+            int count = 0;
+            try {
+                for (int i = 0; i < dataset.length(); i++, count++) {
+                    JSONObject jsonObject = dataset.getJSONObject(i);
+                    mDataset.put(jsonObject);
+                    MyLog.d("addDataset >> " + jsonObject);
                 }
+
+                return count;
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
             return 0;
@@ -74,7 +73,7 @@ public interface RecyclerViewAdapterData {
         }
 
         @Override
-        public Object getData(int position) {
+        public JSONObject getData(int position) {
             try {
                 return mDataset.getJSONObject(position);
             } catch (JSONException e) {
@@ -84,8 +83,8 @@ public interface RecyclerViewAdapterData {
         }
 
         @Override
-        public void addData(Object data) {
-            mDataset.put((JSONObject) data);
+        public void addData(JSONObject data) {
+            mDataset.put(data);
         }
 
         @Override
@@ -94,11 +93,9 @@ public interface RecyclerViewAdapterData {
         }
 
         @Override
-        public void setDataset(Object dataset) {
+        public void setDataset(JSONArray dataset) {
             mDataset = null;
-            if(dataset instanceof JSONArray) {
-                mDataset = (JSONArray) dataset;
-            }
+            mDataset = dataset;
         }
     }
 }

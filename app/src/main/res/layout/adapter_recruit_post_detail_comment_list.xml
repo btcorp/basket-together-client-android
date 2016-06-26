@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/list_item_padding">
+
+    <ImageView
+        android:id="@+id/comment_author_image"
+        android:layout_width="@dimen/recruit_post_detail_comment_user_image"
+        android:layout_height="@dimen/recruit_post_detail_comment_user_image"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/ic_person_white_24dp"
+        android:background="#ff0000"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/comment_author_image"
+        android:layout_marginLeft="8dp"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/comment_author"
+            android:id="@+id/comment_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+        <TextView
+            style="@style/comment_content"
+            android:id="@+id/comment_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            style="@style/comment_reg_date"
+            android:id="@+id/comment_reg_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+    </LinearLayout>
+
+
+
+
+
+</RelativeLayout>

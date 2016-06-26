@@ -16,10 +16,10 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -101,12 +101,13 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequest
                 setHeader(httpPost);
 
                 String json = params[0].toString();
-                StringEntity se = new StringEntity(json);
+                StringEntity se = new StringEntity(json, HTTP.UTF_8);
                 httpPost.setEntity(se);
 
                 MyLog.w("request " + MyApplication.serverUrl + APIUrl + " POST, jsonParams >> " + json);
+                MyLog.w("requestDirectString=" + se.toString());
 
-                httpResponse = httpClient.execute((HttpUriRequest) httpPost);
+                httpResponse = httpClient.execute(httpPost);
                 MyLog.i("retCode >> " + httpResponse.getStatusLine().getStatusCode());
 
             } else if (method.equalsIgnoreCase("GET")) {
@@ -177,7 +178,13 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequest
                 JSONObject jsonResult = new JSONObject(resultString);
                 onAPIResponseListener.onResponse(APIUrl, HttpURLConnection.HTTP_OK, jsonResult);
             } else if (resultString.startsWith("[")) {
-                JSONArray jsonArrayResult = new JSONArray(result);
+//                resultString = "{\"json_array\":[{\"comments_count\": 0, \"title\": \"hello\", \"author_id\": 1, \"comments\":["
+//                + "{\"list\":[{\"test\": \"a\"}, {\"test\": \"a\"}, {\"test\": \"a\"}]}], \"recruit_status\": \"\", \"author_name\": \"test\", \"content\": \"alskdf\", \"registered_date\": \"2016-06-19T10:31:04.724Z\", \"id\": 1, \"recruit_count\": 6, \"attend_count\": 0}, {\"comments_count\": 0, \"title\": \"hh\", \"author_id\": 1, \"comments\": [], \"recruit_status\": \"\", \"author_name\": \"test\", \"content\": \"ff\", \"registered_date\": \"2016-06-19T11:26:22.978Z\", \"id\": 2, \"recruit_count\": 4, \"attend_count\": 0}, {\"comments_count\": 0, \"title\": \"jj\", \"author_id\": 1, \"comments\": [], \"recruit_status\": \"\", \"author_name\": \"test\", \"content\": \"gg\", \"registered_date\": \"2016-06-19T11:27:00.959Z\", \"id\": 3, \"recruit_count\": 4, \"attend_count\": 0}]}";
+
+                resultString = "{\"json_array\":" + resultString + "}";
+                MyLog.d("appended Result=" + resultString);
+                JSONObject jsonResult = new JSONObject(resultString);
+                JSONArray jsonArrayResult = jsonResult.getJSONArray("json_array");
                 onAPIResponseListener.onResponse(APIUrl, HttpURLConnection.HTTP_OK, jsonArrayResult);
             }
 

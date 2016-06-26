@@ -131,6 +131,7 @@ public class RecruitPostRegistActivity extends BaseActivity {
         jsonObject.put("title", mEditTitle.getText().toString().trim());
         jsonObject.put("content", mEditContent.getText().toString().trim());
         jsonObject.put("recruit_count", mSpinPeopleNum.getSelectedItemPosition() + 1);
+        jsonObject.put("recruit_status", "s");
 //        jsonObject.put("gps_x", "123.356");
 //        jsonObject.put("gps_y", "452.952");
 //        jsonObject.put("address1", "경기도 양주시 백석읍");

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,9 +26,8 @@ import org.json.JSONObject;
 /**
  * Created by KimJeongHun on 2016-06-24.
  */
-public class RecruitPostListFragment extends BaseSwipeRefreshListFragment implements RecyclerViewAdapterData, View.OnClickListener {
-    private static final String TAG_LIST_ROW = "listRow";
-
+public class RecruitPostListFragment extends BaseSwipeRefreshListFragment
+        implements RecyclerViewAdapterData<JSONArray, JSONObject>, View.OnClickListener {
     public static RecruitPostListFragment newInstance() {
         RecruitPostListFragment fragment = new RecruitPostListFragment();
 //        Bundle args = new Bundle();
@@ -56,6 +56,18 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment implem
     }
 
     @Override
+    public void populateList(JSONArray dataset) {
+        MyLog.d("populatePostList >> response=" + dataset);
+        if(mCurPage > 1) {
+            mRecyclerViewAdapter.addDataset(dataset);
+        } else {
+            mRecyclerViewAdapter.setDataset(dataset);
+        }
+
+        mTotalItemCount += dataset.length();
+    }
+
+    @Override
     public AbsRecyclerViewHolder createViewHolder(ViewGroup parent) {
         View v = getActivity().getLayoutInflater().inflate(R.layout.adapter_recruit_post_list, parent, false);
         v.setTag(TAG_LIST_ROW);
@@ -70,12 +82,10 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment implem
     }
 
     @Override
-    public void onBindViewHolder(AbsRecyclerViewHolder holder, int position, Object data) {
-        JSONObject rowData = (JSONObject) data;
-
-        ((ViewHolder) holder).mPostTitle.setText(rowData.optString("title"));
-        ((ViewHolder) holder).mPostContent.setText(rowData.optString("content"));
-        ((ViewHolder) holder).mPostAuthor.setText(rowData.optString("author_name"));
+    public void onBindViewHolder(AbsRecyclerViewHolder holder, int position, JSONObject data) {
+        ((ViewHolder) holder).mPostTitle.setText(data.optString("title"));
+        ((ViewHolder) holder).mPostContent.setText(data.optString("content"));
+        ((ViewHolder) holder).mPostAuthor.setText(data.optString("author_name"));
 //        if(mDefaultProfileImageDrawable == null) {
 //            mDefaultProfileImageDrawable = RoundedBitmapDrawableFactory.create(getResources(),
 //                    BitmapFactory.decodeResource(getResources(), R.drawable.ic_person_white_24dp));
@@ -97,10 +107,10 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment implem
 
     @Override
     protected View createHeaderView(ViewGroup parent) {
-//        return new ViewStub(getActivity());     // 헤더가 없을 땐 빈 ViewStup 전달
-        TextView tv = new TextView(getActivity());
-        tv.setText("Header View");
-        return tv;
+        return new ViewStub(getActivity());     // 헤더가 없을 땐 빈 ViewStup 전달
+//        TextView tv = new TextView(getActivity());
+//        tv.setText("Header View");
+//        return tv;
     }
 
     private JSONArray testResponse(int start) {
@@ -133,14 +143,14 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment implem
             @Override
             public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
                 MyLog.i("retCode=" + retCode + ", response=" + response);
-                populatePostList(response.getJSONArray("results"));
+                populateList(response.getJSONArray("results"));
                 refreshComplete(true);
             }
 
             @Override
             public void onResponse(String APIUrl, int retCode, JSONArray response) throws JSONException {
                 MyLog.i("retCode=" + retCode + ", response=" + response);
-                populatePostList(response);
+                populateList(response);
                 refreshComplete(true);
             }
 
@@ -150,7 +160,7 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment implem
                 mRecyclerView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        populatePostList(testResponse(mTotalItemCount));
+                        populateList(testResponse(mTotalItemCount));
                         isCanLoadMore = true;
                     }
                 }, 1000);
@@ -159,21 +169,16 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment implem
         }).execute((JSONObject) null);
     }
 
-    private void populatePostList(final JSONArray response) {
-        MyLog.d("populatePostList >> response=" + response);
-        if(mRecyclerViewAdapter == null) {
-            mRecyclerViewAdapter = new MyRecyclerViewAdapter(this);
-            mRecyclerView.setAdapter(mRecyclerViewAdapter);
-        } else {
-            if(mCurPage > 1) {
-                mRecyclerViewAdapter.addDataset(response);
-            } else {
-                mRecyclerViewAdapter.setDataset(response);
-            }
-        }
-
-        mTotalItemCount += response.length();
-    }
+//    private void populatePostList(final JSONArray response) {
+//        MyLog.d("populatePostList >> response=" + response);
+//        if(mCurPage > 1) {
+//            mRecyclerViewAdapter.addDataset(response);
+//        } else {
+//            mRecyclerViewAdapter.setDataset(response);
+//        }
+//
+//        mTotalItemCount += response.length();
+//    }
 
     private void goDetail(int position, long id) {
         MyLog.d("position=" + position + ", id=" + id);

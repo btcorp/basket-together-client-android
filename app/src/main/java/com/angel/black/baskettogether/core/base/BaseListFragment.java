@@ -19,6 +19,8 @@ import com.angel.black.baskettogether.util.MyLog;
  * Created by KimJeongHun on 2016-06-24.
  */
 public abstract class BaseListFragment extends BaseFragment {
+    public static final String TAG_LIST_ROW = "listRow";
+
     protected RecyclerView mRecyclerView;
     protected MyRecyclerViewAdapter mRecyclerViewAdapter;
     protected LinearLayoutManager mLayoutManager;
