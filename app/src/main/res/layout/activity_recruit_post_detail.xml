@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.angel.black.baskettogether.recruit.get.RecruitPostDetailActivity">
+    tools:context=".recruit.RecruitPostDetailActivity">
 
-    <include layout="@layout/toolbar" />
-
-    <ListView
-        android:id="@+id/comment_list"
+    <fragment
+        android:id="@+id/recruit_post_detail_fragment"
+        android:name="com.angel.black.baskettogether.recruit.fragment.RecruitPostDetailFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listheader="@layout/content_recruit_post_detail">
+        android:layout_height="wrap_content" />
 
-    </ListView>
+    <fragment
+        android:id="@+id/recruit_post_detail_comment_list_fragment"
+        android:name="com.angel.black.baskettogether.recruit.fragment.RecruitPostDetailCommentListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </android.support.design.widget.CoordinatorLayout>

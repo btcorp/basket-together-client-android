@@ -6,4 +6,5 @@
 
     <color name="black_overlay">#66000000</color>
     <color name="light_grey">#BDBDBD</color>
+    <color name="content_div_line_color">@android:color/darker_gray</color>
 </resources>

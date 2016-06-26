@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -28,12 +29,20 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     protected Toolbar mToolbar;
     protected ProgressBar mLoadingProgress;
-    protected ViewGroup mRootLayout;    // 액티비티의 루트 레이아웃
-    protected ViewGroup mContentsLayout;
+    protected ViewGroup mRootLayout;        // 액티비티의 최상위 루트 레이아웃(액션바 포함)
+    protected ViewGroup mContentsLayout;    // 타이틀바 아래에 들어갈 액티비티의 내용 레이아웃
+
+    public ViewGroup getRootLayout() {
+        return mRootLayout;
+    }
+
+    public ViewGroup getContentsLayout() {
+        return mContentsLayout;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        MyLog.i(TAG, "onCreate");
+        MyLog.i(TAG, "onCreate savedInstanceState=" + savedInstanceState);
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_base);
         initToolbar();
@@ -55,6 +64,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             ActionBar actionBar = getSupportActionBar();
 
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDefaultDisplayHomeAsUpEnabled(true);
             mToolbar.setOnMenuItemClickListener(this);
         }
     }
@@ -114,7 +124,18 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         return false;
     }
 
-    protected void hideSoftKeyboard() {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void hideCurrentFocusKeyboard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     }

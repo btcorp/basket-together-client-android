@@ -113,7 +113,7 @@ public class RecruitPostRegistActivity extends BaseActivity {
                 }
 
                 @Override
-                public void onErrorResponse(String APIUrl, String message, Throwable cause) {
+                public void onErrorResponse(String APIUrl, int retCode, String message, Throwable cause) {
                     showToast("글등록 실패");
                 }
             }).execute(data);

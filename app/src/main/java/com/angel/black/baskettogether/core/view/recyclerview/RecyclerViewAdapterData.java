@@ -68,6 +68,7 @@ public interface RecyclerViewAdapterData {
             try {
                 return ((JSONObject) mDataset.get(position)).optLong("id");
             } catch (JSONException e) {
+                e.printStackTrace();
                 return 0;
             }
         }

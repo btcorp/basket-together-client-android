@@ -1,146 +1,53 @@
-package com.angel.black.baskettogether.recruit.get;
+package com.angel.black.baskettogether.recruit.fragment;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.v4.widget.DrawerLayout;
-import android.view.Gravity;
-import android.view.MenuItem;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.angel.black.baskettogether.R;
-import com.angel.black.baskettogether.core.BaseListActivity;
+import com.angel.black.baskettogether.core.base.BaseSwipeRefreshListFragment;
 import com.angel.black.baskettogether.core.intent.IntentConst;
 import com.angel.black.baskettogether.core.network.HttpAPIRequester;
 import com.angel.black.baskettogether.core.network.ServerURLInfo;
 import com.angel.black.baskettogether.core.view.recyclerview.AbsRecyclerViewHolder;
 import com.angel.black.baskettogether.core.view.recyclerview.RecyclerViewAdapterData;
-import com.angel.black.baskettogether.recruit.RecruitPostRegistActivity;
+import com.angel.black.baskettogether.recruit.RecruitPostDetailActivity;
 import com.angel.black.baskettogether.util.MyLog;
-import com.angel.black.baskettogether.util.ScreenUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by KimJeongHun on 2016-06-06.
+ * Created by KimJeongHun on 2016-06-24.
  */
-public class RecruitPostListActivity extends BaseListActivity implements RecyclerViewAdapterData,
-        View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
-    private static final String TAG_FAB = "fab";
+public class RecruitPostListFragment extends BaseSwipeRefreshListFragment implements RecyclerViewAdapterData, View.OnClickListener {
     private static final String TAG_LIST_ROW = "listRow";
 
-    private ImageLoader mImageLoader;
-    private DrawerLayout mDrawerLayout;
-    private NavigationView mNaviView;
-
-    private Drawable mDefaultProfileImageDrawable;
+    public static RecruitPostListFragment newInstance() {
+        RecruitPostListFragment fragment = new RecruitPostListFragment();
+//        Bundle args = new Bundle();
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
 
-        mDrawerLayout = (DrawerLayout) getLayoutInflater().inflate(R.layout.base_drawer_layout, null);
-        FrameLayout layoutContent = (FrameLayout) mDrawerLayout.findViewById(R.id.content_frame);
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
 
-        ((ViewGroup) mRootLayout.getParent()).removeView(mRootLayout);
-        layoutContent.addView(mRootLayout);
-        setContentView(mDrawerLayout);
-
-        initToolbar(R.drawable.ic_menu_white_24dp, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDrawerLayout.openDrawer(Gravity.LEFT);
-            }
-        });
-
-        mNaviView = (NavigationView) mDrawerLayout.findViewById(R.id.navigation);
-        mNaviView.inflateHeaderView(R.layout.recruit_post_list_drawer_header);
-        mNaviView.inflateMenu(R.menu.recruit_post_list_drawer_items);
-
-        mNaviView.setNavigationItemSelectedListener(this);
-        mNaviView.setItemBackgroundResource(R.drawable.base_list_item_selector);
-
-        addFloatingActionButton();
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         requestList();
-    }
-
-    private void addFloatingActionButton() {
-        FloatingActionButton fab = new FloatingActionButton(this);
-        fab.setImageResource(R.drawable.ic_add_white_24dp);
-        fab.setRippleColor(getResources().getColor(R.color.colorPrimaryDark));
-        fab.setOnClickListener(this);
-        fab.setTag(TAG_FAB);
-        int size = (int) ScreenUtil.convertDpToPixel(this, 48);
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(size, size, Gravity.RIGHT|Gravity.BOTTOM);
-
-        params.bottomMargin = size/3;
-        params.rightMargin = size/3;
-
-        mContentsLayout.addView(fab, params);
-    }
-
-    @Override
-    public void onClick(View v) {
-        MyLog.i();
-
-        if(v.getTag().equals(TAG_FAB)) {
-            startActivity(RecruitPostRegistActivity.class);
-        } else if(v.getTag().equals(TAG_LIST_ROW)) {
-            int position = mRecyclerView.getChildAdapterPosition(v);
-            long id = mRecyclerViewAdapter.getItemId(position);
-
-            goDetail(position, id);
-        }
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(MenuItem menuItem) {
-        MyLog.i();
-        Intent intent = null;
-        switch(menuItem.getItemId()) {
-            case R.id.navigation_item_1:
-//                intent = new Intent(this, MyPlaybookPostListActivity.class);
-//                intent.putExtra(KeySet.KEY_TITLE_BASE_LIST_ACTIVITY, getResources().getString(R.string.my_playbook));
-//                startActivity(intent);
-
-                break;
-            case R.id.navigation_item_2:
-//                intent = new Intent(this, FavoritePlaybookPostListActivity.class);
-//                intent.putExtra(KeySet.KEY_TITLE_BASE_LIST_ACTIVITY, getResources().getString(R.string.like_playbook));
-//                startActivity(intent);
-                break;
-
-            case R.id.navigation_item_3:
-                //로그아웃
-//                LoginUtil.logOut(LoginUtil.REQUEST_COMMON_LOGIN, MainShareActivity.this);
-                break;
-
-        }
-        return false;
-    }
-
-    public static class ViewHolder extends AbsRecyclerViewHolder {
-        public TextView mPostTitle;
-        public TextView mPostContent;
-        public TextView mPostAuthor;
-        public ImageView mPostAuthorImage;
-
-        public ViewHolder(View rowLayout, TextView postTitle, TextView postContent, TextView postAuthor, ImageView postAuthorImage) {
-            super(rowLayout);
-            this.mPostTitle = postTitle;
-            this.mPostContent = postContent;
-            this.mPostAuthor = postAuthor;
-            this.mPostAuthorImage = postAuthorImage;
-        }
     }
 
     @Override
@@ -150,7 +57,7 @@ public class RecruitPostListActivity extends BaseListActivity implements Recycle
 
     @Override
     public AbsRecyclerViewHolder createViewHolder(ViewGroup parent) {
-        View v = getLayoutInflater().inflate(R.layout.adapter_recruit_post_list, parent, false);
+        View v = getActivity().getLayoutInflater().inflate(R.layout.adapter_recruit_post_list, parent, false);
         v.setTag(TAG_LIST_ROW);
         TextView postTitle = (TextView) v.findViewById(R.id.post_title);
         TextView postContent = (TextView) v.findViewById(R.id.post_content);
@@ -180,14 +87,26 @@ public class RecruitPostListActivity extends BaseListActivity implements Recycle
     @Override
     protected MyRecyclerViewAdapter createListAdapter() {
         MyRecyclerViewAdapter adapter = new MyRecyclerViewAdapter(this);
-
         return adapter;
+    }
+
+    @Override
+    protected void bindHeaderView() {
+
+    }
+
+    @Override
+    protected View createHeaderView(ViewGroup parent) {
+//        return new ViewStub(getActivity());     // 헤더가 없을 땐 빈 ViewStup 전달
+        TextView tv = new TextView(getActivity());
+        tv.setText("Header View");
+        return tv;
     }
 
     private JSONArray testResponse(int start) {
         JSONArray jsonArray = new JSONArray();
 
-        for(int i=start; i<=start+20; i++) {
+        for(int i=start; i<start+20; i++) {
             JSONObject jsonObject = new JSONObject();
 
             try {
@@ -226,7 +145,7 @@ public class RecruitPostListActivity extends BaseListActivity implements Recycle
             }
 
             @Override
-            public void onErrorResponse(String APIUrl, String message, Throwable cause) {
+            public void onErrorResponse(String APIUrl, int retCode, String message, Throwable cause) {
                 //TODO 테스트 용
                 mRecyclerView.postDelayed(new Runnable() {
                     @Override
@@ -258,10 +177,33 @@ public class RecruitPostListActivity extends BaseListActivity implements Recycle
 
     private void goDetail(int position, long id) {
         MyLog.d("position=" + position + ", id=" + id);
-        Intent intent = new Intent(this, RecruitPostDetailActivity.class);
+        Intent intent = new Intent(getActivity(), RecruitPostDetailActivity.class);
         intent.putExtra(IntentConst.KEY_EXTRA_POST_ID, id);
         startActivity(intent);
     }
 
+    @Override
+    public void onClick(View v) {
+        if(v.getTag().equals(TAG_LIST_ROW)) {
+            int position = mRecyclerView.getChildAdapterPosition(v);
+            long id = mRecyclerViewAdapter.getItemId(position);
 
+            goDetail(position, id);
+        }
+    }
+
+    public static class ViewHolder extends AbsRecyclerViewHolder {
+        public TextView mPostTitle;
+        public TextView mPostContent;
+        public TextView mPostAuthor;
+        public ImageView mPostAuthorImage;
+
+        public ViewHolder(View rowLayout, TextView postTitle, TextView postContent, TextView postAuthor, ImageView postAuthorImage) {
+            super(rowLayout);
+            this.mPostTitle = postTitle;
+            this.mPostContent = postContent;
+            this.mPostAuthor = postAuthor;
+            this.mPostAuthorImage = postAuthorImage;
+        }
+    }
 }

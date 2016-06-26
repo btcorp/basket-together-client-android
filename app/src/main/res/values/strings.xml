@@ -1,26 +1,12 @@
 <resources>
     <string name="app_name">Basket Together</string>
 
-    <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
     <string name="prompt_user_id">아이디(이메일)</string>
     <string name="prompt_password">비밀번호</string>
     <string name="prompt_password_re">비밀번호 재입력</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
     <string name="prompt_nickname">닉네임</string>
     <string name="action_sign_up_short">가입</string>
 
-    <string name="title_activity_intro">IntroActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="action_sign_up">회원가입</string>
     <string name="prompt_mobile_no">휴대폰 번호</string>
     <string name="error_not_input_id">아이디를 입력해 주세요.</string>
@@ -29,7 +15,6 @@
     <string name="error_not_input_nickname">닉네임을 입력해 주세요.</string>
     <string name="error_not_input_mobile_no">휴대폰 번호를 입력해 주세요.</string>
     <string name="error_not_equal_pw_re">비밀번호 확인이 일치하지 않습니다.</string>
-    <string name="action_login">로그인</string>
     <string name="post_title">글 제목</string>
     <string name="post_content">내용을 입력하세요.</string>
     <string name="complete">완료</string>
@@ -40,6 +25,11 @@
     <string name="login">로그인</string>
     <string name="not_connected_network">네트워크 연결을 확인해주세요.</string>
     <string name="title_activity_recruit_post_detail">팀 모집글 상세</string>
-    <string name="attender_count">모집인원</string>
+    <string name="attender_count">참가 인원</string>
     <string name="not_responsed_server">서버가 응답하지 않습니다.\n잠시후 다시 시도해 주세요.</string>
+    <string name="recruit_count">모집 인원</string>
+    <string name="request_attend">참가 신청</string>
+    <string name="recruit_time">모임 시간</string>
+    <string name="recruit_place">모임 장소</string>
+    <string name="location_check">위치 확인</string>
 </resources>

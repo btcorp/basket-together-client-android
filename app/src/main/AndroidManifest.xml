@@ -28,22 +28,26 @@
         <activity
             android:name=".login.LoginActivity"
             android:label="@string/login"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan"
+            android:launchMode="singleTop"/>
         <activity
             android:name=".signup.SignUpActivity"
             android:label="@string/action_sign_up"
-            android:parentActivityName=".login.LoginActivity"/>
+            android:parentActivityName=".login.LoginActivity"
+            android:launchMode="singleTop"/>
         <activity
-            android:name=".recruit.get.RecruitPostListActivity"
-            android:label="@string/title_activity_recruit_post_list" />
+            android:name=".recruit.RecruitPostListActivity"
+            android:label="@string/title_activity_recruit_post_list"
+            android:launchMode="singleTop" />
         <activity
             android:name=".recruit.RecruitPostRegistActivity"
             android:label="@string/title_activity_recruit_post_regist"
-            android:parentActivityName=".recruit.get.RecruitPostListActivity"/>
+            android:parentActivityName=".recruit.RecruitPostListActivity"
+            android:launchMode="singleTop"/>
         <activity
-            android:name=".recruit.get.RecruitPostDetailActivity"
+            android:name=".recruit.RecruitPostDetailActivity"
             android:label="@string/title_activity_recruit_post_detail"
-            android:parentActivityName=".recruit.get.RecruitPostListActivity"/>
+            android:parentActivityName=".recruit.RecruitPostListActivity"/>
     </application>
 
 </manifest>

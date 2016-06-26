@@ -6,6 +6,7 @@ import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.core.BaseActivity;
 import com.angel.black.baskettogether.core.BaseListActivity;
 import com.angel.black.baskettogether.core.MyApplication;
+import com.angel.black.baskettogether.core.base.BaseFragment;
 import com.angel.black.baskettogether.core.network.util.NetworkUtil;
 import com.angel.black.baskettogether.util.MyLog;
 
@@ -33,8 +34,13 @@ import java.util.Vector;
 /**
  * Created by KimJeongHun on 2016-06-06.
  */
-public class HttpAPIRequester extends AsyncTask<JSONObject, Void, String> {
+public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequester.APICallResult> {
     private final String NOT_CONNECTED_NETWORK = "NotConnectNetwork";
+
+    // 커스텀 에러코드
+    public static final int ERROR_CODE_JSON_PARSING = 80000;
+    public static final int ERROR_CODE_NULL_RESULT = 80001;
+
     private BaseActivity activity;
     private boolean showCenterLoading;
     private String APIUrl;
@@ -43,6 +49,14 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, String> {
 
     public HttpAPIRequester(BaseActivity activity, boolean showCenterLoading, String APIUrl, String method, OnAPIResponseListener onAPIResponseListener) {
         this.activity = activity;
+        this.showCenterLoading = showCenterLoading;
+        this.APIUrl = APIUrl;
+        this.method = method;
+        this.onAPIResponseListener = onAPIResponseListener;
+    }
+
+    public HttpAPIRequester(BaseFragment fragment, boolean showCenterLoading, String APIUrl, String method, OnAPIResponseListener onAPIResponseListener) {
+        this.activity = (BaseActivity) fragment.getActivity();
         this.showCenterLoading = showCenterLoading;
         this.APIUrl = APIUrl;
         this.method = method;
@@ -73,9 +87,10 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, String> {
     }
 
     @Override
-    public String doInBackground(JSONObject... params) {
+    public APICallResult doInBackground(JSONObject... params) {
         InputStream inputStream;
         String result;
+        int retCode = 0;
 
         try {
             HttpClient httpClient = new DefaultHttpClient();
@@ -105,6 +120,7 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, String> {
             }
 
             if (httpResponse != null) {
+                retCode = httpResponse.getStatusLine().getStatusCode();
                 inputStream = httpResponse.getEntity().getContent();
 
                 if (inputStream != null) {
@@ -115,12 +131,12 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, String> {
                     MyLog.d("API(" + APIUrl + ") result >> " + result);
                 }
 
-                return result;
+                return new APICallResult(retCode, result);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            onAPIResponseListener.onErrorResponse(APIUrl, e.getMessage(), e.getCause());
-            return e.getClass().getSimpleName();
+            onAPIResponseListener.onErrorResponse(APIUrl, retCode, e.getMessage(), e.getCause());
+            return new APICallResult(retCode, e.getClass().getSimpleName());
         }
 
         return null;
@@ -135,14 +151,14 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, String> {
     }
 
     @Override
-    protected void onPostExecute(String result) {
+    protected void onPostExecute(APICallResult result) {
         if(activity instanceof BaseListActivity && !showCenterLoading) {
             ((BaseListActivity) activity).hideLoadingFooter();
         } else if(activity instanceof BaseActivity && showCenterLoading) {
             activity.hideProgress();
         }
 
-        if (HttpHostConnectException.class.getSimpleName().equals(result)) {
+        if (HttpHostConnectException.class.getSimpleName().equals(result.resultString)) {
             if(!activity.isFinishing()) {
                 activity.showOkDialog(R.string.not_responsed_server);
             }
@@ -150,20 +166,27 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, String> {
         }
 
         try {
-            if (result.startsWith("{")) {
-                JSONObject jsonResult = new JSONObject(result);
+            if(result.retCode != HttpURLConnection.HTTP_OK) {
+                // HTTP_OK : 200 응답외의 것들은 모두 에러 처리!!
+                onAPIResponseListener.onErrorResponse(APIUrl, result.retCode, result.resultString, null);
+                return;
+            }
+
+            String resultString = result.resultString;
+            if (resultString.startsWith("{")) {
+                JSONObject jsonResult = new JSONObject(resultString);
                 onAPIResponseListener.onResponse(APIUrl, HttpURLConnection.HTTP_OK, jsonResult);
-            } else if (result.startsWith("[")) {
+            } else if (resultString.startsWith("[")) {
                 JSONArray jsonArrayResult = new JSONArray(result);
                 onAPIResponseListener.onResponse(APIUrl, HttpURLConnection.HTTP_OK, jsonArrayResult);
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
-            onAPIResponseListener.onErrorResponse(APIUrl, "result is not valid JSON", e.getCause());
+            onAPIResponseListener.onErrorResponse(APIUrl, ERROR_CODE_JSON_PARSING, "result is not valid JSON", e.getCause());
         } catch (NullPointerException e) {
             e.printStackTrace();
-            onAPIResponseListener.onErrorResponse(APIUrl, "result is null", e.getCause());
+            onAPIResponseListener.onErrorResponse(APIUrl, ERROR_CODE_NULL_RESULT, "result is null", e.getCause());
         }
     }
 
@@ -203,7 +226,16 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, String> {
 
         void onResponse(String APIUrl, int retCode, JSONArray response) throws JSONException;
 
-        void onErrorResponse(String APIUrl, String message, Throwable cause);
+        void onErrorResponse(String APIUrl, int retCode, String message, Throwable cause);
+    }
 
+    class APICallResult {
+        int retCode;
+        String resultString;
+
+        public APICallResult(int retCode, String resultString) {
+            this.retCode = retCode;
+            this.resultString = resultString;
+        }
     }
 }

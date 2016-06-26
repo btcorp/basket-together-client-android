@@ -47,4 +47,12 @@
         <item name="android:textColor">@android:color/black</item>
     </style>
 
+
+    <!-- 배경 없는 텍스트 버튼 -->
+    <style name="no_bg_text_button">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">@drawable/no_bg_text_button_color</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
 </resources>
