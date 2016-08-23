@@ -28,6 +28,7 @@ import org.json.JSONObject;
  */
 public class RecruitPostListFragment extends BaseSwipeRefreshListFragment
         implements RecyclerViewAdapterData<JSONArray, JSONObject>, View.OnClickListener {
+
     public static RecruitPostListFragment newInstance() {
         RecruitPostListFragment fragment = new RecruitPostListFragment();
 //        Bundle args = new Bundle();
@@ -85,7 +86,7 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment
     public void onBindViewHolder(AbsRecyclerViewHolder holder, int position, JSONObject data) {
         ((ViewHolder) holder).mPostTitle.setText(data.optString("title"));
         ((ViewHolder) holder).mPostContent.setText(data.optString("content"));
-        ((ViewHolder) holder).mPostAuthor.setText(data.optString("author_name"));
+        ((ViewHolder) holder).mPostAuthor.setText(data.optString("author"));
 //        if(mDefaultProfileImageDrawable == null) {
 //            mDefaultProfileImageDrawable = RoundedBitmapDrawableFactory.create(getResources(),
 //                    BitmapFactory.decodeResource(getResources(), R.drawable.ic_person_white_24dp));

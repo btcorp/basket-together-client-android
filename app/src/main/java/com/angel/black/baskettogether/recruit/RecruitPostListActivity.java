@@ -54,7 +54,6 @@ public class RecruitPostListActivity extends BaseListActivity implements View.On
         mNaviView.inflateHeaderView(R.layout.recruit_post_list_drawer_header);
         mNaviView.inflateMenu(R.menu.recruit_post_list_drawer_items);
 
-        mNaviView.setNavigationItemSelectedListener(this);
         mNaviView.setItemBackgroundResource(R.drawable.base_list_item_selector);
 
         addFloatingActionButton();
@@ -82,11 +81,46 @@ public class RecruitPostListActivity extends BaseListActivity implements View.On
 
     @Override
     public void onClick(View v) {
-        MyLog.i();
+        MyLog.i("v.getId()=" + v.getId());
 
         if(v.getTag().equals(TAG_FAB)) {
             startActivity(RecruitPostRegistActivity.class);
         }
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        MyLog.i();
+        switch(item.getItemId()) {
+            case R.id.navigation_item_1:
+                showToast("네비아이템1 클릭");
+//                intent = new Intent(this, MyPlaybookPostListActivity.class);
+//                intent.putExtra(KeySet.KEY_TITLE_BASE_LIST_ACTIVITY, getResources().getString(R.string.my_playbook));
+//                startActivity(intent);
+
+                break;
+            case R.id.navigation_item_2:
+//                intent = new Intent(this, FavoritePlaybookPostListActivity.class);
+//                intent.putExtra(KeySet.KEY_TITLE_BASE_LIST_ACTIVITY, getResources().getString(R.string.like_playbook));
+//                startActivity(intent);
+                break;
+
+            case R.id.navigation_item_3:
+                //로그아웃
+//                LoginUtil.logOut(LoginUtil.REQUEST_COMMON_LOGIN, MainShareActivity.this);
+                break;
+
+            case R.id.navigation_item_4:
+
+                break;
+
+            case R.id.navigation_item_5:
+
+                break;
+
+        }
+
+        return true;
     }
 
     @Override

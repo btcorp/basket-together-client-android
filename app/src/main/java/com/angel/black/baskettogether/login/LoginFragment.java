@@ -91,7 +91,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
                 if (isValidateForm(id, password)) {
                     hideCurrentFocusKeyboard();
                     try {
-                        if(true) {  //TODO 테스트
+                        if(false) {  //TODO 테스트
                             startActivity(RecruitPostListActivity.class, true);
                         } else {
                             requestLogin(id, password);

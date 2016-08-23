@@ -23,11 +23,10 @@
                 <!--android:layout_height="60dp"-->
                 <!--/>-->
 
-            <ImageView
+            <com.angel.black.baskettogether.core.view.imageview.RoundedImageView
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:src="@drawable/ic_person_white_24dp"
-                android:background="@android:drawable/picture_frame"/>
+                android:src="@drawable/ic_person_white_24dp" />
 
         </FrameLayout>
 

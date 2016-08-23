@@ -5,22 +5,27 @@
         <item
             android:id="@+id/navigation_item_1"
             android:icon="@drawable/ic_menu_white_24dp"
+            android:onClick="onMenuItemClick"
             android:title="네비 아이템1"/>
         <item
             android:id="@+id/navigation_item_2"
             android:icon="@drawable/ic_menu_white_24dp"
-            android:title="네비 아이템1"/>
+            android:onClick="onMenuItemClick"
+            android:title="네비 아이템2"/>
         <item
             android:id="@+id/navigation_item_3"
             android:icon="@android:drawable/ic_menu_share"
-            android:title="네비 아이템1"/>
+            android:onClick="onMenuItemClick"
+            android:title="네비 아이템3"/>
         <item
             android:id="@+id/navigation_item_4"
             android:icon="@drawable/ic_menu_white_24dp"
-            android:title="네비 아이템1"/>
+            android:onClick="onMenuItemClick"
+            android:title="네비 아이템4"/>
         <item
             android:id="@+id/navigation_item_5"
             android:icon="@drawable/ic_menu_white_24dp"
-            android:title="네비 아이템1"/>
+            android:onClick="onMenuItemClick"
+            android:title="네비 아이템5"/>
     </group>
 </menu>

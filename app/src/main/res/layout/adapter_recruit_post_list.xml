@@ -17,11 +17,12 @@
             android:id="@+id/post_author_image"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:background="#ff0000" />
+            android:layout_gravity="center_horizontal"/>
 
         <TextView
+            style="@style/recruit_post_list_user_name"
             android:id="@+id/post_author"
-            android:layout_width="wrap_content"
+            android:layout_width="48dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:layout_gravity="center_horizontal"/>
