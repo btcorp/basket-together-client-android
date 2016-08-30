@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.angel.black.baskettogether.R;
+import com.angel.black.baskettogether.core.preference.MyPreferenceManager;
 import com.angel.black.baskettogether.util.MyLog;
 
 /**
@@ -138,6 +139,10 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     public void hideCurrentFocusKeyboard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+    }
+
+    public MyPreferenceManager getPreferenceManager() {
+        return new MyPreferenceManager(this);
     }
 
     public static class AlertDialogFragment extends DialogFragment {

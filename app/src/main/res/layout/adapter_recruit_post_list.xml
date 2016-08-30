@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/recruit_post_list_item_height"
     android:background="?android:selectableItemBackground"
     android:padding="16dp">
 
@@ -22,7 +22,7 @@
         <TextView
             style="@style/recruit_post_list_user_name"
             android:id="@+id/post_author"
-            android:layout_width="48dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:layout_gravity="center_horizontal"/>
@@ -42,6 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/post_title"
-        android:layout_toLeftOf="@id/layout_author"/>
+        android:layout_toLeftOf="@id/layout_author"
+        android:layout_marginTop="4dp"/>
 
 </RelativeLayout>

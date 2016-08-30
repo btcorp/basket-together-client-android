@@ -66,7 +66,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
 
     private void requestSignUp(final String id, final String pwd) throws JSONException{
         JSONObject joinData = buildRequestJoinData(id, pwd);
-        new HttpAPIRequester(this, true, ServerURLInfo.API_USER_REGIST, "POST", new HttpAPIRequester.OnAPIResponseListener() {
+        new HttpAPIRequester(this, true, ServerURLInfo.API_USER_SIGNUP, "POST", new HttpAPIRequester.OnAPIResponseListener() {
             @Override
             public void onResponse(String APIUrl, int retCode, JSONObject response) {
                 try {
@@ -142,8 +142,8 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         } else if(!pwd.equals(pwdRe)) {
             showOkDialog(R.string.error_not_equal_pw_re);
             return false;
-        } else if(pwd.length() < 6 || pwdRe.length() < 6) {
-            mEditPw.setError(getString(R.string.error_pwd_minimun_6));
+        } else if(pwd.length() < 8 || pwdRe.length() < 8) {
+            mEditPw.setError(getString(R.string.error_pwd_minimum_char));
             return false;
         }
 

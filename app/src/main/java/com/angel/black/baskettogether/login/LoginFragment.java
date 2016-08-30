@@ -119,7 +119,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
             mPasswordView.setError(getString(R.string.error_not_input_pwd));
             return false;
         } else if(pwd.length() < 6) {
-            mPasswordView.setError(getString(R.string.error_pwd_minimun_6));
+            mPasswordView.setError(getString(R.string.error_pwd_minimum_char));
             return false;
         }
 
@@ -132,8 +132,9 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
             @Override
             public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
                 try {
-                    String key = response.getString("key");
-                    UserHelper.userAccessToken = key;
+                    String token = response.getString("token");
+                    UserHelper.saveUserAccessToken(getBaseActivity(), token);
+//                    UserHelper.userAccessToken = token;
 
                     showToast("로그인 성공");
                     startActivity(RecruitPostListActivity.class, true);

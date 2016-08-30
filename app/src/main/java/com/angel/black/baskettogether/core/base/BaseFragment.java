@@ -24,7 +24,7 @@ public class BaseFragment extends Fragment {
         return getBaseActivity().getContentsLayout();
     }
 
-    private BaseActivity getBaseActivity() {
+    protected BaseActivity getBaseActivity() {
         return (BaseActivity) getActivity();
     }
 

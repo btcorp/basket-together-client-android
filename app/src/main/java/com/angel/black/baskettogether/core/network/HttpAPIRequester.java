@@ -225,7 +225,7 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequest
     }
 
     private boolean isNeedUserAuthToken() {
-        return !(APIUrl.contains(ServerURLInfo.API_USER_REGIST) || APIUrl.contains(ServerURLInfo.API_USER_LOGIN));
+        return !(APIUrl.contains(ServerURLInfo.API_USER_SIGNUP) || APIUrl.contains(ServerURLInfo.API_USER_LOGIN));
     }
 
     public interface OnAPIResponseListener {

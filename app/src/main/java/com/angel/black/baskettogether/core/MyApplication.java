@@ -7,7 +7,11 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.angel.black.baskettogether.BuildConfig;
 import com.angel.black.baskettogether.core.network.ServerURLInfo;
+import com.angel.black.baskettogether.core.preference.KeyConst;
+import com.angel.black.baskettogether.core.preference.MyPreferenceManager;
 import com.angel.black.baskettogether.image.LruBitmapCache;
+import com.angel.black.baskettogether.user.UserHelper;
+import com.angel.black.baskettogether.util.StringUtil;
 
 /**
  * Created by KimJeongHun on 2016-05-19.
@@ -17,6 +21,7 @@ public class MyApplication extends Application {
 
     private static MyApplication sInstance;
 
+    //TODO 발리 안씀 현재
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
 
@@ -31,6 +36,13 @@ public class MyApplication extends Application {
         mRequestQueue = Volley.newRequestQueue(this);
         mImageLoader = new ImageLoader(mRequestQueue, new LruBitmapCache(8388608));
         sInstance = this;
+
+        MyPreferenceManager pm = new MyPreferenceManager(this);
+        String savedAccessToken = pm.loadString(KeyConst.SAVED_ACCESS_TOKEN);
+
+        if(!StringUtil.isEmptyString(savedAccessToken)) {
+            UserHelper.userAccessToken = savedAccessToken;
+        }
     }
 
     public synchronized static MyApplication getInstance() {
