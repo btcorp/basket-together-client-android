@@ -6,9 +6,17 @@ import android.view.View;
 
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.core.BaseActivity;
+import com.angel.black.baskettogether.core.network.HttpAPIRequester;
+import com.angel.black.baskettogether.core.network.ServerURLInfo;
+import com.angel.black.baskettogether.core.preference.KeyConst;
 import com.angel.black.baskettogether.login.LoginActivity;
 import com.angel.black.baskettogether.recruit.RecruitPostListActivity;
 import com.angel.black.baskettogether.user.UserHelper;
+import com.angel.black.baskettogether.util.StringUtil;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -22,10 +30,22 @@ public class IntroActivity extends BaseActivity {
     private final Runnable mIntroRunnable = new Runnable() {
         @Override
         public void run() {
-            if(UserHelper.isAutoLogined()) {
+            if(UserHelper.isValidUserAccessToken()) {
                 startActivity(RecruitPostListActivity.class);
             } else {
-                startActivity(LoginActivity.class);
+                String savedId = getPreferenceManager().loadString(KeyConst.SAVED_USER_ID);
+                //TODO 추후 암호화
+                String savedPwd = getPreferenceManager().loadString(KeyConst.SAVED_USER_PWD);
+
+                if (StringUtil.isEmptyString(savedId) && StringUtil.isEmptyString(savedPwd)) {
+                    startActivity(LoginActivity.class);
+                } else {
+                    try {
+                        requestLogin(savedId, savedPwd);
+                    } catch (JSONException e) {
+                        showOkDialog(R.string.error_login);
+                    }
+                }
             }
         }
     };
@@ -57,5 +77,41 @@ public class IntroActivity extends BaseActivity {
     private void delayedIntro(int delayMillis) {
         mHideHandler.removeCallbacks(mIntroRunnable);
         mHideHandler.postDelayed(mIntroRunnable, delayMillis);
+    }
+
+    private void requestLogin(String id, String pwd) throws JSONException {
+        JSONObject loginData = buildRequestLoginData(id, pwd);
+        new HttpAPIRequester(this, true, ServerURLInfo.API_USER_LOGIN, "POST", new HttpAPIRequester.OnAPIResponseListener() {
+            @Override
+            public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
+                try {
+                    String token = response.getString("token");
+                    UserHelper.saveUserAccessToken(IntroActivity.this, token);
+
+                    showToast("로그인 성공");
+                    startActivity(RecruitPostListActivity.class, true);
+                } catch (JSONException e) {
+                    showOkDialog(response.toString());
+                }
+            }
+
+            @Override
+            public void onResponse(String APIUrl, int retCode, JSONArray response) throws JSONException {
+
+            }
+
+            @Override
+            public void onErrorResponse(String APIUrl, int retCode, String message, Throwable cause) {
+
+            }
+        }).execute(loginData);
+    }
+
+    private JSONObject buildRequestLoginData(String id, String pwd) throws JSONException{
+        JSONObject json = new JSONObject();
+        json.put("username", id);
+        json.put("password", pwd);
+
+        return json;
     }
 }

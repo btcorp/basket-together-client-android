@@ -40,6 +40,7 @@ public class CipherUtil {
 
             byte[] output = c.doFinal(message.getBytes());
 
+            return new String(output);
 
         } catch (GeneralSecurityException e) {
             e.printStackTrace();

@@ -32,4 +32,7 @@
     <string name="recruit_time">모임 시간</string>
     <string name="recruit_place">모임 장소</string>
     <string name="location_check">위치 확인</string>
+    <string name="comment_input">댓글을 입력하세요.</string>
+    <string name="error_login">로그인에 실패하였습니다.\\n다시 시도해주세요.</string>
+    <string name="error_regist_comment">댓글등록에 실패했습니다.</string>
 </resources>

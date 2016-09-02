@@ -64,9 +64,15 @@
     <!-- 팀 모집글 목록 사용자 닉네임 -->
     <style name="recruit_post_list_user_name">
         <item name="android:textSize">10sp</item>
-        <item name="android:textColor">@color/light_grey</item>
+        <item name="android:textColor">@color/light_gray</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">end</item>
     </style>
+
+    <style name="detail_comment_input_char_num"></style>
+
+    <style name="detail_comment_char_limit"></style>
+
+    <style name="detail_comment_edit"></style>
 
 </resources>

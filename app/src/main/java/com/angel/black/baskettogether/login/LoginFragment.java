@@ -134,7 +134,6 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
                 try {
                     String token = response.getString("token");
                     UserHelper.saveUserAccessToken(getBaseActivity(), token);
-//                    UserHelper.userAccessToken = token;
 
                     showToast("로그인 성공");
                     startActivity(RecruitPostListActivity.class, true);

@@ -45,7 +45,27 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
 
     @Override
     protected void requestList() {
+        new HttpAPIRequester(this, true, ServerURLInfo.API_GET_RECRUIT_POST_DETAIL + mPostId + "/", "GET", new HttpAPIRequester.OnAPIResponseListener() {
+            @Override
+            public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
+                setData(response);
+            }
 
+            @Override
+            public void onResponse(String APIUrl, int retCode, JSONArray response) throws JSONException {
+
+            }
+
+            @Override
+            public void onErrorResponse(String APIUrl, int retCode, String message, Throwable cause) {
+                //TODO 테스트
+                try {
+                    setData(testResponse());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).execute((JSONObject)null);
     }
 
     @Override
@@ -81,31 +101,7 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
      */
     public void setPostId(long postId) {
         this.mPostId = postId;
-        requestGetPostDetail(postId);
-    }
-
-    private void requestGetPostDetail(long postId) {
-        new HttpAPIRequester(this, true, ServerURLInfo.API_GET_RECRUIT_POST_DETAIL + postId + "/", "GET", new HttpAPIRequester.OnAPIResponseListener() {
-            @Override
-            public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
-                setData(response);
-            }
-
-            @Override
-            public void onResponse(String APIUrl, int retCode, JSONArray response) throws JSONException {
-
-            }
-
-            @Override
-            public void onErrorResponse(String APIUrl, int retCode, String message, Throwable cause) {
-                //TODO 테스트
-                try {
-                    setData(testResponse());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).execute((JSONObject)null);
+        requestList();
     }
 
     private JSONObject testResponse() {
@@ -131,6 +127,8 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
         mBtnAttenderCount.setText(getString(R.string.attender_count) + " " +
                 response.optInt("attend_count") + "/" + response.optString("recruit_count"));
         mRegDate.setText(CalendarUtil.getDateString(response.optString("registered_date")));
+
+        populateList(response.getJSONArray("comments"));
 
     }
 
@@ -162,6 +160,8 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
     @Override
     public void populateList(JSONArray dataset) {
         MyLog.d("dataset=" + dataset);
+
+
     }
 
     @Override
@@ -173,8 +173,35 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
                 break;
             case R.id.btn_request_attend:
                 // 참가 신청
+                requestAttendToRecruit();
+
                 break;
         }
+    }
+
+    /**
+     * 참가신청
+     */
+    private void requestAttendToRecruit() {
+        new HttpAPIRequester(this, true, ServerURLInfo.API_RECRUIT_ATTEND + mPostId + "/", "POST",
+                new HttpAPIRequester.OnAPIResponseListener() {
+                    @Override
+                    public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
+                        //TODO 참가신청 성공 후 포스트 데이터 재요청
+                        requestList();
+                    }
+
+                    @Override
+                    public void onResponse(String APIUrl, int retCode, JSONArray response) throws JSONException {
+
+                    }
+
+                    @Override
+                    public void onErrorResponse(String APIUrl, int retCode, String message, Throwable cause) {
+                        //TODO 테스트
+
+                    }
+                }).execute((JSONObject)null);
     }
 
     private void showAttendee(boolean show) {
@@ -189,6 +216,13 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
         } else {
 
         }
+    }
+
+    /**
+     * 댓글 조회 API 요청
+     */
+    public void requestGetComments() {
+
     }
 
     public static class ViewHolder extends AbsRecyclerViewHolder {

@@ -47,7 +47,9 @@
         <activity
             android:name=".recruit.RecruitPostDetailActivity"
             android:label="@string/title_activity_recruit_post_detail"
-            android:parentActivityName=".recruit.RecruitPostListActivity"/>
+            android:parentActivityName=".recruit.RecruitPostListActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"/>
     </application>
 
 </manifest>

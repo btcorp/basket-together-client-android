@@ -26,7 +26,7 @@ public class UserHelper {
      * 자동 로그인 설정 되있는지 여부 반환
      * @return
      */
-    public static boolean isAutoLogined() {
-        return StringUtil.isEmptyString(userAccessToken);
+    public static boolean isValidUserAccessToken() {
+        return !StringUtil.isEmptyString(userAccessToken);
     }
 }
