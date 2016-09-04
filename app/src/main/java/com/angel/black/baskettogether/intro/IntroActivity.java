@@ -12,6 +12,7 @@ import com.angel.black.baskettogether.core.preference.KeyConst;
 import com.angel.black.baskettogether.login.LoginActivity;
 import com.angel.black.baskettogether.recruit.RecruitPostListActivity;
 import com.angel.black.baskettogether.user.UserHelper;
+import com.angel.black.baskettogether.util.MyLog;
 import com.angel.black.baskettogether.util.StringUtil;
 
 import org.json.JSONArray;
@@ -30,21 +31,19 @@ public class IntroActivity extends BaseActivity {
     private final Runnable mIntroRunnable = new Runnable() {
         @Override
         public void run() {
-            if(UserHelper.isValidUserAccessToken()) {
-                startActivity(RecruitPostListActivity.class);
-            } else {
-                String savedId = getPreferenceManager().loadString(KeyConst.SAVED_USER_ID);
-                //TODO 추후 암호화
-                String savedPwd = getPreferenceManager().loadString(KeyConst.SAVED_USER_PWD);
+            String savedId = getPreferenceManager().loadString(KeyConst.SAVED_USER_ID);
+            //TODO 추후 암호화
+            String savedPwd = getPreferenceManager().loadString(KeyConst.SAVED_USER_PWD);
 
-                if (StringUtil.isEmptyString(savedId) && StringUtil.isEmptyString(savedPwd)) {
-                    startActivity(LoginActivity.class);
-                } else {
-                    try {
-                        requestLogin(savedId, savedPwd);
-                    } catch (JSONException e) {
-                        showOkDialog(R.string.error_login);
-                    }
+            MyLog.d("savedId=" + savedId + ", savedPwd=" + savedPwd);
+
+            if (StringUtil.isEmptyString(savedId) && StringUtil.isEmptyString(savedPwd)) {
+                startActivity(LoginActivity.class);
+            } else {
+                try {
+                    requestLogin(savedId, savedPwd);
+                } catch (JSONException e) {
+                    showOkDialog(R.string.error_login);
                 }
             }
         }
@@ -79,19 +78,20 @@ public class IntroActivity extends BaseActivity {
         mHideHandler.postDelayed(mIntroRunnable, delayMillis);
     }
 
-    private void requestLogin(String id, String pwd) throws JSONException {
+    private void requestLogin(final String id, final String pwd) throws JSONException {
         JSONObject loginData = buildRequestLoginData(id, pwd);
         new HttpAPIRequester(this, true, ServerURLInfo.API_USER_LOGIN, "POST", new HttpAPIRequester.OnAPIResponseListener() {
             @Override
             public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
                 try {
                     String token = response.getString("token");
-                    UserHelper.saveUserAccessToken(IntroActivity.this, token);
+                    UserHelper.saveUserInfo(IntroActivity.this, token, id, pwd);
 
                     showToast("로그인 성공");
                     startActivity(RecruitPostListActivity.class, true);
                 } catch (JSONException e) {
                     showOkDialog(response.toString());
+                    startActivity(LoginActivity.class);
                 }
             }
 

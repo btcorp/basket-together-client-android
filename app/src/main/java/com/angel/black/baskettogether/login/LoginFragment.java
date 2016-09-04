@@ -126,14 +126,14 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
         return true;
     }
 
-    private void requestLogin(String id, String pwd) throws JSONException{
+    private void requestLogin(final String id, final String pwd) throws JSONException{
         JSONObject loginData = buildRequestLoginData(id, pwd);
         new HttpAPIRequester(this, true, ServerURLInfo.API_USER_LOGIN, "POST", new HttpAPIRequester.OnAPIResponseListener() {
             @Override
             public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
                 try {
                     String token = response.getString("token");
-                    UserHelper.saveUserAccessToken(getBaseActivity(), token);
+                    UserHelper.saveUserInfo(getBaseActivity(), token, id, pwd);
 
                     showToast("로그인 성공");
                     startActivity(RecruitPostListActivity.class, true);

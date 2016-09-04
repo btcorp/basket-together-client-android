@@ -105,6 +105,8 @@ public class RecruitPostRegistActivity extends BaseActivity {
                 @Override
                 public void onResponse(String APIUrl, int retCode, JSONObject response) {
                     showToast("글등록 성공");
+                    setResult(RESULT_OK);
+                    finish();
                 }
 
                 @Override
@@ -131,7 +133,7 @@ public class RecruitPostRegistActivity extends BaseActivity {
         jsonObject.put("title", mEditTitle.getText().toString().trim());
         jsonObject.put("content", mEditContent.getText().toString().trim());
         jsonObject.put("recruit_count", mSpinPeopleNum.getSelectedItemPosition() + 1);
-        jsonObject.put("recruit_status", "s");
+        jsonObject.put("recruit_status", 0);
 //        jsonObject.put("gps_x", "123.356");
 //        jsonObject.put("gps_y", "452.952");
 //        jsonObject.put("address1", "경기도 양주시 백석읍");

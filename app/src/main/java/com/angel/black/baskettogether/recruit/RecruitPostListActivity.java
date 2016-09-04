@@ -16,6 +16,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.core.BaseListActivity;
 import com.angel.black.baskettogether.core.base.BaseListFragment;
+import com.angel.black.baskettogether.core.intent.IntentConst;
 import com.angel.black.baskettogether.recruit.fragment.RecruitPostListFragment;
 import com.angel.black.baskettogether.util.MyLog;
 import com.angel.black.baskettogether.util.ScreenUtil;
@@ -84,7 +85,7 @@ public class RecruitPostListActivity extends BaseListActivity implements View.On
         MyLog.i("v.getId()=" + v.getId());
 
         if(v.getTag().equals(TAG_FAB)) {
-            startActivity(RecruitPostRegistActivity.class);
+            startActivityForResult(RecruitPostRegistActivity.class, IntentConst.REQUEST_REGIST_RECRUIT_POST);
         }
     }
 
@@ -149,5 +150,14 @@ public class RecruitPostListActivity extends BaseListActivity implements View.On
         return false;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode == IntentConst.REQUEST_REGIST_RECRUIT_POST) {
+            if (resultCode == RESULT_OK) {
+                mBaseListFragment.requestList();
+            }
+        }
+    }
 }

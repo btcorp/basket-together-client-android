@@ -61,12 +61,12 @@ public class RecruitPostDetailActivity extends BaseActivity implements CommentIn
         String content = mCmntInputView.getInputedComment();
         JSONObject commentData = buildRegistCommentData(content);
 
-        new HttpAPIRequester(this, true, ServerURLInfo.API_RECRUIT_POST_REGIST_COMMENT_PREFIX + mPostId +
-                ServerURLInfo.API_RECRUIT_POST_REGIST_COMMENT_POSTFIX, "POST",
+        new HttpAPIRequester(this, true, String.format(ServerURLInfo.API_RECRUIT_POST_REGIST_COMMENT, mPostId), "POST",
                 new HttpAPIRequester.OnAPIResponseListener() {
                     @Override
                     public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
                         // 댓글등록 성공
+                        showToast("댓글 등록 성공");
                         mPostDetailFragment.requestGetComments();
                     }
 

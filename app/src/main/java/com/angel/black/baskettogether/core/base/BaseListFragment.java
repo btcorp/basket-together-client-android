@@ -1,7 +1,6 @@
 package com.angel.black.baskettogether.core.base;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,7 +30,7 @@ public abstract class BaseListFragment extends BaseFragment {
     protected boolean isCanLoadMore = true;
     protected int pastVisiblesItems, visibleItemCount, totalItemCount;
 
-    protected abstract void requestList();
+    public abstract void requestList();
     protected abstract MyRecyclerViewAdapter createListAdapter();
 
     @Nullable
@@ -70,13 +69,14 @@ public abstract class BaseListFragment extends BaseFragment {
         mCurPage++;
         requestList();
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                MyLog.w("Load More");
-
-            }
-        }, 3000);
+        //TODO 테스트용 3초 지연
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                MyLog.w("Load More");
+//
+//            }
+//        }, 3000);
     }
 
     public class MyRecyclerViewAdapter extends RecyclerView.Adapter<AbsRecyclerViewHolder> {
@@ -193,7 +193,7 @@ public abstract class BaseListFragment extends BaseFragment {
 
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            MyLog.i();
+//            MyLog.i();
             if(dy > 0) {
                 visibleItemCount = mLayoutManager.getChildCount();
                 totalItemCount = mLayoutManager.getItemCount();

@@ -13,7 +13,6 @@ import com.angel.black.baskettogether.core.base.BaseFragment;
 import com.angel.black.baskettogether.core.network.HttpAPIRequester;
 import com.angel.black.baskettogether.core.network.ServerURLInfo;
 import com.angel.black.baskettogether.recruit.RecruitPostRegistActivity;
-import com.angel.black.baskettogether.user.UserHelper;
 import com.angel.black.baskettogether.util.StringUtil;
 
 import org.json.JSONArray;
@@ -70,9 +69,6 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             @Override
             public void onResponse(String APIUrl, int retCode, JSONObject response) {
                 try {
-                    String key = response.getString("key");
-                    UserHelper.userAccessToken = key;
-
                     requestLogin(id, pwd);
                 } catch (JSONException e) {
                     showOkDialog(response.toString());

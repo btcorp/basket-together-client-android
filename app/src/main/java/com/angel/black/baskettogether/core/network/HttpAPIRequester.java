@@ -8,6 +8,7 @@ import com.angel.black.baskettogether.core.BaseListActivity;
 import com.angel.black.baskettogether.core.MyApplication;
 import com.angel.black.baskettogether.core.base.BaseFragment;
 import com.angel.black.baskettogether.core.network.util.NetworkUtil;
+import com.angel.black.baskettogether.user.UserHelper;
 import com.angel.black.baskettogether.util.MyLog;
 
 import org.apache.http.HttpResponse;
@@ -145,7 +146,15 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequest
 
     private void setHeader(HttpRequestBase httpRequestBase) {
         httpRequestBase.setHeader("Accept", "application/json");
+        MyLog.d("setHeader(Accept, application/json)");
         httpRequestBase.setHeader("Content-type", "application/json");
+        MyLog.d("setHeader(Content-type, application/json)");
+
+        if (isNeedUserAuthToken()) {
+            httpRequestBase.setHeader("Token", UserHelper.userAccessToken);
+            MyLog.d("setHeader(Token, " + UserHelper.userAccessToken + ")");
+        }
+
 //        if (isNeedUserAuthToken()) {
 //            httpRequestBase.setHeader("Authorization", "Token " + UserHelper.userAccessToken);
 //        }
@@ -167,7 +176,7 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequest
         }
 
         try {
-            if(result.retCode != HttpURLConnection.HTTP_OK) {
+            if(!(result.retCode == HttpURLConnection.HTTP_OK || result.retCode == HttpURLConnection.HTTP_CREATED)) {
                 // HTTP_OK : 200 응답외의 것들은 모두 에러 처리!!
                 onAPIResponseListener.onErrorResponse(APIUrl, result.retCode, result.resultString, null);
                 return;

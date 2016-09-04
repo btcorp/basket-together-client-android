@@ -37,6 +37,14 @@
 
     </LinearLayout>
 
+    <!-- 참가자 목록 프래그먼트 컨테이너 -->
+    <FrameLayout
+        android:id="@+id/container_attendee_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </FrameLayout>
+
     <include
         layout="@layout/content_div_line" />
 

@@ -94,6 +94,11 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         if(finish) finish();
     }
 
+    protected void startActivityForResult(Class clazz, int requestCode) {
+        Intent intent = new Intent(this, clazz);
+        startActivityForResult(intent, requestCode);
+    }
+
     public void showProgress() {
         if(mLoadingProgress == null) {
             mLoadingProgress = (ProgressBar) findViewById(R.id.loading_progress);

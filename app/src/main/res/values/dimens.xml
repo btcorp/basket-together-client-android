@@ -6,4 +6,5 @@
     <dimen name="list_item_padding">8dp</dimen>
     <dimen name="recruit_post_detail_comment_user_image">48dp</dimen>
     <dimen name="recruit_post_list_item_height">96dp</dimen>
+    <dimen name="recruit_post_attendee_image_size">24dp</dimen>
 </resources>

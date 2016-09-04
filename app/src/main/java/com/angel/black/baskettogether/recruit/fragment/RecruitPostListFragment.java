@@ -136,38 +136,39 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment
     }
 
     @Override
-    protected void requestList() {
+    public void requestList() {
         boolean showLoading = true;
         if(mTotalItemCount > 0) showLoading = false;
 
-        new HttpAPIRequester(this, showLoading, ServerURLInfo.API_RECRUIT_POSTS_GET, "GET", new HttpAPIRequester.OnAPIResponseListener() {
-            @Override
-            public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
-                MyLog.i("retCode=" + retCode + ", response=" + response);
-                populateList(response.getJSONArray("results"));
-                refreshComplete(true);
-            }
-
-            @Override
-            public void onResponse(String APIUrl, int retCode, JSONArray response) throws JSONException {
-                MyLog.i("retCode=" + retCode + ", response=" + response);
-                populateList(response);
-                refreshComplete(true);
-            }
-
-            @Override
-            public void onErrorResponse(String APIUrl, int retCode, String message, Throwable cause) {
-                //TODO 테스트 용
-                mRecyclerView.postDelayed(new Runnable() {
+        new HttpAPIRequester(this, showLoading, String.format(ServerURLInfo.API_RECRUIT_POSTS_GET, mCurPage), "GET",
+                new HttpAPIRequester.OnAPIResponseListener() {
                     @Override
-                    public void run() {
-                        populateList(testResponse(mTotalItemCount));
-                        isCanLoadMore = true;
+                    public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
+                        MyLog.i("retCode=" + retCode + ", response=" + response);
+                        populateList(response.getJSONArray("object_list"));
+                        refreshComplete(true);
                     }
-                }, 1000);
-                refreshComplete(false);
-            }
-        }).execute((JSONObject) null);
+
+                    @Override
+                    public void onResponse(String APIUrl, int retCode, JSONArray response) throws JSONException {
+                        MyLog.i("retCode=" + retCode + ", response=" + response);
+                        populateList(response);
+                        refreshComplete(true);
+                    }
+
+                    @Override
+                    public void onErrorResponse(String APIUrl, int retCode, String message, Throwable cause) {
+                        //TODO 테스트 용
+                        mRecyclerView.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                populateList(testResponse(mTotalItemCount));
+                                isCanLoadMore = true;
+                            }
+                        }, 1000);
+                        refreshComplete(false);
+                    }
+                }).execute((JSONObject) null);
     }
 
 //    private void populatePostList(final JSONArray response) {

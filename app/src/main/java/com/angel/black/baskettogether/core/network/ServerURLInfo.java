@@ -14,10 +14,9 @@ public class ServerURLInfo {
     public static final String API_USER_LOGIN = "accounts/login/";
 
     public static final String API_RECRUIT_POST_REGIST = "recruit/post/add/";
-    public static final String API_RECRUIT_POSTS_GET = "recruit/posts/";
+    public static final String API_RECRUIT_POSTS_GET = "recruit/posts/page-" + "%1$d" + "/";
     public static final String API_GET_RECRUIT_POST_DETAIL = "recruit/post/";       // 뒤에 글 id 붙여야함
-    public static final String API_RECRUIT_ATTEND = "recruit/post/attend/";
+    public static final String API_RECRUIT_REQUEST_ATTEND = "recruit/post/" + "%1$d" + "/participation/add/";
 
-    public static final String API_RECRUIT_POST_REGIST_COMMENT_PREFIX = "recruit/post/";        // 댓글등록. 이뒤에 postId 붙임
-    public static final String API_RECRUIT_POST_REGIST_COMMENT_POSTFIX = "/comment/add/";       // 댓글등록 포스트픽스
+    public static final String API_RECRUIT_POST_REGIST_COMMENT = "recruit/post/" + "%1$d" + "/comment/add/";       // 댓글등록
 }

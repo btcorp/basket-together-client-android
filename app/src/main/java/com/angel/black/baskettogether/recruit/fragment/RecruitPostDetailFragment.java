@@ -3,6 +3,7 @@ package com.angel.black.baskettogether.recruit.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -38,13 +39,15 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
     private Button mBtnReqAttend;
     private TextView mRegDate;
 
+    private RecruitPostDetailAttendeeFragment mAttendeeFragment;
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
     }
 
     @Override
-    protected void requestList() {
+    public void requestList() {
         new HttpAPIRequester(this, true, ServerURLInfo.API_GET_RECRUIT_POST_DETAIL + mPostId + "/", "GET", new HttpAPIRequester.OnAPIResponseListener() {
             @Override
             public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
@@ -129,7 +132,6 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
         mRegDate.setText(CalendarUtil.getDateString(response.optString("registered_date")));
 
         populateList(response.getJSONArray("comments"));
-
     }
 
     @Override
@@ -161,7 +163,13 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
     public void populateList(JSONArray dataset) {
         MyLog.d("dataset=" + dataset);
 
+        if(mCurPage > 1) {
+            mRecyclerViewAdapter.addDataset(dataset);
+        } else {
+            mRecyclerViewAdapter.setDataset(dataset);
+        }
 
+        mTotalItemCount += dataset.length();
     }
 
     @Override
@@ -183,12 +191,14 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
      * 참가신청
      */
     private void requestAttendToRecruit() {
-        new HttpAPIRequester(this, true, ServerURLInfo.API_RECRUIT_ATTEND + mPostId + "/", "POST",
+        new HttpAPIRequester(this, true, String.format(ServerURLInfo.API_RECRUIT_REQUEST_ATTEND, mPostId), "GET",
                 new HttpAPIRequester.OnAPIResponseListener() {
                     @Override
                     public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
                         //TODO 참가신청 성공 후 포스트 데이터 재요청
                         requestList();
+
+                        showToast(R.string.succ_recruit_req_attend);
                     }
 
                     @Override
@@ -208,13 +218,20 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
         if (show) {
             FragmentManager fm = getChildFragmentManager();
 
-//            FragmentTransaction ft = fm.beginTransaction();
-//            ft.add()
+            FragmentTransaction ft = fm.beginTransaction();
 
-
+            mAttendeeFragment = RecruitPostDetailAttendeeFragment.newInstance();
+            ft.add(R.id.container_attendee_fragment, mAttendeeFragment);
+            ft.commit();
 
         } else {
+            FragmentManager fm = getChildFragmentManager();
 
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.remove(mAttendeeFragment);
+            ft.commit();
+
+            mAttendeeFragment = null;
         }
     }
 

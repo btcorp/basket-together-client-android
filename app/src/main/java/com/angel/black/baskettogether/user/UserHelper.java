@@ -3,6 +3,7 @@ package com.angel.black.baskettogether.user;
 import com.angel.black.baskettogether.core.BaseActivity;
 import com.angel.black.baskettogether.core.preference.KeyConst;
 import com.angel.black.baskettogether.core.preference.MyPreferenceManager;
+import com.angel.black.baskettogether.util.MyLog;
 import com.angel.black.baskettogether.util.StringUtil;
 
 /**
@@ -15,11 +16,14 @@ public class UserHelper {
     public static String userAccessToken;
 
 
-    public static void saveUserAccessToken(BaseActivity activity, String token) {
+    public static void saveUserInfo(BaseActivity activity, String token, String id, String pwd) {
         userAccessToken = token;
+        MyLog.e("set userAcessToken=" + userAccessToken + ", saved id=" + id + ", pwd=" + pwd);
 
         MyPreferenceManager pm = activity.getPreferenceManager();
         pm.saveString(KeyConst.SAVED_ACCESS_TOKEN, token);
+        pm.saveString(KeyConst.SAVED_USER_ID, id);
+        pm.saveString(KeyConst.SAVED_USER_PWD, pwd);
     }
 
     /**

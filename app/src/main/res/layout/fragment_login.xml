@@ -39,7 +39,7 @@
                 android:imeOptions="actionUnspecified"
                 android:inputType="textPassword"
                 android:maxLines="1"
-                android:text="1234qwer"
+                android:text="qqqqqqqq"
                 android:singleLine="true" />
 
         </android.support.design.widget.TextInputLayout>

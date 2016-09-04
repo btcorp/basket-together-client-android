@@ -56,6 +56,10 @@ public class BaseFragment extends Fragment {
         Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
     }
 
+    public void showToast(int msgResId) {
+        Toast.makeText(getActivity(), msgResId, Toast.LENGTH_LONG).show();
+    }
+
     public static class AlertDialogFragment extends DialogFragment {
         private static final String ARG_TITLE = "title";
         private static final String ARG_MESSAGE = "message";
