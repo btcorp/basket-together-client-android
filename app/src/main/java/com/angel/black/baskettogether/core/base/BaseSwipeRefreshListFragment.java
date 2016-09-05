@@ -34,7 +34,7 @@ public abstract class BaseSwipeRefreshListFragment extends BaseListFragment impl
     public void onRefresh() {
         MyLog.i("before mCurPage=" + mCurPage);
         mCurPage = 1;
-        mTotalItemCount = 0;
+        mCurItemCount = 0;
         requestList();
     }
 

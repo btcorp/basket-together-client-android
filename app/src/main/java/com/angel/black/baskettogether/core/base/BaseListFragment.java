@@ -26,9 +26,10 @@ public abstract class BaseListFragment extends BaseFragment {
     protected View mLoadingFooterView;
 
     protected int mCurPage = 1;
-    protected int mTotalItemCount = 0;
+    protected int mCurItemCount = 0;    // 리스트의 현재까지 페이징 된 아이템 갯수
+    protected int mTotalItemCount = 0;  // 리스트의 모든 페이지 토탈 아이템 갯수
+
     protected boolean isCanLoadMore = true;
-    protected int pastVisiblesItems, visibleItemCount, totalItemCount;
 
     public abstract void requestList();
     protected abstract MyRecyclerViewAdapter createListAdapter();
@@ -79,6 +80,13 @@ public abstract class BaseListFragment extends BaseFragment {
 //        }, 3000);
     }
 
+
+    protected void setPagination(int totalCount) {
+        mTotalItemCount = totalCount;
+
+        MyLog.d("mCurItemCount=" + mCurItemCount + ", mCurPage=" + mCurPage + ", mTotalItemCount=" + mTotalItemCount);
+    }
+
     public class MyRecyclerViewAdapter extends RecyclerView.Adapter<AbsRecyclerViewHolder> {
         private final int VIEW_TYPE_HEADER = 0;
         private final int VIEW_TYPE_ITEM = 1;
@@ -120,7 +128,7 @@ public abstract class BaseListFragment extends BaseFragment {
         public void addDataset(Object dataset) {
             MyLog.i();
             int itemCount = mDataset.addDataset(dataset);
-            notifyItemRangeInserted(mTotalItemCount + 1, itemCount);
+            notifyItemRangeInserted(mCurItemCount + 1, itemCount);
         }
 
         public void addData(Object data) {
@@ -185,6 +193,7 @@ public abstract class BaseListFragment extends BaseFragment {
     protected abstract View createHeaderView(ViewGroup parent);
 
     class MyScrollListener extends RecyclerView.OnScrollListener {
+        private int pastVisiblesItems, visibleItemCount, totalItemCount;
 
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -199,7 +208,7 @@ public abstract class BaseListFragment extends BaseFragment {
                 totalItemCount = mLayoutManager.getItemCount();
                 pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
 
-                if (isCanLoadMore) {
+                if (isCanLoadMore && mCurItemCount < mTotalItemCount) {
                     if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount) {
                         isCanLoadMore = false;
                         MyLog.v("Last Item Wow !");

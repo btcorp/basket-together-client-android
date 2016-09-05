@@ -65,7 +65,7 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment
             mRecyclerViewAdapter.setDataset(dataset);
         }
 
-        mTotalItemCount += dataset.length();
+        mCurItemCount += dataset.length();
     }
 
     @Override
@@ -138,14 +138,15 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment
     @Override
     public void requestList() {
         boolean showLoading = true;
-        if(mTotalItemCount > 0) showLoading = false;
+        if(mCurItemCount > 0) showLoading = false;
 
         new HttpAPIRequester(this, showLoading, String.format(ServerURLInfo.API_RECRUIT_POSTS_GET, mCurPage), "GET",
                 new HttpAPIRequester.OnAPIResponseListener() {
                     @Override
                     public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
                         MyLog.i("retCode=" + retCode + ", response=" + response);
-                        populateList(response.getJSONArray("object_list"));
+                        populateList(response.getJSONArray("post_list"));
+                        setPagination(response.getInt("total_count"));
                         refreshComplete(true);
                     }
 
@@ -162,7 +163,7 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment
                         mRecyclerView.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                populateList(testResponse(mTotalItemCount));
+                                populateList(testResponse(mCurItemCount));
                                 isCanLoadMore = true;
                             }
                         }, 1000);
@@ -179,7 +180,7 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment
 //            mRecyclerViewAdapter.setDataset(response);
 //        }
 //
-//        mTotalItemCount += response.length();
+//        mCurItemCount += response.length();
 //    }
 
     private void goDetail(int position, long id) {

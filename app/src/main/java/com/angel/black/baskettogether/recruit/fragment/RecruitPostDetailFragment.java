@@ -169,7 +169,7 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
             mRecyclerViewAdapter.setDataset(dataset);
         }
 
-        mTotalItemCount += dataset.length();
+        mCurItemCount += dataset.length();
     }
 
     @Override
