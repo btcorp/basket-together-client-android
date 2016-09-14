@@ -14,13 +14,13 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.angel.black.baframework.core.base.BaseActivity;
+import com.angel.black.baframework.logger.BaLog;
+import com.angel.black.baframework.network.HttpAPIRequester;
+import com.angel.black.baframework.util.CalendarUtil;
+import com.angel.black.baframework.util.StringUtil;
 import com.angel.black.baskettogether.R;
-import com.angel.black.baskettogether.core.BaseActivity;
-import com.angel.black.baskettogether.core.network.HttpAPIRequester;
 import com.angel.black.baskettogether.core.network.ServerURLInfo;
-import com.angel.black.baskettogether.util.CalendarUtil;
-import com.angel.black.baskettogether.util.MyLog;
-import com.angel.black.baskettogether.util.StringUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,7 +72,7 @@ public class RecruitPostRegistActivity extends BaseActivity {
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         if(item.getItemId() == R.id.menu_post_regist) {
-            MyLog.d("글 등록 완료버튼 클릭!");
+            BaLog.d("글 등록 완료버튼 클릭!");
 
             String title = mEditTitle.getText().toString().trim();
             String content = mEditContent.getText().toString().trim();
@@ -122,7 +122,7 @@ public class RecruitPostRegistActivity extends BaseActivity {
 
         } catch(JSONException e) {
             e.printStackTrace();
-            MyLog.e("글등록 요청중 오류 발생!!");
+            BaLog.e("글등록 요청중 오류 발생!!");
         }
     }
 
@@ -145,7 +145,7 @@ public class RecruitPostRegistActivity extends BaseActivity {
 
     public void onClick(View v) {
         if(v.getId() == R.id.btn_pick_date) {
-            MyLog.d("날짜 픽 버튼 클릭");
+            BaLog.d("날짜 픽 버튼 클릭");
             showDatePickerDialog();
         }
     }

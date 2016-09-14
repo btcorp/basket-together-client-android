@@ -4,11 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 
+import com.angel.black.baframework.core.base.BaseActivity;
+import com.angel.black.baframework.network.HttpAPIRequester;
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.common.view.CommentInputView;
-import com.angel.black.baskettogether.core.BaseActivity;
 import com.angel.black.baskettogether.core.intent.IntentConst;
-import com.angel.black.baskettogether.core.network.HttpAPIRequester;
 import com.angel.black.baskettogether.core.network.ServerURLInfo;
 import com.angel.black.baskettogether.recruit.fragment.RecruitPostDetailFragment;
 

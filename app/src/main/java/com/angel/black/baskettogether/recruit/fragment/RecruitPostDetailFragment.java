@@ -10,14 +10,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.angel.black.baframework.core.base.BaseListFragment;
+import com.angel.black.baframework.logger.BaLog;
+import com.angel.black.baframework.network.HttpAPIRequester;
+import com.angel.black.baframework.ui.view.recyclerview.AbsRecyclerViewHolder;
+import com.angel.black.baframework.ui.view.recyclerview.RecyclerViewAdapterData;
+import com.angel.black.baframework.util.CalendarUtil;
 import com.angel.black.baskettogether.R;
-import com.angel.black.baskettogether.core.base.BaseListFragment;
-import com.angel.black.baskettogether.core.network.HttpAPIRequester;
 import com.angel.black.baskettogether.core.network.ServerURLInfo;
-import com.angel.black.baskettogether.core.view.recyclerview.AbsRecyclerViewHolder;
-import com.angel.black.baskettogether.core.view.recyclerview.RecyclerViewAdapterData;
-import com.angel.black.baskettogether.util.CalendarUtil;
-import com.angel.black.baskettogether.util.MyLog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -161,7 +161,7 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
 
     @Override
     public void populateList(JSONArray dataset) {
-        MyLog.d("dataset=" + dataset);
+        BaLog.d("dataset=" + dataset);
 
         if(mCurPage > 1) {
             mRecyclerViewAdapter.addDataset(dataset);

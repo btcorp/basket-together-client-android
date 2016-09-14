@@ -13,13 +13,13 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.android.volley.toolbox.ImageLoader;
+import com.angel.black.baframework.core.base.BaseListActivity;
+import com.angel.black.baframework.core.base.BaseListFragment;
+import com.angel.black.baframework.logger.BaLog;
+import com.angel.black.baframework.util.ScreenUtil;
 import com.angel.black.baskettogether.R;
-import com.angel.black.baskettogether.core.BaseListActivity;
-import com.angel.black.baskettogether.core.base.BaseListFragment;
 import com.angel.black.baskettogether.core.intent.IntentConst;
 import com.angel.black.baskettogether.recruit.fragment.RecruitPostListFragment;
-import com.angel.black.baskettogether.util.MyLog;
-import com.angel.black.baskettogether.util.ScreenUtil;
 
 /**
  * Created by KimJeongHun on 2016-06-06.
@@ -82,7 +82,7 @@ public class RecruitPostListActivity extends BaseListActivity implements View.On
 
     @Override
     public void onClick(View v) {
-        MyLog.i("v.getId()=" + v.getId());
+        BaLog.i("v.getId()=" + v.getId());
 
         if(v.getTag().equals(TAG_FAB)) {
             startActivityForResult(RecruitPostRegistActivity.class, IntentConst.REQUEST_REGIST_RECRUIT_POST);
@@ -91,7 +91,7 @@ public class RecruitPostListActivity extends BaseListActivity implements View.On
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        MyLog.i();
+        BaLog.i();
         switch(item.getItemId()) {
             case R.id.navigation_item_1:
                 showToast("네비아이템1 클릭");
@@ -126,7 +126,7 @@ public class RecruitPostListActivity extends BaseListActivity implements View.On
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
-        MyLog.i();
+        BaLog.i();
         Intent intent = null;
         switch(menuItem.getItemId()) {
             case R.id.navigation_item_1:

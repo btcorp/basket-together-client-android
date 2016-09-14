@@ -12,14 +12,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.angel.black.baframework.core.base.BaseFragment;
+import com.angel.black.baframework.network.HttpAPIRequester;
+import com.angel.black.baframework.util.StringUtil;
 import com.angel.black.baskettogether.R;
-import com.angel.black.baskettogether.core.base.BaseFragment;
-import com.angel.black.baskettogether.core.network.HttpAPIRequester;
 import com.angel.black.baskettogether.core.network.ServerURLInfo;
 import com.angel.black.baskettogether.recruit.RecruitPostListActivity;
 import com.angel.black.baskettogether.signup.SignUpActivity;
 import com.angel.black.baskettogether.user.UserHelper;
-import com.angel.black.baskettogether.util.StringUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,34 +74,32 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
     }
 
     private void attemptLogin() {
+        mIdView.setError(null);
+        mPasswordView.setError(null);
 
+        String id = mIdView.getText().toString();
+        String password = mPasswordView.getText().toString();
+
+        if (isValidateForm(id, password)) {
+            hideCurrentFocusKeyboard();
+            try {
+                if(false) {  //TODO 테스트
+                    startActivity(RecruitPostListActivity.class, true);
+                } else {
+                    requestLogin(id, password);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                showOkDialog("로그인 실패");
+            }
+        }
     }
 
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.btn_login:
-
-                mIdView.setError(null);
-                mPasswordView.setError(null);
-
-                String id = mIdView.getText().toString();
-                String password = mPasswordView.getText().toString();
-
-                if (isValidateForm(id, password)) {
-                    hideCurrentFocusKeyboard();
-                    try {
-                        if(false) {  //TODO 테스트
-                            startActivity(RecruitPostListActivity.class, true);
-                        } else {
-                            requestLogin(id, password);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        showOkDialog("로그인 실패");
-                    }
-
-                }
+                attemptLogin();
                 break;
 
             case R.id.btn_sign_up_at_login:

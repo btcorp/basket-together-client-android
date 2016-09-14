@@ -23,10 +23,8 @@
     <string name="error_pwd_minimum_char">비밀번호는 최소 8자리여야 합니다.</string>
     <string name="title_activity_recruit_post_list">팀 모집글 목록</string>
     <string name="login">로그인</string>
-    <string name="not_connected_network">네트워크 연결을 확인해주세요.</string>
     <string name="title_activity_recruit_post_detail">팀 모집글 상세</string>
     <string name="attender_count">참가 인원</string>
-    <string name="not_responsed_server">서버가 응답하지 않습니다.\n잠시후 다시 시도해 주세요.</string>
     <string name="recruit_count">모집 인원</string>
     <string name="request_attend">참가 신청</string>
     <string name="recruit_time">모임 시간</string>

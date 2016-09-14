@@ -5,8 +5,8 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.angel.black.baframework.core.base.BaseActivity;
 import com.angel.black.baskettogether.R;
-import com.angel.black.baskettogether.core.BaseActivity;
 import com.angel.black.baskettogether.core.view.imageview.RoundedImageView;
 
 /**

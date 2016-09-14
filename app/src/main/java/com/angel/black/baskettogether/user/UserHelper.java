@@ -1,10 +1,10 @@
 package com.angel.black.baskettogether.user;
 
-import com.angel.black.baskettogether.core.BaseActivity;
+import com.angel.black.baframework.core.base.BaseActivity;
+import com.angel.black.baframework.logger.BaLog;
+import com.angel.black.baframework.preference.MyPreferenceManager;
+import com.angel.black.baframework.util.StringUtil;
 import com.angel.black.baskettogether.core.preference.KeyConst;
-import com.angel.black.baskettogether.core.preference.MyPreferenceManager;
-import com.angel.black.baskettogether.util.MyLog;
-import com.angel.black.baskettogether.util.StringUtil;
 
 /**
  * Created by KimJeongHun on 2016-05-24.
@@ -18,7 +18,7 @@ public class UserHelper {
 
     public static void saveUserInfo(BaseActivity activity, String token, String id, String pwd) {
         userAccessToken = token;
-        MyLog.e("set userAcessToken=" + userAccessToken + ", saved id=" + id + ", pwd=" + pwd);
+        BaLog.e("set userAcessToken=" + userAccessToken + ", saved id=" + id + ", pwd=" + pwd);
 
         MyPreferenceManager pm = activity.getPreferenceManager();
         pm.saveString(KeyConst.SAVED_ACCESS_TOKEN, token);

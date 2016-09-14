@@ -4,16 +4,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 
+import com.angel.black.baframework.core.base.BaseActivity;
+import com.angel.black.baframework.logger.BaLog;
+import com.angel.black.baframework.network.HttpAPIRequester;
+import com.angel.black.baframework.util.StringUtil;
 import com.angel.black.baskettogether.R;
-import com.angel.black.baskettogether.core.BaseActivity;
-import com.angel.black.baskettogether.core.network.HttpAPIRequester;
 import com.angel.black.baskettogether.core.network.ServerURLInfo;
 import com.angel.black.baskettogether.core.preference.KeyConst;
 import com.angel.black.baskettogether.login.LoginActivity;
 import com.angel.black.baskettogether.recruit.RecruitPostListActivity;
 import com.angel.black.baskettogether.user.UserHelper;
-import com.angel.black.baskettogether.util.MyLog;
-import com.angel.black.baskettogether.util.StringUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,7 +35,7 @@ public class IntroActivity extends BaseActivity {
             //TODO 추후 암호화
             String savedPwd = getPreferenceManager().loadString(KeyConst.SAVED_USER_PWD);
 
-            MyLog.d("savedId=" + savedId + ", savedPwd=" + savedPwd);
+            BaLog.d("savedId=" + savedId + ", savedPwd=" + savedPwd);
 
             if (StringUtil.isEmptyString(savedId) && StringUtil.isEmptyString(savedPwd)) {
                 startActivity(LoginActivity.class);
@@ -80,7 +80,8 @@ public class IntroActivity extends BaseActivity {
 
     private void requestLogin(final String id, final String pwd) throws JSONException {
         JSONObject loginData = buildRequestLoginData(id, pwd);
-        new HttpAPIRequester(this, true, ServerURLInfo.API_USER_LOGIN, "POST", new HttpAPIRequester.OnAPIResponseListener() {
+        new HttpAPIRequester(this, true, ServerURLInfo.API_USER_LOGIN, "POST",
+                new HttpAPIRequester.OnAPIResponseListener() {
             @Override
             public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
                 try {

@@ -8,12 +8,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.angel.black.baframework.core.base.BaseFragment;
+import com.angel.black.baframework.network.HttpAPIRequester;
+import com.angel.black.baframework.util.StringUtil;
 import com.angel.black.baskettogether.R;
-import com.angel.black.baskettogether.core.base.BaseFragment;
-import com.angel.black.baskettogether.core.network.HttpAPIRequester;
 import com.angel.black.baskettogether.core.network.ServerURLInfo;
 import com.angel.black.baskettogether.recruit.RecruitPostRegistActivity;
-import com.angel.black.baskettogether.util.StringUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -9,15 +9,15 @@ import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.angel.black.baframework.core.base.BaseSwipeRefreshListFragment;
+import com.angel.black.baframework.logger.BaLog;
+import com.angel.black.baframework.network.HttpAPIRequester;
+import com.angel.black.baframework.ui.view.recyclerview.AbsRecyclerViewHolder;
+import com.angel.black.baframework.ui.view.recyclerview.RecyclerViewAdapterData;
 import com.angel.black.baskettogether.R;
-import com.angel.black.baskettogether.core.base.BaseSwipeRefreshListFragment;
 import com.angel.black.baskettogether.core.intent.IntentConst;
-import com.angel.black.baskettogether.core.network.HttpAPIRequester;
 import com.angel.black.baskettogether.core.network.ServerURLInfo;
-import com.angel.black.baskettogether.core.view.recyclerview.AbsRecyclerViewHolder;
-import com.angel.black.baskettogether.core.view.recyclerview.RecyclerViewAdapterData;
 import com.angel.black.baskettogether.recruit.RecruitPostDetailActivity;
-import com.angel.black.baskettogether.util.MyLog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,7 +58,7 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment
 
     @Override
     public void populateList(JSONArray dataset) {
-        MyLog.d("populatePostList >> response=" + dataset);
+        BaLog.d("populatePostList >> response=" + dataset);
         if(mCurPage > 1) {
             mRecyclerViewAdapter.addDataset(dataset);
         } else {
@@ -144,7 +144,7 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment
                 new HttpAPIRequester.OnAPIResponseListener() {
                     @Override
                     public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
-                        MyLog.i("retCode=" + retCode + ", response=" + response);
+                        BaLog.i("retCode=" + retCode + ", response=" + response);
                         populateList(response.getJSONArray("post_list"));
                         setPagination(response.getInt("total_count"));
                         refreshComplete(true);
@@ -152,7 +152,7 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment
 
                     @Override
                     public void onResponse(String APIUrl, int retCode, JSONArray response) throws JSONException {
-                        MyLog.i("retCode=" + retCode + ", response=" + response);
+                        BaLog.i("retCode=" + retCode + ", response=" + response);
                         populateList(response);
                         refreshComplete(true);
                     }
@@ -173,7 +173,7 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment
     }
 
 //    private void populatePostList(final JSONArray response) {
-//        MyLog.d("populatePostList >> response=" + response);
+//        BaLog.d("populatePostList >> response=" + response);
 //        if(mCurPage > 1) {
 //            mRecyclerViewAdapter.addDataset(response);
 //        } else {
@@ -184,7 +184,7 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment
 //    }
 
     private void goDetail(int position, long id) {
-        MyLog.d("position=" + position + ", id=" + id);
+        BaLog.d("position=" + position + ", id=" + id);
         Intent intent = new Intent(getActivity(), RecruitPostDetailActivity.class);
         intent.putExtra(IntentConst.KEY_EXTRA_POST_ID, id);
         startActivity(intent);

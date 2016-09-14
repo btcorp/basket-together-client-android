@@ -3,8 +3,8 @@ package com.angel.black.baskettogether.login;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 
+import com.angel.black.baframework.core.base.BaseActivity;
 import com.angel.black.baskettogether.R;
-import com.angel.black.baskettogether.core.BaseActivity;
 
 public class LoginActivity extends BaseActivity {
 

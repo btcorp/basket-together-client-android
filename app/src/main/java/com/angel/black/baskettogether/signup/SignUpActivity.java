@@ -2,8 +2,8 @@ package com.angel.black.baskettogether.signup;
 
 import android.os.Bundle;
 
+import com.angel.black.baframework.core.base.BaseActivity;
 import com.angel.black.baskettogether.R;
-import com.angel.black.baskettogether.core.BaseActivity;
 
 public class SignUpActivity extends BaseActivity {
 

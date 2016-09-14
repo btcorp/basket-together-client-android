@@ -7,8 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.angel.black.baframework.core.base.BaseFragment;
 import com.angel.black.baskettogether.R;
-import com.angel.black.baskettogether.core.base.BaseFragment;
 import com.angel.black.baskettogether.recruit.view.RecruitAttendeeView;
 
 /**
