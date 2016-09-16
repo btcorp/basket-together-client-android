@@ -12,10 +12,10 @@ import com.angel.black.baframework.core.base.BaseFragment;
 import com.angel.black.baframework.network.HttpAPIRequester;
 import com.angel.black.baframework.util.StringUtil;
 import com.angel.black.baskettogether.R;
-import com.angel.black.baskettogether.core.network.ServerURLInfo;
-import com.angel.black.baskettogether.recruit.RecruitPostRegistActivity;
+import com.angel.black.baskettogether.api.APICallSuccessNotifier;
+import com.angel.black.baskettogether.api.UserAPI;
+import com.angel.black.baskettogether.recruit.RecruitPostListActivity;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -64,8 +64,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     }
 
     private void requestSignUp(final String id, final String pwd) throws JSONException{
-        JSONObject joinData = buildRequestJoinData(id, pwd);
-        new HttpAPIRequester(this, true, ServerURLInfo.API_USER_SIGNUP, "POST", new HttpAPIRequester.OnAPIResponseListener() {
+        UserAPI.signUp(getBaseActivity(), id, pwd, new HttpAPIRequester.OnAPIResponseListener() {
             @Override
             public void onResponse(String APIUrl, int retCode, JSONObject response) {
                 try {
@@ -76,53 +75,20 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             }
 
             @Override
-            public void onResponse(String APIUrl, int retCode, JSONArray response) throws JSONException {
-
-            }
-
-            @Override
             public void onErrorResponse(String APIUrl, int retCode, String message, Throwable cause) {
 
             }
-        }).execute(joinData);
+        });
     }
 
     private void requestLogin(String id, String pwd) throws JSONException{
-        JSONObject loginData = buildRequestLoginData(id, pwd);
-        new HttpAPIRequester(this, true, ServerURLInfo.API_USER_LOGIN, "POST", new HttpAPIRequester.OnAPIResponseListener() {
+        UserAPI.login(getBaseActivity(), id, pwd, new APICallSuccessNotifier() {
             @Override
-            public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
+            public void onSuccess(JSONObject response) {
                 showToast("로그인 성공");
-                startActivity(RecruitPostRegistActivity.class);
+                startActivity(RecruitPostListActivity.class);
             }
-
-            @Override
-            public void onResponse(String APIUrl, int retCode, JSONArray response) throws JSONException {
-
-            }
-
-            @Override
-            public void onErrorResponse(String APIUrl, int retCode, String message, Throwable cause) {
-
-            }
-        }).execute(loginData);
-    }
-
-    private JSONObject buildRequestJoinData(String id, String pwd) throws JSONException{
-        JSONObject json = new JSONObject();
-        json.put("username", id);
-        json.put("password1", pwd);
-        json.put("password2", pwd);
-
-        return json;
-    }
-
-    private JSONObject buildRequestLoginData(String id, String pwd) throws JSONException{
-        JSONObject json = new JSONObject();
-        json.put("username", id);
-        json.put("password", pwd);
-
-        return json;
+        });
     }
 
     private boolean isValidateForm(String id, String pwd, String pwdRe) {

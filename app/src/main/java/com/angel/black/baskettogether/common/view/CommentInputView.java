@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import com.angel.black.baframework.util.StringUtil;
 import com.angel.black.baskettogether.R;
 
 /**
@@ -46,6 +47,10 @@ public class CommentInputView extends LinearLayout implements View.OnClickListen
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.btn_comment_regist) {
+            if(StringUtil.isEmptyInputString(getInputedComment())) {
+                return;
+            }
+
             if(mCommentActionListener != null) {
                 mCommentActionListener.onClickRegistComment();
             }
@@ -56,6 +61,9 @@ public class CommentInputView extends LinearLayout implements View.OnClickListen
         return mEditComment.getText().toString().trim();
     }
 
+    public void setCommentText(String comment) {
+        mEditComment.setText(comment);
+    }
 
     public interface CommentActionListener {
         void onClickRegistComment();

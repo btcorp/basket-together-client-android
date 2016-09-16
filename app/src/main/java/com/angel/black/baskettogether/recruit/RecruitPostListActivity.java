@@ -158,6 +158,11 @@ public class RecruitPostListActivity extends BaseListActivity implements View.On
             if (resultCode == RESULT_OK) {
                 mBaseListFragment.requestList();
             }
+        } else if (requestCode == IntentConst.REQUEST_VIEW_RECRUIT_POST_DETAIL) {
+            if (resultCode == IntentConst.RESULT_DELETED) {
+
+                BaLog.i("글 삭제후 돌아옴");
+            }
         }
     }
 }

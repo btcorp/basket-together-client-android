@@ -12,14 +12,13 @@
         android:id="@+id/comment_input_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"/>
 
     <fragment
         android:id="@+id/recruit_post_detail_fragment"
         android:name="com.angel.black.baskettogether.recruit.fragment.RecruitPostDetailFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_above="@id/comment_input_view"/>
-
 </RelativeLayout>

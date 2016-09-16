@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 알림 설정 스위치 -->
+    <style name="setting_switch">
+        <item name="android:switchMinWidth">32dp</item>
+        <item name="android:thumb">@drawable/abc_switch_thumb_material</item>
+        <item name="android:track">@drawable/bg_switch_track</item>
+        <item name="android:textOn"> </item>
+        <item name="android:textOff"> </item>
+    </style>
+</resources>

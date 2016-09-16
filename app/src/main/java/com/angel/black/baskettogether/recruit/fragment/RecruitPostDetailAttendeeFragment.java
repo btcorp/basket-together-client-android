@@ -11,11 +11,16 @@ import com.angel.black.baframework.core.base.BaseFragment;
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.recruit.view.RecruitAttendeeView;
 
+import java.util.ArrayList;
+
 /**
  * Created by KimJeongHun on 2016-09-04.
  */
 public class RecruitPostDetailAttendeeFragment extends BaseFragment {
+    private static final String KEY_ATTENDEE = "attendee";
+
     private LinearLayout mContainerAttendeeView;
+    private ArrayList<Attendee> mAttendees;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,21 +34,36 @@ public class RecruitPostDetailAttendeeFragment extends BaseFragment {
 
         mContainerAttendeeView = (LinearLayout) view;
 
-        //TODO 테스트로 추가
-        addAttendee("1", "test1");
-        addAttendee("2", "스테판커리");
-
         return view;
     }
 
-    public void addAttendee(String attendeeId, String attendeeName) {
-        RecruitAttendeeView recruitAttendeeView = new RecruitAttendeeView(getContext());
+    @Override
+    public void onStart() {
+        super.onStart();
 
-        Attendee attendee = new Attendee(attendeeId, attendeeName);
-        recruitAttendeeView.setTag(attendee);
-        recruitAttendeeView.setName(attendeeName);
+        showAttendees();
+    }
 
-        mContainerAttendeeView.addView(recruitAttendeeView);
+    public void addAttendee(long attendeeId, String attendeeName) {
+        if(mAttendees == null) {
+            mAttendees = new ArrayList<>();
+        }
+
+        mAttendees.add(new Attendee(attendeeId, attendeeName));
+    }
+
+    public void showAttendees() {
+        if(mAttendees == null)
+            return;
+
+        for(Attendee attendee : mAttendees) {
+            RecruitAttendeeView recruitAttendeeView = new RecruitAttendeeView(getContext());
+
+            recruitAttendeeView.setTag(attendee);
+            recruitAttendeeView.setName(attendee.name);
+
+            mContainerAttendeeView.addView(recruitAttendeeView);
+        }
     }
 
     public static RecruitPostDetailAttendeeFragment newInstance() {
@@ -56,10 +76,10 @@ public class RecruitPostDetailAttendeeFragment extends BaseFragment {
     }
 
     public class Attendee {
-        String id;
+        long id;
         String name;
 
-        public Attendee(String id, String name) {
+        public Attendee(long id, String name) {
             this.id = id;
             this.name = name;
         }

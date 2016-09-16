@@ -17,6 +17,11 @@ public class ServerURLInfo {
     public static final String API_RECRUIT_POSTS_GET = "recruit/posts/page-" + "%1$d" + "/";
     public static final String API_GET_RECRUIT_POST_DETAIL = "recruit/post/";       // 뒤에 글 id 붙여야함
     public static final String API_RECRUIT_REQUEST_ATTEND = "recruit/post/" + "%1$d" + "/participation/add/";
+    public static final String API_RECRUIT_REQUEST_ATTEND_CANCEL = "recruit/post/" + "%1$d" + "/participation/remove/";
+    public static final String API_DELETE_RECRUIT_POST_COMMENT = "recruit/post/" + "%1$d" + "/";               // 모집글삭제
 
-    public static final String API_RECRUIT_POST_REGIST_COMMENT = "recruit/post/" + "%1$d" + "/comment/add/";       // 댓글등록
+    public static final String API_RECRUIT_POST_REGIST_COMMENT = "recruit/post/" + "%1$d" + "/comment/add/";    // 댓글등록
+    public static final String API_GET_RECRUIT_POST_COMMENTS = "recruit/post/" + "%1$d" + "/comments/";         // 댓글조회
+
+
 }

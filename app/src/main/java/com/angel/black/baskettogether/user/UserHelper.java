@@ -15,10 +15,17 @@ public class UserHelper {
      */
     public static String userAccessToken;
 
+    /**
+     * 유저의 유니크한 id 값 (서버 DB상의 회원 구분값)
+     */
+    public static long userUid;
 
-    public static void saveUserInfo(BaseActivity activity, String token, String id, String pwd) {
+
+    public static void saveUserInfo(BaseActivity activity, String token, String id, String pwd, long uid) {
         userAccessToken = token;
-        BaLog.e("set userAcessToken=" + userAccessToken + ", saved id=" + id + ", pwd=" + pwd);
+        userUid = uid;
+
+        BaLog.e("set userAcessToken=" + userAccessToken + ", saved id=" + id + ", pwd=" + pwd + ", uid=" + uid);
 
         MyPreferenceManager pm = activity.getPreferenceManager();
         pm.saveString(KeyConst.SAVED_ACCESS_TOKEN, token);

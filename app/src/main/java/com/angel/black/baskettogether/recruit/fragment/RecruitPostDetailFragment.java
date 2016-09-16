@@ -1,9 +1,9 @@
 package com.angel.black.baskettogether.recruit.fragment;
 
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -12,12 +12,14 @@ import android.widget.TextView;
 
 import com.angel.black.baframework.core.base.BaseListFragment;
 import com.angel.black.baframework.logger.BaLog;
-import com.angel.black.baframework.network.HttpAPIRequester;
 import com.angel.black.baframework.ui.view.recyclerview.AbsRecyclerViewHolder;
 import com.angel.black.baframework.ui.view.recyclerview.RecyclerViewAdapterData;
 import com.angel.black.baframework.util.CalendarUtil;
 import com.angel.black.baskettogether.R;
-import com.angel.black.baskettogether.core.network.ServerURLInfo;
+import com.angel.black.baskettogether.api.APICallSuccessNotifier;
+import com.angel.black.baskettogether.api.RecruitAPI;
+import com.angel.black.baskettogether.recruit.RecruitPostDetailActivity;
+import com.angel.black.baskettogether.user.UserHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,6 +32,13 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
         RecyclerViewAdapterData<JSONArray, JSONObject>,
         View.OnClickListener {
     private long mPostId;
+    private boolean mIsAttendingThis;   // 내가 이 모집글에 참가중인지 여부
+
+    public boolean isMyPost() {
+        return mIsMyPost;
+    }
+
+    private boolean mIsMyPost;          // 이 글이 내가 쓴글인지 여부
 
     private TextView mTitle;
     private TextView mContent;
@@ -38,42 +47,46 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
     private Button mBtnAttenderCount;
     private Button mBtnReqAttend;
     private TextView mRegDate;
+    private TextView mCommentEmptyView;
 
     private RecruitPostDetailAttendeeFragment mAttendeeFragment;
 
+
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                BaLog.d("outRect=" + outRect);
+
+                // 이렇게 해야 헤더 뷰의 높이가 조정됨
+                ViewGroup.LayoutParams params = view.getLayoutParams();
+                outRect.top = params.height;
+            }
+        }, 0);
     }
 
     @Override
     public void requestList() {
-        new HttpAPIRequester(this, true, ServerURLInfo.API_GET_RECRUIT_POST_DETAIL + mPostId + "/", "GET", new HttpAPIRequester.OnAPIResponseListener() {
+        RecruitAPI.getRecruitPostDetail(getBaseActivity(), String.valueOf(mPostId), new APICallSuccessNotifier() {
             @Override
-            public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
-                setData(response);
-            }
-
-            @Override
-            public void onResponse(String APIUrl, int retCode, JSONArray response) throws JSONException {
-
-            }
-
-            @Override
-            public void onErrorResponse(String APIUrl, int retCode, String message, Throwable cause) {
-                //TODO 테스트
+            public void onSuccess(JSONObject response) {
                 try {
-                    setData(testResponse());
+                    setData(response);
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    showOkDialog("모집글 데이터를 가져오는 중 문제가 발생했습니다.");
                 }
             }
-        }).execute((JSONObject)null);
+        });
     }
 
     @Override
     protected MyRecyclerViewAdapter createListAdapter() {
-        return new MyRecyclerViewAdapter(this);
+        return new MyRecyclerViewAdapterWithHeader(this);
     }
 
     @Override
@@ -94,6 +107,7 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
         mBtnReqAttend = (Button) view.findViewById(R.id.btn_request_attend);
         mBtnReqAttend.setOnClickListener(this);
         mRegDate = (TextView) view.findViewById(R.id.post_reg_date);
+        mCommentEmptyView = (TextView) view.findViewById(R.id.comment_empty);
 
         return view;
     }
@@ -104,6 +118,7 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
      */
     public void setPostId(long postId) {
         this.mPostId = postId;
+
         requestList();
     }
 
@@ -123,15 +138,79 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
         return object;
     }
 
+    /**
+     * 이 모집글에 내가 참가신청을 했는지 여부 반환
+     * @param attendList
+     * @return
+     */
+    private boolean isAttendingThis(JSONArray attendList) {
+        try {
+            for (int i = 0; i < attendList.length(); i++) {
+                JSONObject attendInfo = attendList.getJSONObject(i);
+
+                if(UserHelper.userUid == attendInfo.getLong("user_id")) {
+                    return true;
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     private void setData(JSONObject response) throws JSONException {
+        mIsMyPost = response.optLong("author_id") == UserHelper.userUid;
+
+        if(mIsMyPost) {
+            ((RecruitPostDetailActivity) getBaseActivity()).showOptionsMenuItems();
+        }
+
         mTitle.setText(response.optString("title"));
         mContent.setText(response.optString("content"));
         mAuthor.setText(response.optString("author"));
         mBtnAttenderCount.setText(getString(R.string.attender_count) + " " +
                 response.optInt("attend_count") + "/" + response.optString("recruit_count"));
+
+        JSONArray attendList = response.getJSONArray("attend_list");
+
+        // 참가 신청, 참가 신청 취소 버튼 셋팅
+        if(!mIsMyPost) {
+            mBtnReqAttend.setVisibility(View.VISIBLE);
+            mIsAttendingThis = isAttendingThis(attendList);
+
+            if (mIsAttendingThis) {
+                mBtnReqAttend.setText(R.string.request_attend_cancel);
+            } else {
+                mBtnReqAttend.setText(R.string.request_attend);
+            }
+        } else {
+            // 내 글이면 참가신청 버튼 숨김
+            mIsAttendingThis = true;
+        }
+
+        createAttendeeFragment(attendList);
+
         mRegDate.setText(CalendarUtil.getDateString(response.optString("registered_date")));
 
         populateList(response.getJSONArray("comments"));
+    }
+
+    private void createAttendeeFragment(JSONArray attendList) {
+        mAttendeeFragment = RecruitPostDetailAttendeeFragment.newInstance();
+
+        for(int i=0; i < attendList.length(); i++) {
+            try {
+                JSONObject jsonObject = attendList.getJSONObject(i);
+
+                long id = jsonObject.getLong("user_id");
+                String name = jsonObject.getString("user_name");
+
+                mAttendeeFragment.addAttendee(id, name);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -167,71 +246,82 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
             mRecyclerViewAdapter.addDataset(dataset);
         } else {
             mRecyclerViewAdapter.setDataset(dataset);
+            showCommentsEmptyView(dataset.length() == 0);
         }
 
         mCurItemCount += dataset.length();
+    }
+
+    private void showCommentsEmptyView(boolean show) {
+        if(show) {
+            mCommentEmptyView.setVisibility(View.VISIBLE);
+        } else {
+            mCommentEmptyView.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_attender_count:
-                showAttendee(true);
+                if(mAttendeeFragment != null && !mAttendeeFragment.isVisible()) {
+                    showAttendee(true);
+                } else {
+                    showAttendee(false);
+                }
 
                 break;
             case R.id.btn_request_attend:
-                // 참가 신청
-                requestAttendToRecruit();
+                if(mIsAttendingThis) {
+                    // 참가 신청 취소
+                    requestAttendCancelToRecruit();
+                } else {
+                    // 참가 신청
+                    requestAttendToRecruit();
+                }
 
                 break;
         }
     }
 
     /**
+     * 참가신청 취소
+     */
+    private void requestAttendCancelToRecruit() {
+        RecruitAPI.cancelAttendToRecruit(getBaseActivity(), mPostId, new APICallSuccessNotifier() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                requestList();
+
+                showToast(R.string.succ_recruit_req_attend_canceled);
+            }
+        });
+    }
+
+    /**
      * 참가신청
      */
     private void requestAttendToRecruit() {
-        new HttpAPIRequester(this, true, String.format(ServerURLInfo.API_RECRUIT_REQUEST_ATTEND, mPostId), "GET",
-                new HttpAPIRequester.OnAPIResponseListener() {
-                    @Override
-                    public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
-                        //TODO 참가신청 성공 후 포스트 데이터 재요청
-                        requestList();
+        RecruitAPI.requestAttendToRecruit(getBaseActivity(), mPostId, new APICallSuccessNotifier() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                //TODO 참가신청 성공 후 모집글 데이터 재요청
+                requestList();
 
-                        showToast(R.string.succ_recruit_req_attend);
-                    }
-
-                    @Override
-                    public void onResponse(String APIUrl, int retCode, JSONArray response) throws JSONException {
-
-                    }
-
-                    @Override
-                    public void onErrorResponse(String APIUrl, int retCode, String message, Throwable cause) {
-                        //TODO 테스트
-
-                    }
-                }).execute((JSONObject)null);
+                showToast(R.string.succ_recruit_req_attend);
+            }
+        });
     }
 
     private void showAttendee(boolean show) {
+        if(mAttendeeFragment == null)
+            return;
+
         if (show) {
-            FragmentManager fm = getChildFragmentManager();
-
-            FragmentTransaction ft = fm.beginTransaction();
-
-            mAttendeeFragment = RecruitPostDetailAttendeeFragment.newInstance();
-            ft.add(R.id.container_attendee_fragment, mAttendeeFragment);
-            ft.commit();
-
+            addChildFragment(R.id.container_attendee_fragment, mAttendeeFragment,
+                    R.anim.slide_top_in, R.anim.slide_bottom_out);
         } else {
-            FragmentManager fm = getChildFragmentManager();
-
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.remove(mAttendeeFragment);
-            ft.commit();
-
-            mAttendeeFragment = null;
+            removeChildFragment(mAttendeeFragment, R.anim.slide_top_out, R.anim.slide_bottom_in);
         }
     }
 
@@ -239,7 +329,21 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
      * 댓글 조회 API 요청
      */
     public void requestGetComments() {
+        RecruitAPI.getRecruitPostComments(getBaseActivity(), mPostId, new APICallSuccessNotifier() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                showToast("댓글 조회 SUccess");
 
+                try {
+                    JSONArray jsonArray = response.getJSONArray("json_array");
+                    mRecyclerViewAdapter.setDataset(jsonArray);
+                    showCommentsEmptyView(jsonArray.length() == 0);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    showToast("댓글 조회 후 데이터 교체 실패");
+                }
+            }
+        });
     }
 
     public static class ViewHolder extends AbsRecyclerViewHolder {

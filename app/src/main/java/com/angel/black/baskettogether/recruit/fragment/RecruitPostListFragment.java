@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -108,10 +107,7 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment
 
     @Override
     protected View createHeaderView(ViewGroup parent) {
-        return new ViewStub(getActivity());     // 헤더가 없을 땐 빈 ViewStup 전달
-//        TextView tv = new TextView(getActivity());
-//        tv.setText("Header View");
-//        return tv;
+        return null;
     }
 
     private JSONArray testResponse(int start) {
@@ -151,13 +147,6 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment
                     }
 
                     @Override
-                    public void onResponse(String APIUrl, int retCode, JSONArray response) throws JSONException {
-                        BaLog.i("retCode=" + retCode + ", response=" + response);
-                        populateList(response);
-                        refreshComplete(true);
-                    }
-
-                    @Override
                     public void onErrorResponse(String APIUrl, int retCode, String message, Throwable cause) {
                         //TODO 테스트 용
                         mRecyclerView.postDelayed(new Runnable() {
@@ -187,7 +176,7 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment
         BaLog.d("position=" + position + ", id=" + id);
         Intent intent = new Intent(getActivity(), RecruitPostDetailActivity.class);
         intent.putExtra(IntentConst.KEY_EXTRA_POST_ID, id);
-        startActivity(intent);
+        startActivityForResult(intent, IntentConst.REQUEST_VIEW_RECRUIT_POST_DETAIL);
     }
 
     @Override

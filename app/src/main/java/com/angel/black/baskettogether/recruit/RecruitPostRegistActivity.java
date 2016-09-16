@@ -1,8 +1,5 @@
 package com.angel.black.baskettogether.recruit;
 
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,18 +14,18 @@ import android.widget.TextView;
 import com.angel.black.baframework.core.base.BaseActivity;
 import com.angel.black.baframework.logger.BaLog;
 import com.angel.black.baframework.network.HttpAPIRequester;
+import com.angel.black.baframework.ui.dialog.DatePickerDialogFragment;
 import com.angel.black.baframework.util.CalendarUtil;
 import com.angel.black.baframework.util.StringUtil;
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.core.network.ServerURLInfo;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Calendar;
 
-public class RecruitPostRegistActivity extends BaseActivity {
+public class RecruitPostRegistActivity extends BaseActivity implements DatePickerDialogFragment.OnDatePickListener {
     private EditText mEditTitle;
     private EditText mEditContent;
     private ImageButton mBtnPickDate;
@@ -65,7 +62,7 @@ public class RecruitPostRegistActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.post_recruit, menu);
+        getMenuInflater().inflate(R.menu.recruit_post_regist, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -110,11 +107,6 @@ public class RecruitPostRegistActivity extends BaseActivity {
                 }
 
                 @Override
-                public void onResponse(String APIUrl, int retCode, JSONArray response) throws JSONException {
-
-                }
-
-                @Override
                 public void onErrorResponse(String APIUrl, int retCode, String message, Throwable cause) {
                     showToast("글등록 실패");
                 }
@@ -133,7 +125,7 @@ public class RecruitPostRegistActivity extends BaseActivity {
         jsonObject.put("title", mEditTitle.getText().toString().trim());
         jsonObject.put("content", mEditContent.getText().toString().trim());
         jsonObject.put("recruit_count", mSpinPeopleNum.getSelectedItemPosition() + 1);
-        jsonObject.put("recruit_status", 0);
+//        jsonObject.put("recruit_status", 0);
 //        jsonObject.put("gps_x", "123.356");
 //        jsonObject.put("gps_y", "452.952");
 //        jsonObject.put("address1", "경기도 양주시 백석읍");
@@ -151,54 +143,17 @@ public class RecruitPostRegistActivity extends BaseActivity {
     }
 
     public void showDatePickerDialog() {
-        DatePickerFragment newFragment = DatePickerFragment.newInstance(recruitDateYear, recruitDateMonth, recruitDateDay);
+        DatePickerDialogFragment newFragment = DatePickerDialogFragment.newInstance(recruitDateYear, recruitDateMonth, recruitDateDay);
         newFragment.show(getFragmentManager(), "datePicker");
     }
 
-    public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
-        private int year;
-        private int month;
-        private int day;
+    @Override
+    public void onDatePick(DatePicker view, int year, int month, int day) {
+        BaLog.i("year=" + year + ", month=" + month + ", day=" + day);
+        recruitDateYear = year;
+        recruitDateMonth = month;
+        recruitDateDay = day;
 
-        /**
-         * Create a new instance of MyDialogFragment, providing "num"
-         * as an argument.
-         */
-        public static DatePickerFragment newInstance(int year, int month, int day) {
-            DatePickerFragment f = new DatePickerFragment();
-
-            // Supply num input as an argument.
-            Bundle args = new Bundle();
-            args.putInt("year", year);
-            args.putInt("month", month);
-            args.putInt("day", day);
-            f.setArguments(args);
-
-            return f;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final Calendar c = Calendar.getInstance();
-
-            if(savedInstanceState != null) {
-                c.set(savedInstanceState.getInt("year"), savedInstanceState.getInt("month"), savedInstanceState.getInt("day"));
-            }
-
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
-
-            return new DatePickerDialog(getActivity(), this, year, month, day);
-        }
-
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-            RecruitPostRegistActivity activity = ((RecruitPostRegistActivity)getActivity());
-            activity.recruitDateYear = year;
-            activity.recruitDateMonth = month;
-            activity.recruitDateDay = day;
-
-            activity.mTxtRecruitDate.setText(CalendarUtil.getDateString(year, month, day));
-        }
+        mTxtRecruitDate.setText(CalendarUtil.getDateString(year, month, day));
     }
 }

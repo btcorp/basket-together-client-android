@@ -1,26 +1,30 @@
 package com.angel.black.baskettogether.recruit;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.angel.black.baframework.core.base.BaseActivity;
-import com.angel.black.baframework.network.HttpAPIRequester;
+import com.angel.black.baframework.logger.BaLog;
+import com.angel.black.baframework.ui.dialog.DialogClickListener;
 import com.angel.black.baskettogether.R;
+import com.angel.black.baskettogether.api.APICallSuccessNotifier;
+import com.angel.black.baskettogether.api.RecruitAPI;
 import com.angel.black.baskettogether.common.view.CommentInputView;
 import com.angel.black.baskettogether.core.intent.IntentConst;
-import com.angel.black.baskettogether.core.network.ServerURLInfo;
 import com.angel.black.baskettogether.recruit.fragment.RecruitPostDetailFragment;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class RecruitPostDetailActivity extends BaseActivity implements CommentInputView.CommentActionListener {
     private long mPostId;
 
+    private Menu mOptionsMenu;                  // 툴바 수정, 삭제 메뉴
     private CommentInputView mCmntInputView;
-
     private RecruitPostDetailFragment mPostDetailFragment;
 
     @Override
@@ -46,6 +50,42 @@ public class RecruitPostDetailActivity extends BaseActivity implements CommentIn
         mPostDetailFragment.setPostId(mPostId);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.recruit_post_detail, menu);
+        mOptionsMenu = menu;
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        if(item.getItemId() == R.id.menu_edit) {
+            BaLog.d("글 수정 버튼 클릭!");
+
+        } else if(item.getItemId() == R.id.menu_delete) {
+            BaLog.d("글 삭제 버튼 클릭!");
+            showAlertDialog(R.string.confirm_delete_this_recruit_post, new DialogClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    BaLog.d("글 삭제 OK 버튼 클릭");
+
+                    RecruitAPI.deleteRecruitPost(RecruitPostDetailActivity.this, mPostId, new APICallSuccessNotifier() {
+                        @Override
+                        public void onSuccess(JSONObject response) {
+                            setResult(IntentConst.RESULT_DELETED);
+                            finish();
+                        }
+                    });
+                }
+            });
+        }
+        return false;
+    }
+
+    public void showOptionsMenuItems() {
+        mOptionsMenu.getItem(0).setVisible(true);
+        mOptionsMenu.getItem(1).setVisible(true);
+    }
 
     @Override
     public void onClickRegistComment() {
@@ -59,34 +99,17 @@ public class RecruitPostDetailActivity extends BaseActivity implements CommentIn
 
     private void requestRegistComment() throws JSONException {
         String content = mCmntInputView.getInputedComment();
-        JSONObject commentData = buildRegistCommentData(content);
 
-        new HttpAPIRequester(this, true, String.format(ServerURLInfo.API_RECRUIT_POST_REGIST_COMMENT, mPostId), "POST",
-                new HttpAPIRequester.OnAPIResponseListener() {
-                    @Override
-                    public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
-                        // 댓글등록 성공
-                        showToast("댓글 등록 성공");
-                        mPostDetailFragment.requestGetComments();
-                    }
+        RecruitAPI.registCommentToRecruit(this, mPostId, content, new APICallSuccessNotifier() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                // 댓글등록 성공
+                hideCurrentFocusKeyboard();
+                mCmntInputView.setCommentText("");
+                showToast("댓글 등록 성공");
 
-                    @Override
-                    public void onResponse(String APIUrl, int retCode, JSONArray response) throws JSONException {
-
-                    }
-
-                    @Override
-                    public void onErrorResponse(String APIUrl, int retCode, String message, Throwable cause) {
-                        //TODO 테스트
-
-                    }
-                }).execute(commentData);
-    }
-
-    private JSONObject buildRegistCommentData(String comment) throws JSONException {
-        JSONObject json = new JSONObject();
-        json.put("content", comment);
-
-        return json;
+                mPostDetailFragment.requestGetComments();
+            }
+        });
     }
 }

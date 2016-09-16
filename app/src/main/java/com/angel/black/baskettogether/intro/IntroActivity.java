@@ -6,16 +6,14 @@ import android.view.View;
 
 import com.angel.black.baframework.core.base.BaseActivity;
 import com.angel.black.baframework.logger.BaLog;
-import com.angel.black.baframework.network.HttpAPIRequester;
 import com.angel.black.baframework.util.StringUtil;
 import com.angel.black.baskettogether.R;
-import com.angel.black.baskettogether.core.network.ServerURLInfo;
+import com.angel.black.baskettogether.api.APICallSuccessNotifier;
+import com.angel.black.baskettogether.api.UserAPI;
 import com.angel.black.baskettogether.core.preference.KeyConst;
 import com.angel.black.baskettogether.login.LoginActivity;
 import com.angel.black.baskettogether.recruit.RecruitPostListActivity;
-import com.angel.black.baskettogether.user.UserHelper;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -79,40 +77,12 @@ public class IntroActivity extends BaseActivity {
     }
 
     private void requestLogin(final String id, final String pwd) throws JSONException {
-        JSONObject loginData = buildRequestLoginData(id, pwd);
-        new HttpAPIRequester(this, true, ServerURLInfo.API_USER_LOGIN, "POST",
-                new HttpAPIRequester.OnAPIResponseListener() {
+        UserAPI.login(this, id, pwd, new APICallSuccessNotifier() {
             @Override
-            public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
-                try {
-                    String token = response.getString("token");
-                    UserHelper.saveUserInfo(IntroActivity.this, token, id, pwd);
-
-                    showToast("로그인 성공");
-                    startActivity(RecruitPostListActivity.class, true);
-                } catch (JSONException e) {
-                    showOkDialog(response.toString());
-                    startActivity(LoginActivity.class);
-                }
+            public void onSuccess(JSONObject response) {
+                showToast("로그인 성공");
+                startActivity(RecruitPostListActivity.class, true);
             }
-
-            @Override
-            public void onResponse(String APIUrl, int retCode, JSONArray response) throws JSONException {
-
-            }
-
-            @Override
-            public void onErrorResponse(String APIUrl, int retCode, String message, Throwable cause) {
-
-            }
-        }).execute(loginData);
-    }
-
-    private JSONObject buildRequestLoginData(String id, String pwd) throws JSONException{
-        JSONObject json = new JSONObject();
-        json.put("username", id);
-        json.put("password", pwd);
-
-        return json;
+        });
     }
 }
