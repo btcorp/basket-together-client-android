@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">Basket Together</string>
 
+    <string name="title_activity_recruit_post_regist">모집 글 등록</string>
+    <string name="title_activity_recruit_post_list">팀 모집글 목록</string>
+    <string name="title_activity_recruit_post_regist_map">농구장 위치 지정</string>
+    <string name="title_activity_recruit_post_detail">팀 모집글 상세</string>
+
     <string name="prompt_user_id">아이디</string>
     <string name="prompt_password">비밀번호</string>
     <string name="prompt_password_re">비밀번호 재입력</string>
@@ -19,11 +24,9 @@
     <string name="post_content">내용을 입력하세요.</string>
     <string name="complete">완료</string>
     <string name="regist">등록</string>
-    <string name="title_activity_recruit_post_regist">모집 글 등록</string>
+
     <string name="error_pwd_minimum_char">비밀번호는 최소 8자리여야 합니다.</string>
-    <string name="title_activity_recruit_post_list">팀 모집글 목록</string>
     <string name="login">로그인</string>
-    <string name="title_activity_recruit_post_detail">팀 모집글 상세</string>
     <string name="attender_count">참가 인원</string>
     <string name="recruit_count">모집 인원</string>
     <string name="request_attend">참가 신청</string>
@@ -40,4 +43,16 @@
     <string name="edit">수정</string>
     <string name="delete">삭제</string>
     <string name="confirm_delete_this_recruit_post">이 모집글을 삭제하시겠습니까?</string>
+    <string name="request_access_location_permission">사용자의 위치정보에 접근하려 합니다.</string>
+    <string name="error_require_access_location_permission">지도에 접근하기 위해서 위치액세스 권한을 허용해야합니다.</string>
+    <string name="error_not_picked_place">화면을 클릭하여 농구장 위치를 지정해주세요.</string>
+    <string name="error_not_input_post_title">글 제목을 입력해주세요.</string>
+    <string name="error_not_input_post_content">글 내용을 입력해주세요.</string>
+    <string name="error_not_input_court_place">농구장의 위치를 지정해주세요.</string>
+    <string name="error_ealier_than_today">오늘 이전의 날짜는 선택할 수 없습니다.</string>
+    <string name="detail_address">상세 주소</string>
+    <string name="hint_time_pick">시간을 지정해주세요.</string>
+    <string name="hint_place_pick">농구장 위치를 지정해주세요.</string>
+    <string name="view_court_location">농구장 위치 확인</string>
+
 </resources>

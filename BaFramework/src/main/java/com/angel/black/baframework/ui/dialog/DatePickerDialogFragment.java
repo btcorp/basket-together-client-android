@@ -2,8 +2,8 @@ package com.angel.black.baframework.ui.dialog;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
 
 import java.util.Calendar;
@@ -14,14 +14,9 @@ import java.util.Calendar;
 public class DatePickerDialogFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
     private OnDatePickListener mOnDatePickListener;
 
-    /**
-     * Create a new instance of MyDialogFragment, providing "num"
-     * as an argument.
-     */
     public static DatePickerDialogFragment newInstance(int year, int month, int day) {
         DatePickerDialogFragment f = new DatePickerDialogFragment();
 
-        // Supply num input as an argument.
         Bundle args = new Bundle();
         args.putInt("year", year);
         args.putInt("month", month);
@@ -44,9 +39,7 @@ public class DatePickerDialogFragment extends DialogFragment implements DatePick
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Calendar c = Calendar.getInstance();
 
-        if(savedInstanceState != null) {
-            c.set(savedInstanceState.getInt("year"), savedInstanceState.getInt("month"), savedInstanceState.getInt("day"));
-        }
+        c.set(getArguments().getInt("year"), getArguments().getInt("month"), getArguments().getInt("day"));
 
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);

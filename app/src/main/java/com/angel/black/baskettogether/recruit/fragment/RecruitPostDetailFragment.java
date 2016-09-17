@@ -1,5 +1,6 @@
 package com.angel.black.baskettogether.recruit.fragment;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,7 +19,10 @@ import com.angel.black.baframework.util.CalendarUtil;
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.api.APICallSuccessNotifier;
 import com.angel.black.baskettogether.api.RecruitAPI;
+import com.angel.black.baskettogether.core.intent.IntentConst;
 import com.angel.black.baskettogether.recruit.RecruitPostDetailActivity;
+import com.angel.black.baskettogether.recruit.googlemap.LocationInfo;
+import com.angel.black.baskettogether.recruit.googlemap.RecruitPostLocationMapActivity;
 import com.angel.black.baskettogether.user.UserHelper;
 
 import org.json.JSONArray;
@@ -34,10 +38,6 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
     private long mPostId;
     private boolean mIsAttendingThis;   // 내가 이 모집글에 참가중인지 여부
 
-    public boolean isMyPost() {
-        return mIsMyPost;
-    }
-
     private boolean mIsMyPost;          // 이 글이 내가 쓴글인지 여부
 
     private TextView mTitle;
@@ -47,10 +47,13 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
     private Button mBtnAttenderCount;
     private Button mBtnReqAttend;
     private TextView mRegDate;
+    private TextView mMeetingDate;
+    private TextView mMeetingPlaceAddr1;
+    private TextView mMeetingPlaceAddr2;
+    private Button mBtnViewLocation;
     private TextView mCommentEmptyView;
 
     private RecruitPostDetailAttendeeFragment mAttendeeFragment;
-
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -60,8 +63,6 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
 
             @Override
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                BaLog.d("outRect=" + outRect);
-
                 // 이렇게 해야 헤더 뷰의 높이가 조정됨
                 ViewGroup.LayoutParams params = view.getLayoutParams();
                 outRect.top = params.height;
@@ -107,6 +108,11 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
         mBtnReqAttend = (Button) view.findViewById(R.id.btn_request_attend);
         mBtnReqAttend.setOnClickListener(this);
         mRegDate = (TextView) view.findViewById(R.id.post_reg_date);
+        mMeetingDate = (TextView) view.findViewById(R.id.recruit_datetime);
+        mMeetingPlaceAddr1 = (TextView) view.findViewById(R.id.recruit_place_addr1);
+        mMeetingPlaceAddr2 = (TextView) view.findViewById(R.id.recruit_place_addr2);
+        mBtnViewLocation = (Button) view.findViewById(R.id.btn_location_map);
+        mBtnViewLocation.setOnClickListener(this);
         mCommentEmptyView = (TextView) view.findViewById(R.id.comment_empty);
 
         return view;
@@ -168,7 +174,7 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
 
         mTitle.setText(response.optString("title"));
         mContent.setText(response.optString("content"));
-        mAuthor.setText(response.optString("author"));
+        mAuthor.setText(response.optString("author_name"));
         mBtnAttenderCount.setText(getString(R.string.attender_count) + " " +
                 response.optInt("attend_count") + "/" + response.optString("recruit_count"));
 
@@ -191,7 +197,14 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
 
         createAttendeeFragment(attendList);
 
-        mRegDate.setText(CalendarUtil.getDateString(response.optString("registered_date")));
+        mRegDate.setText(CalendarUtil.getDateString(response.optLong("registered_date")));
+        mMeetingDate.setText(CalendarUtil.getDateString(response.optLong("meeting_date")));
+        String addr1 = response.optString("adress1");
+        String addr2 = response.optString("adress2");
+        mMeetingPlaceAddr1.setText(addr1);
+        mMeetingPlaceAddr2.setText(addr2);
+
+        mBtnViewLocation.setTag(new LocationInfo(response.optDouble("lat"), response.optDouble("lng"), addr1 + " " + addr2));
 
         populateList(response.getJSONArray("comments"));
     }
@@ -220,10 +233,11 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
         TextView commentContent = (TextView) v.findViewById(R.id.comment_content);
         TextView commentAuthor = (TextView) v.findViewById(R.id.comment_author);
         ImageView commentAuthorImage = (ImageView) v.findViewById(R.id.comment_author_image);
+        TextView commentRegDate = (TextView) v.findViewById(R.id.comment_reg_date);
 
         v.setOnClickListener(this);
 
-        return new ViewHolder(v, commentContent, commentAuthor, commentAuthorImage);
+        return new ViewHolder(v, commentContent, commentAuthor, commentAuthorImage, commentRegDate);
     }
 
     @Override
@@ -231,6 +245,7 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
         ((ViewHolder) holder).mCommentContent.setText(data.optString("content"));
         ((ViewHolder) holder).mCommentAuthor.setText(data.optString("author_name"));
         ((ViewHolder) holder).mCommentAuthorImage.setImageResource(R.drawable.ic_account_circle_black_24dp);
+        ((ViewHolder) holder).mCommentRegDate.setText(CalendarUtil.getDateString(data.optLong("registered_date")));
     }
 
     @Override
@@ -278,6 +293,21 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
                 } else {
                     // 참가 신청
                     requestAttendToRecruit();
+                }
+
+                break;
+            case R.id.btn_location_map:
+                if(mBtnViewLocation.getTag() != null) {
+                    LocationInfo locationInfo = (LocationInfo) mBtnViewLocation.getTag();
+
+                    Intent intent = new Intent(getContext(), RecruitPostLocationMapActivity.class);
+
+                    intent.putExtra(IntentConst.KEY_EXTRA_MAP_LATITUDE, locationInfo.latitude);
+                    intent.putExtra(IntentConst.KEY_EXTRA_MAP_LONGITUDE, locationInfo.longitude);
+                    intent.putExtra(IntentConst.KEY_EXTRA_MAP_MODE, RecruitPostLocationMapActivity.MapMode.VIEW.toString());
+                    intent.putExtra(IntentConst.KEY_EXTRA_MAP_ADDRESS, locationInfo.address);
+
+                    startActivity(intent);
                 }
 
                 break;
@@ -350,12 +380,14 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
         public TextView mCommentContent;
         public TextView mCommentAuthor;
         public ImageView mCommentAuthorImage;
+        public TextView mCommentRegDate;
 
-        public ViewHolder(View rowLayout, TextView commentContent, TextView commentAuthor, ImageView commentAuthorImage) {
+        public ViewHolder(View rowLayout, TextView commentContent, TextView commentAuthor, ImageView commentAuthorImage, TextView commentRegDate) {
             super(rowLayout);
             this.mCommentContent = commentContent;
             this.mCommentAuthor = commentAuthor;
             this.mCommentAuthorImage = commentAuthorImage;
+            this.mCommentRegDate = commentRegDate;
         }
     }
 }

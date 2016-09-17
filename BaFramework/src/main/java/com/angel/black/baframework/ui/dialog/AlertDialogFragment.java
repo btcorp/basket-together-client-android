@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 public class AlertDialogFragment extends DialogFragment {
     private static final String ARG_TITLE = "title";
     private static final String ARG_MESSAGE = "message";
+    private static final String ARG_NOT_CANCELABLE = "notCancelable";
     private static final String ARG_POSITIVE_CLICK = "positiveClick";
     private static final String ARG_NEGATIVE_CLICK = "negativeClick";
 
@@ -38,8 +39,20 @@ public class AlertDialogFragment extends DialogFragment {
         return dialogFragment;
     }
 
+    public static AlertDialogFragment newInstance(String title, String message, boolean notCancelable, DialogClickListener positiveClickListener) {
+        AlertDialogFragment dialogFragment = new AlertDialogFragment();
 
-    public static AlertDialogFragment newInstance(String title, String message,
+        Bundle args = new Bundle();
+        if(title != null) args.putString(ARG_TITLE, title);
+        args.putString(ARG_MESSAGE, message);
+        args.putBoolean(ARG_NOT_CANCELABLE, notCancelable);
+        args.putSerializable(ARG_POSITIVE_CLICK, positiveClickListener);
+        dialogFragment.setArguments(args);
+
+        return dialogFragment;
+    }
+
+    public static AlertDialogFragment newInstance(String title, String message, boolean notCancelable,
                                                   DialogClickListener positiveClickListener,
                                                   DialogClickListener negativeClickListener) {
         AlertDialogFragment dialogFragment = new AlertDialogFragment();
@@ -47,6 +60,7 @@ public class AlertDialogFragment extends DialogFragment {
         Bundle args = new Bundle();
         if(title != null) args.putString(ARG_TITLE, title);
         args.putString(ARG_MESSAGE, message);
+        args.putBoolean(ARG_NOT_CANCELABLE, notCancelable);
         args.putSerializable(ARG_POSITIVE_CLICK, positiveClickListener);
         args.putSerializable(ARG_NEGATIVE_CLICK, negativeClickListener);
         dialogFragment.setArguments(args);
@@ -73,6 +87,8 @@ public class AlertDialogFragment extends DialogFragment {
         if(negativeClick != null) {
             builder.setNegativeButton(android.R.string.cancel, negativeClick);
         }
+
+        builder.setCancelable(!getArguments().getBoolean(ARG_NOT_CANCELABLE));
 
         return builder.create();
     }

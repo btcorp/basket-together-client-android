@@ -1,8 +1,14 @@
 package com.angel.black.baframework.core.base;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +25,7 @@ import com.angel.black.baframework.logger.BaLog;
 import com.angel.black.baframework.preference.MyPreferenceManager;
 import com.angel.black.baframework.ui.dialog.AlertDialogFragment;
 import com.angel.black.baframework.ui.dialog.DialogClickListener;
+import com.angel.black.baframework.ui.dialog.PermissionConfirmationDialog;
 
 /**
  * Created by KimJeongHun on 2016-05-19.
@@ -116,7 +123,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     public void showOkDialog(String message) {
         AlertDialogFragment dialogFragment = AlertDialogFragment.newInstance(null, message);
-        dialogFragment.show(getSupportFragmentManager(), "okDialog");
+        showDialogFragment(dialogFragment, "okDlg");
     }
 
     public void showAlertDialog(int msgResId, DialogClickListener positiveClick) {
@@ -125,11 +132,28 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     public void showAlertDialog(String message, DialogClickListener positiveClick) {
         AlertDialogFragment dialogFragment = AlertDialogFragment.newInstance(null, message, positiveClick);
-        dialogFragment.show(getSupportFragmentManager(), "okDialogWithPositivie");
+        showDialogFragment(dialogFragment, "altDlgWithPosi");
+    }
+
+    public void showAlertDialogNotCancelable(int msgResId, DialogClickListener positiveClick) {
+        AlertDialogFragment dialogFragment = AlertDialogFragment.newInstance(null, getString(msgResId), true, positiveClick);
+        showDialogFragment(dialogFragment, "altDlgWithPosiNotCancel");
+    }
+
+    private void showDialogFragment(DialogFragment dialogFragment, String tag) {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+
+        ft.add(dialogFragment, tag);
+        ft.commitAllowingStateLoss();
     }
 
     public void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    public void showToast(int msgResId) {
+        Toast.makeText(this, msgResId, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -157,6 +181,17 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     public MyPreferenceManager getPreferenceManager() {
         return new MyPreferenceManager(this);
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    protected void requestPermission(String permission, int requestCode, int permissonReqMsgId) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
+            PermissionConfirmationDialog.newInstance(getResources().getString(permissonReqMsgId),
+                    permission, requestCode, true)
+                    .show(getSupportFragmentManager(), PermissionConfirmationDialog.TAG);
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
+        }
     }
 
 

@@ -75,37 +75,54 @@
             android:text="@string/recruit_time"/>
 
         <TextView
-            android:id="@+id/recruit_time"
+            android:id="@+id/recruit_datetime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"/>
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal">
+        android:layout_marginTop="8dp" >
 
         <TextView
+            android:id="@+id/label_recruit_place"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:text="@string/recruit_place"/>
-
-        <TextView
-            android:id="@+id/recruit_place"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"/>
 
         <Button
             style="?android:textAppearanceSmall"
             android:id="@+id/btn_location_map"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
             android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
             android:text="@string/location_check" />
-    </LinearLayout>
+
+        <TextView
+            android:id="@+id/recruit_place_addr1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/label_recruit_place"
+            android:layout_toLeftOf="@id/btn_location_map"
+            android:layout_alignTop="@id/label_recruit_place"
+            android:layout_alignBottom="@id/label_recruit_place"
+            android:layout_marginLeft="8dp"/>
+
+        <TextView
+            android:id="@+id/recruit_place_addr2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/recruit_place_addr1"
+            android:layout_alignLeft="@id/recruit_place_addr1"
+            android:layout_toLeftOf="@id/btn_location_map"/>
+
+
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
