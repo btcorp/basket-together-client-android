@@ -10,16 +10,29 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.angel.black.baframework.core.base.BaseListActivity;
 import com.angel.black.baframework.core.base.BaseListFragment;
 import com.angel.black.baframework.logger.BaLog;
 import com.angel.black.baframework.util.ScreenUtil;
 import com.angel.black.baskettogether.R;
+import com.angel.black.baskettogether.api.APICallSuccessNotifier;
+import com.angel.black.baskettogether.api.UserAPI;
+import com.angel.black.baskettogether.core.MyApplication;
 import com.angel.black.baskettogether.core.intent.IntentConst;
+import com.angel.black.baskettogether.core.view.imageview.RoundedImageView;
+import com.angel.black.baskettogether.login.LoginActivity;
 import com.angel.black.baskettogether.recruit.fragment.RecruitPostListFragment;
+import com.angel.black.baskettogether.user.UserHelper;
+import com.angel.black.baskettogether.user.UserProfileEditActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by KimJeongHun on 2016-06-06.
@@ -54,8 +67,35 @@ public class RecruitPostListActivity extends BaseListActivity implements View.On
         mNaviView = (NavigationView) mDrawerLayout.findViewById(R.id.navigation);
         mNaviView.inflateHeaderView(R.layout.recruit_post_list_drawer_header);
         mNaviView.inflateMenu(R.menu.recruit_post_list_drawer_items);
-
         mNaviView.setItemBackgroundResource(R.drawable.base_list_item_selector);
+
+        View headerView = mNaviView.getHeaderView(0);
+        TextView txtNickName = (TextView) headerView.findViewById(R.id.user_nickname);
+        txtNickName.setText(UserHelper.userNickName);
+
+        Button btnEditUserInfo = (Button) headerView.findViewById(R.id.btn_edit_user_info);
+        btnEditUserInfo.setOnClickListener(this);
+
+        final RoundedImageView userImgView = (RoundedImageView) headerView.findViewById(R.id.user_profile_img);
+
+        ((MyApplication) getApplication()).getImageLoader().get(MyApplication.serverUrl + UserHelper.userProfileImgUrl,
+                new ImageLoader.ImageListener() {
+                    @Override
+                    public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
+                        BaLog.i("uri=" + imageContainer.getRequestUrl() + ", bitmap=" + imageContainer.getBitmap());
+                        if(imageContainer.getBitmap() == null) {
+                            return;
+                        }
+                        userImgView.setImageBitmap(imageContainer.getBitmap());
+                    }
+
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+
+                    }
+                });
+
+
 
         addFloatingActionButton();
     }
@@ -84,8 +124,10 @@ public class RecruitPostListActivity extends BaseListActivity implements View.On
     public void onClick(View v) {
         BaLog.i("v.getId()=" + v.getId());
 
-        if(v.getTag().equals(TAG_FAB)) {
+        if(v.getTag() != null && v.getTag().equals(TAG_FAB)) {
             startActivityForResult(RecruitPostRegistActivity.class, IntentConst.REQUEST_REGIST_RECRUIT_POST);
+        } else if (v.getId() == R.id.btn_edit_user_info) {
+            startActivity(UserProfileEditActivity.class);
         }
     }
 
@@ -107,7 +149,6 @@ public class RecruitPostListActivity extends BaseListActivity implements View.On
                 break;
 
             case R.id.navigation_item_3:
-                //로그아웃
 //                LoginUtil.logOut(LoginUtil.REQUEST_COMMON_LOGIN, MainShareActivity.this);
                 break;
 
@@ -116,6 +157,19 @@ public class RecruitPostListActivity extends BaseListActivity implements View.On
                 break;
 
             case R.id.navigation_item_5:
+                // 로그아웃
+
+                try {
+                    UserAPI.logout(RecruitPostListActivity.this, new APICallSuccessNotifier() {
+                        @Override
+                        public void onSuccess(JSONObject response) {
+                            startActivity(LoginActivity.class, true);
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    showOkDialog("로그아웃이 되지 않았습니다.");
+                }
 
                 break;
 

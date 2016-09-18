@@ -8,6 +8,8 @@ import com.angel.black.baskettogether.user.UserHelper;
 
 import org.apache.http.client.methods.HttpRequestBase;
 
+import java.net.HttpURLConnection;
+
 /**
  * Created by KimJeongHun on 2016-09-11.
  */
@@ -26,6 +28,19 @@ public class MyRequestStrategy implements HttpAPIRequester.HttpRequestStrategy {
 
         if (isNeedUserAuthToken()) {
             httpRequestBase.setHeader("Token", UserHelper.userAccessToken);
+            BaLog.d("setHeader(Token, " + UserHelper.userAccessToken + ")");
+        }
+    }
+
+    @Override
+    public void setHeader(HttpURLConnection conn) {
+        conn.setRequestProperty("Accept", "application/json");                          // 서버 응답 컨텐츠 타입
+        BaLog.d("setHeader(Accept, application/json)");
+        conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");   // 요청 컨텐츠 타입
+        BaLog.d("setHeader(Content-type, application/x-www-form-urlencoded)");
+
+        if (isNeedUserAuthToken()) {
+            conn.setRequestProperty("Token", UserHelper.userAccessToken);
             BaLog.d("setHeader(Token, " + UserHelper.userAccessToken + ")");
         }
     }

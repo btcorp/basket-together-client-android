@@ -42,6 +42,7 @@ public class RecruitPostLocationMapActivity extends BaseActivity implements OnMa
     private static final double SEOUL_CITY_HALL_LATITUDE = 37.566367;
     private static final double SEOUL_CITY_HALL_LONGITUDE = 126.977929;
 
+    private static final int ANIMATE_CAMERA_SPEED = 300;
     private MapFragment mMapFragment;
     private GoogleMap mGoogleMap;
     private Marker mMarker;
@@ -142,7 +143,7 @@ public class RecruitPostLocationMapActivity extends BaseActivity implements OnMa
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermission(Manifest.permission.ACCESS_COARSE_LOCATION,
                     PermissionConstants.REQUEST_LOCATION_PERMISSION,
-                    R.string.request_access_location_permission);
+                    R.string.request_access_location_permission, true);
             return;
         } else {
             mGoogleMap.setMyLocationEnabled(true);
@@ -198,7 +199,7 @@ public class RecruitPostLocationMapActivity extends BaseActivity implements OnMa
     private void showCurrentLocation(final Double latitude, final Double longitude) {
         LatLng curPoint = new LatLng(latitude, longitude);
 
-        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curPoint, 15), 300, null);
+        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curPoint, 15), ANIMATE_CAMERA_SPEED, null);
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
     }
 
@@ -225,7 +226,7 @@ public class RecruitPostLocationMapActivity extends BaseActivity implements OnMa
         if(mMapMode != MapMode.SELECT_LOCATION)
             return;
 
-        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng), ANIMATE_CAMERA_SPEED, null);
         setMarker(latLng);
     }
 
@@ -297,7 +298,7 @@ public class RecruitPostLocationMapActivity extends BaseActivity implements OnMa
 
     @Override
     public void onMarkerDragEnd(Marker marker) {
-        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()), ANIMATE_CAMERA_SPEED, null);
         setMarker(marker.getPosition());
     }
 

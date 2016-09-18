@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.angel.black.baskettogether.core.view.imageview.RoundedImageView
+        android:id="@+id/user_profile_img"
+        android:layout_width="@dimen/default_profile_image_size"
+        android:layout_height="@dimen/default_profile_image_size"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/ic_person_white_24dp"
+        android:background="@color/black_overlay"/>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/edit_nickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_nickname"
+            android:imeOptions="actionNext"
+            android:inputType="text"
+            android:singleLine="true" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp">
+
+        <EditText
+            android:id="@+id/edit_phone_num"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_phone_num"
+            android:imeOptions="actionNext"
+            android:inputType="phone"
+            android:singleLine="true" />
+
+    </android.support.design.widget.TextInputLayout>
+
+</LinearLayout>

@@ -26,6 +26,6 @@
             android:id="@+id/navigation_item_5"
             android:icon="@drawable/ic_menu_white_24dp"
             android:onClick="onMenuItemClick"
-            android:title="네비 아이템5"/>
+            android:title="@string/logout"/>
     </group>
 </menu>

@@ -11,11 +11,12 @@
         android:background="@color/colorPrimary"
         android:paddingBottom="8dp">
 
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp">
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
 
             <!--<com.facebook.login.widget.ProfilePictureView-->
                 <!--android:id="@+id/fb_profile_picture"-->
@@ -24,11 +25,20 @@
                 <!--/>-->
 
             <com.angel.black.baskettogether.core.view.imageview.RoundedImageView
+                android:id="@+id/user_profile_img"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:src="@drawable/ic_person_white_24dp" />
 
-        </FrameLayout>
+            <TextView
+                style="@style/navi_user_nickname"
+                android:id="@+id/user_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_gravity="center_vertical"/>
+
+        </LinearLayout>
 
 
         <FrameLayout
@@ -48,13 +58,13 @@
                 android:visibility="gone"/>
 
             <Button
-                android:id="@+id/btn_fb_login"
+                android:id="@+id/btn_edit_user_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:drawablePadding="8dp"
                 android:padding="8dp"
-                android:text="버튼"
+                android:text="@string/edit_user_info"
                 android:textColor="@android:color/white"/>
         </FrameLayout>
 

@@ -10,18 +10,12 @@ import com.angel.black.baframework.core.base.BaseListActivity;
 import com.angel.black.baframework.logger.BaLog;
 import com.angel.black.baframework.network.util.NetworkUtil;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.HttpHostConnectException;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HTTP;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,7 +23,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -42,7 +43,7 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequest
     public static final int ERROR_CODE_JSON_PARSING = 80000;
     public static final int ERROR_CODE_NULL_RESULT = 80001;
 
-    public static final String NO_HTTP_RESPONSE_ENTITY = "NoHttpResponse";
+    public static final String NO_HTTP_RESPONSE = "NoHttpResponse";
 
     public HttpRequestStrategy mHttpRequestStrategy;
 
@@ -90,31 +91,32 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequest
 
     @Override
     public APICallResult doInBackground(JSONObject... params) {
-        InputStream inputStream = null;
-        String result;
+        HttpURLConnection conn = null;
         int retCode = 0;
 
         String serverUrl = mHttpRequestStrategy.getServerUrl();
         try {
-            HttpClient httpClient = new DefaultHttpClient();
-            HttpRequestBase httpRequest = null;
-            HttpResponse httpResponse;
+            URL connectURL = new URL(serverUrl + APIUrl);
+            conn = (HttpURLConnection) connectURL.openConnection();
 
-            if (method.equalsIgnoreCase("POST")) {
-                httpRequest = new HttpPost(serverUrl + APIUrl);
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            conn.setUseCaches(false);
+            conn.setRequestMethod(method);
 
-                // HttpPost 에 Post 데이터(JSON) input
+            mHttpRequestStrategy.setHeader(conn);
+
+            conn.connect();
+
+            if (method.equalsIgnoreCase("POST") || method.equalsIgnoreCase("PUT")) {
                 String json = params[0].toString();
-                StringEntity se = new StringEntity(json, HTTP.UTF_8);
-                ((HttpPost) httpRequest).setEntity(se);
+                List<BasicNameValuePair> postParams = buildPostParams(json);
 
-                BaLog.w("requestDirectString=" + se.toString());
-
-            } else if (method.equalsIgnoreCase("GET")) {
-                httpRequest = makeHttpGet(serverUrl + APIUrl);
-
-            } else if (method.equalsIgnoreCase("DELETE")) {
-                httpRequest = makeHttpDelete(serverUrl + APIUrl);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(conn.getOutputStream(), "UTF-8");
+                outputStreamWriter.write(getURLQuery(postParams));
+//                outputStreamWriter.write(json);
+                outputStreamWriter.flush();
+                outputStreamWriter.close();
             }
 
             BaLog.w("request " + serverUrl + APIUrl + " " + method);
@@ -123,48 +125,155 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequest
                 BaLog.w("jsonParams >> " + params[0].toString());
             }
 
-            setHeader(httpRequest);
-            httpResponse = httpClient.execute(httpRequest);
-            BaLog.i("retCode >> " + httpResponse.getStatusLine().getStatusCode());
+            String response = getResponse(conn);
+            int responseCode = conn.getResponseCode();
+            String responseMsg = conn.getResponseMessage();
+            BaLog.i("responseCode=" + responseCode + ", responseMsg=" + responseMsg);
+            BaLog.w("API response=" + response);
 
-            if (httpResponse != null) {
-                retCode = httpResponse.getStatusLine().getStatusCode();
-                HttpEntity httpEntity = httpResponse.getEntity();
+            return new APICallResult(responseCode, responseMsg, response);
 
-                if(httpEntity != null) {
-                    inputStream = httpEntity.getContent();
-                }
 
-                if (inputStream != null) {
-                    result = convertStreamToString(inputStream);
-                } else {
-                    result = NO_HTTP_RESPONSE_ENTITY;
-                }
-                BaLog.d("API(" + APIUrl + " " + method + ") result >> " + result);
-
-                return new APICallResult(retCode, result);
-            }
+//            HttpClient httpClient = new DefaultHttpClient();
+//            HttpRequestBase httpRequest = null;
+//            HttpResponse httpResponse;
+//
+//            if (method.equalsIgnoreCase("POST")) {
+//                httpRequest = new HttpPost(serverUrl + APIUrl);
+//
+//                // HttpPost 에 Post 데이터(JSON) input
+//                String json = params[0].toString();
+//                StringEntity se = new StringEntity(json, HTTP.UTF_8);
+//                List<BasicNameValuePair> postParams = new ArrayList<BasicNameValuePair>(1);
+//                postParams.add(new BasicNameValuePair("json_value", json));
+//
+//                ((HttpPost) httpRequest).setEntity(new UrlEncodedFormEntity(postParams));
+//
+//            } else if (method.equalsIgnoreCase("GET")) {
+//                httpRequest = makeHttpGet(serverUrl + APIUrl);
+//
+//            } else if (method.equalsIgnoreCase("DELETE")) {
+//                httpRequest = makeHttpDelete(serverUrl + APIUrl);
+//            }
+//
+//            BaLog.w("request " + serverUrl + APIUrl + " " + method);
+//
+//            if(params[0] != null) {
+//                BaLog.w("jsonParams >> " + params[0].toString());
+//            }
+//
+//            setHeader(httpRequest);
+//            httpResponse = httpClient.execute(httpRequest);
+//            BaLog.i("retCode >> " + httpResponse.getStatusLine().getStatusCode());
+//
+//            if (httpResponse != null) {
+//                retCode = httpResponse.getStatusLine().getStatusCode();
+//                HttpEntity httpEntity = httpResponse.getEntity();
+//
+//                if(httpEntity != null) {
+//                    inputStream = httpEntity.getContent();
+//                }
+//
+//                if (inputStream != null) {
+//                    result = convertStreamToString(inputStream);
+//                } else {
+//                    result = NO_HTTP_RESPONSE;
+//                }
+//                BaLog.d("API(" + APIUrl + " " + method + ") result >> " + result);
+//
+//                return new APICallResult(retCode, result);
+//            }
         } catch (Exception e) {
             e.printStackTrace();
             onAPIResponseListener.onErrorResponse(APIUrl, retCode, e.getMessage(), e.getCause());
-            return new APICallResult(retCode, e.getClass().getSimpleName());
+            return new APICallResult(retCode, e.getMessage(), NO_HTTP_RESPONSE);
+        } finally {
+            if(conn != null) {
+                conn.disconnect();
+            }
         }
-
-        return null;
     }
 
-    private void setHeader(HttpRequestBase httpRequestBase) {
-//        httpRequestBase.setHeader("Accept", "application/json");
-//        BaLog.d("setHeader(Accept, application/json)");
-//        httpRequestBase.setHeader("Content-type", "application/json");
-//        BaLog.d("setHeader(Content-type, application/json)");
-//
-//        if (isNeedUserAuthToken()) {
-//            httpRequestBase.setHeader("Token", UserHelper.userAccessToken);
-//            BaLog.d("setHeader(Token, " + UserHelper.userAccessToken + ")");
-//        }
+    private List<BasicNameValuePair> buildPostParams(String json) throws JSONException {
+        List<BasicNameValuePair> list = new ArrayList<>();
 
-        mHttpRequestStrategy.setHeader(httpRequestBase);
+        JSONObject jsonObject = new JSONObject(json);
+
+        Iterator<String> keyIter = jsonObject.keys();
+        while(keyIter.hasNext()) {
+            String key = keyIter.next();
+
+            list.add(new BasicNameValuePair(key, jsonObject.optString(key)));
+        }
+
+        return list;
+    }
+
+    private String getURLQuery(List<BasicNameValuePair> params){
+        StringBuilder stringBuilder = new StringBuilder();
+        boolean first = true;
+
+        for (BasicNameValuePair pair : params) {
+            if (first)
+                first = false;
+            else
+                stringBuilder.append("&");
+
+            try {
+                stringBuilder.append(URLEncoder.encode(pair.getName(), "UTF-8"));
+                stringBuilder.append("=");
+                stringBuilder.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return stringBuilder.toString();
+    }
+
+    /**
+     * @param conn
+     * @return
+     */
+    private String getResponse(HttpURLConnection conn) {
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            InputStreamReader inputStream = new InputStreamReader(conn.getInputStream(), "UTF-8");
+            BufferedReader bufferReader = new BufferedReader(inputStream);
+
+            String str;
+            while((str = bufferReader.readLine()) != null){
+                sb.append(str + "\n");
+            }
+
+            if(bufferReader != null) {
+                bufferReader.close();
+            }
+
+            return sb.toString();
+        } catch (IOException e) {
+            BaLog.e("getResponse error >> " + e.getMessage());
+            return NO_HTTP_RESPONSE;
+        }
+
+//
+//        try {
+//            DataInputStream dis = new DataInputStream(conn.getInputStream());
+//            byte[] data = new byte[1024];
+//            int len = dis.read(data, 0, 1024);
+//
+//            dis.close();
+//
+//            if (len > 0)
+//                return new String(data, 0, len);
+//            else
+//                return NO_HTTP_RESPONSE;
+//        }
+//        catch(Exception e) {
+//            BaLog.e("getResponse error >> " + e.getMessage());
+//            return NO_HTTP_RESPONSE;
+//        }
     }
 
     @Override
@@ -183,11 +292,11 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequest
         }
 
         try {
-            if(!(result.retCode == HttpURLConnection.HTTP_OK
-                    || result.retCode == HttpURLConnection.HTTP_CREATED
-                    || result.retCode == HttpURLConnection.HTTP_NO_CONTENT)) {
+            if(!(result.responseCode == HttpURLConnection.HTTP_OK
+                    || result.responseCode == HttpURLConnection.HTTP_CREATED
+                    || result.responseCode == HttpURLConnection.HTTP_NO_CONTENT)) {
                 // 200, 201, 204 응답외의 것들은 모두 에러 처리!!
-                onAPIResponseListener.onErrorResponse(APIUrl, result.retCode, result.resultString, null);
+                onAPIResponseListener.onErrorResponse(APIUrl, result.responseCode, result.resultString, null);
                 return;
             }
 
@@ -195,7 +304,7 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequest
 
             if (resultString.startsWith("{")) {
                 JSONObject jsonResult = new JSONObject(resultString);
-                onAPIResponseListener.onResponse(APIUrl, result.retCode, jsonResult);
+                onAPIResponseListener.onResponse(APIUrl, result.responseCode, jsonResult);
             } else if (resultString.startsWith("[")) {
 //                resultString = "{\"json_array\":[{\"comments_count\": 0, \"title\": \"hello\", \"author_id\": 1, \"comments\":["
 //                + "{\"list\":[{\"test\": \"a\"}, {\"test\": \"a\"}, {\"test\": \"a\"}]}], \"recruit_status\": \"\", \"author_name\": \"test\", \"content\": \"alskdf\", \"registered_date\": \"2016-06-19T10:31:04.724Z\", \"id\": 1, \"recruit_count\": 6, \"attend_count\": 0}, {\"comments_count\": 0, \"title\": \"hh\", \"author_id\": 1, \"comments\": [], \"recruit_status\": \"\", \"author_name\": \"test\", \"content\": \"ff\", \"registered_date\": \"2016-06-19T11:26:22.978Z\", \"id\": 2, \"recruit_count\": 4, \"attend_count\": 0}, {\"comments_count\": 0, \"title\": \"jj\", \"author_id\": 1, \"comments\": [], \"recruit_status\": \"\", \"author_name\": \"test\", \"content\": \"gg\", \"registered_date\": \"2016-06-19T11:27:00.959Z\", \"id\": 3, \"recruit_count\": 4, \"attend_count\": 0}]}";
@@ -205,9 +314,9 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequest
                 JSONObject jsonResult = new JSONObject(resultString);
 
                 // "json_array" 라는 키값으로 묶어서 jsonObject 로 전달
-                onAPIResponseListener.onResponse(APIUrl, result.retCode, jsonResult);
-            } else if (resultString.equals(NO_HTTP_RESPONSE_ENTITY)) {
-                onAPIResponseListener.onResponse(APIUrl, result.retCode, null);
+                onAPIResponseListener.onResponse(APIUrl, result.responseCode, jsonResult);
+            } else if (resultString.equals(NO_HTTP_RESPONSE)) {
+                onAPIResponseListener.onResponse(APIUrl, result.responseCode, null);
             }
 
         } catch (JSONException e) {
@@ -260,11 +369,13 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequest
     }
 
     class APICallResult {
-        int retCode;
-        String resultString;
+        int responseCode;       // HTTP 요청에 대한 응답 코드
+        String responseMsg;     // HTTP 요청에 대한 응답 메시지 (OK, Bad Gateway 등)
+        String resultString;    // API 응답으로 오는 JSON 문자열
 
-        public APICallResult(int retCode, String resultString) {
-            this.retCode = retCode;
+        public APICallResult(int responseCode, String responseMsg, String resultString) {
+            this.responseCode = responseCode;
+            this.responseMsg = responseMsg;
             this.resultString = resultString;
         }
     }
@@ -272,5 +383,6 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequest
     public interface HttpRequestStrategy {
         String getServerUrl();
         void setHeader(HttpRequestBase httpRequestBase);
+        void setHeader(HttpURLConnection conn);
     }
 }

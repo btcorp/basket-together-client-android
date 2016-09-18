@@ -73,8 +73,8 @@ public class RecruitPostRegistActivity extends BaseActivity implements DatePicke
         recruitDateYear = c.get(Calendar.YEAR);
         recruitDateMonth = c.get(Calendar.MONTH);
         recruitDateDay = c.get(Calendar.DAY_OF_MONTH);
-        recruitTimeHour = (c.get(Calendar.HOUR_OF_DAY) + 1) % 24;      // 디폴트로 현재 시간보다 1시간뒤
-        recruitTimeMinute = c.get(Calendar.MINUTE);
+        recruitTimeHour = (c.get(Calendar.HOUR_OF_DAY) + 1) % 24;       // 디폴트로 현재 시간보다 1시간뒤
+        recruitTimeMinute = 0;                                          // 디폴트로 0분
 
         mTxtRecruitTime.setText(CalendarUtil.getTimeString(recruitTimeHour, 0));
         mTxtRecruitDate.setText(CalendarUtil.getDateString(c));
@@ -172,9 +172,9 @@ public class RecruitPostRegistActivity extends BaseActivity implements DatePicke
                 intent.putExtra(IntentConst.KEY_EXTRA_MAP_LATITUDE, locationInfo.latitude);
                 intent.putExtra(IntentConst.KEY_EXTRA_MAP_LONGITUDE, locationInfo.longitude);
                 intent.putExtra(IntentConst.KEY_EXTRA_MAP_ADDRESS, locationInfo.address);
-                intent.putExtra(IntentConst.KEY_EXTRA_MAP_MODE, RecruitPostLocationMapActivity.MapMode.SELECT_LOCATION.toString());
             }
 
+            intent.putExtra(IntentConst.KEY_EXTRA_MAP_MODE, RecruitPostLocationMapActivity.MapMode.SELECT_LOCATION.toString());
             startActivityForResult(intent, IntentConst.REQUEST_MAP_LOCATION_SELECT);
         }
     }
@@ -233,9 +233,9 @@ public class RecruitPostRegistActivity extends BaseActivity implements DatePicke
 
                 mEditAddress2.setVisibility(View.VISIBLE);
 
+                mTxtAddress1.setError(null);
                 mTxtAddress1.setText(address);
-                mTxtAddress1.setEnabled(true);
-                mTxtAddress1.requestFocus();
+                mEditAddress2.requestFocus();
             }
         }
     }

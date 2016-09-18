@@ -26,6 +26,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     private EditText mEditId;
     private EditText mEditPw;
     private EditText mEditPwRe;
+    private EditText mEditNickName;
     private Button mBtnSignUp;
 
     @Nullable
@@ -36,6 +37,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         mEditId = (EditText) view.findViewById(R.id.user_id);
         mEditPw = (EditText) view.findViewById(R.id.password);
         mEditPwRe = (EditText) view.findViewById(R.id.password_re);
+        mEditNickName = (EditText) view.findViewById(R.id.user_nickname);
         mBtnSignUp = (Button) view.findViewById(R.id.btn_sign_up);
         mBtnSignUp.setOnClickListener(this);
 
@@ -48,14 +50,16 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             mEditId.setError(null);
             mEditPw.setError(null);
             mEditPwRe.setError(null);
+            mEditNickName.setError(null);
 
             String id = mEditId.getText().toString().trim();
             String pwd = mEditPw.getText().toString().trim();
             String pwdRe = mEditPwRe.getText().toString().trim();
+            String nickname = mEditNickName.getText().toString().trim();
 
-            if(isValidateForm(id, pwd, pwdRe)) {
+            if(isValidateForm(id, pwd, pwdRe, nickname)) {
                 try {
-                    requestSignUp(id, pwd);
+                    requestSignUp(id, pwd, nickname);
                 } catch(JSONException e) {
                     e.printStackTrace();
                 }
@@ -63,8 +67,8 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         }
     }
 
-    private void requestSignUp(final String id, final String pwd) throws JSONException{
-        UserAPI.signUp(getBaseActivity(), id, pwd, new HttpAPIRequester.OnAPIResponseListener() {
+    private void requestSignUp(final String id, final String pwd, final String nickname) throws JSONException{
+        UserAPI.signUp(getBaseActivity(), id, pwd, nickname, new HttpAPIRequester.OnAPIResponseListener() {
             @Override
             public void onResponse(String APIUrl, int retCode, JSONObject response) {
                 try {
@@ -91,7 +95,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
         });
     }
 
-    private boolean isValidateForm(String id, String pwd, String pwdRe) {
+    private boolean isValidateForm(String id, String pwd, String pwdRe, String nickname) {
         if(StringUtil.isEmptyString(id)) {
             mEditId.setError(getString(R.string.error_not_input_id));
             return false;
@@ -106,6 +110,9 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             return false;
         } else if(pwd.length() < 8 || pwdRe.length() < 8) {
             mEditPw.setError(getString(R.string.error_pwd_minimum_char));
+            return false;
+        } else if(StringUtil.isEmptyString(nickname)) {
+            mEditNickName.setError(getString(R.string.error_not_input_nickname));
             return false;
         }
 

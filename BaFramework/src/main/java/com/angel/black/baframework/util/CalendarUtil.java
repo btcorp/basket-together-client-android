@@ -61,4 +61,12 @@ public class CalendarUtil {
 
         return (hourOfDay >= 12 && hourOfDay < 24 ? "오후 " : "오전 ") + hourStr + "시 " + minStr + "분";
     }
+
+    public static String getDateTimeString(long timeInMillis) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(timeInMillis);
+
+        return c.get(Calendar.YEAR) + "년 " + (c.get(Calendar.MONTH) + 1) + "월 " + c.get(Calendar.DAY_OF_MONTH) + "일"
+                + c.get(Calendar.HOUR_OF_DAY) + "시 " + c.get(Calendar.MINUTE) + "분";
+    }
 }

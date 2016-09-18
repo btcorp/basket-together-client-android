@@ -184,15 +184,14 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    protected void requestPermission(String permission, int requestCode, int permissonReqMsgId) {
+    protected void requestPermission(String permission, int requestCode, int permissonReqMsgId, boolean isCancelActFinish) {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
             PermissionConfirmationDialog.newInstance(getResources().getString(permissonReqMsgId),
-                    permission, requestCode, true)
+                    permission, requestCode, isCancelActFinish)
                     .show(getSupportFragmentManager(), PermissionConfirmationDialog.TAG);
         } else {
             ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
         }
     }
-
 
 }

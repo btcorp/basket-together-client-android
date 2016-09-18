@@ -64,6 +64,21 @@
 
         </android.support.design.widget.TextInputLayout>
 
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/user_nickname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/prompt_nickname"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:singleLine="true" />
+
+        </android.support.design.widget.TextInputLayout>
+
         <Button
             android:id="@+id/btn_sign_up"
             style="?android:textAppearanceSmall"

@@ -16,21 +16,31 @@ public class UserHelper {
     public static String userAccessToken;
 
     /**
-     * 유저의 유니크한 id 값 (서버 DB상의 회원 구분값)
+     * 로그인한 유저의 유니크한 id 값 (서버 DB상의 회원 구분값)
      */
     public static long userUid;
 
+    /**
+     * 로그인한 유저의 닉네임
+     */
+    public static String userNickName;
 
-    public static void saveUserInfo(BaseActivity activity, String token, String id, String pwd, long uid) {
+    public static String userProfileImgUrl;
+
+
+    public static void saveUserInfo(BaseActivity activity, String token, String id, String pwd, String nickname, String profileImgUrl, long uid) {
         userAccessToken = token;
         userUid = uid;
+        userNickName = nickname;
+        userProfileImgUrl = profileImgUrl;
 
-        BaLog.e("set userAcessToken=" + userAccessToken + ", saved id=" + id + ", pwd=" + pwd + ", uid=" + uid);
+        BaLog.e("set userAcessToken=" + userAccessToken + ", saved id=" + id + ", pwd=" + pwd + ", nickname=" + nickname + ", uid=" + uid);
 
         MyPreferenceManager pm = activity.getPreferenceManager();
         pm.saveString(KeyConst.SAVED_ACCESS_TOKEN, token);
         pm.saveString(KeyConst.SAVED_USER_ID, id);
         pm.saveString(KeyConst.SAVED_USER_PWD, pwd);
+        pm.saveString(KeyConst.SAVED_USER_NICKNAME, nickname);
     }
 
     /**
@@ -39,5 +49,17 @@ public class UserHelper {
      */
     public static boolean isValidUserAccessToken() {
         return !StringUtil.isEmptyString(userAccessToken);
+    }
+
+    public static void removeUserInfo(BaseActivity activity) {
+        userAccessToken = null;
+        userNickName = null;
+        userUid = -1;
+
+        MyPreferenceManager pm = activity.getPreferenceManager();
+        pm.saveString(KeyConst.SAVED_ACCESS_TOKEN, "");
+        pm.saveString(KeyConst.SAVED_USER_ID, "");
+        pm.saveString(KeyConst.SAVED_USER_PWD, "");
+        pm.saveString(KeyConst.SAVED_USER_NICKNAME, "");
     }
 }

@@ -128,22 +128,6 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
         requestList();
     }
 
-    private JSONObject testResponse() {
-        JSONObject object = new JSONObject();
-
-        try {
-            object.put("title", "농구합시다 3:3");
-            object.put("content", "양주시 백석체육공원에서 농구합니다. 오세요.");
-            object.put("author", "김정훈");
-            object.put("recruit_count", "6");
-            object.put("attend_count", 1);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return object;
-    }
-
     /**
      * 이 모집글에 내가 참가신청을 했는지 여부 반환
      * @param attendList
@@ -198,7 +182,7 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
         createAttendeeFragment(attendList);
 
         mRegDate.setText(CalendarUtil.getDateString(response.optLong("registered_date")));
-        mMeetingDate.setText(CalendarUtil.getDateString(response.optLong("meeting_date")));
+        mMeetingDate.setText(CalendarUtil.getDateTimeString(response.optLong("meeting_date")));
         String addr1 = response.optString("adress1");
         String addr2 = response.optString("adress2");
         mMeetingPlaceAddr1.setText(addr1);

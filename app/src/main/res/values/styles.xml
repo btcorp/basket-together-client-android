@@ -75,4 +75,9 @@
         <item name="android:layout_marginLeft">16dp</item>
     </style>
 
+    <style name="navi_user_nickname">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
 </resources>
