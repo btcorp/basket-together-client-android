@@ -6,6 +6,7 @@ import android.telephony.PhoneNumberUtils;
 import com.angel.black.baframework.logger.BaLog;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 /**
@@ -56,15 +57,7 @@ public class StringUtil {
      * 스트링 어레이의 내용을 한줄 문자열로 가져온다.
      */
     public static String debugStringArray(String[] arr) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
-        for (String s : arr) {
-            sb.append(s);
-            sb.append(", ");
-        }
-        sb.append("]");
-
-        return sb.toString();
+        return Arrays.toString(arr);
     }
 
 
@@ -111,5 +104,21 @@ public class StringUtil {
 
         BaLog.d("phoneNum=" + phoneNum);
         return phoneNum;
+    }
+
+    public static class RegularExpressions {
+        int LENGTH_resRegNo = 13;
+        /** 메일주소 인것 */
+        String regularExpressionEmail = "^([\\w-\\.]+)@((?:[\\w]+\\.)+[a-zA-Z]{2,4})$";
+        /** 전화번호 인것 */
+        String regularExpressionPhoneNo = "^(0(?:505|70|10|11|16|17|18|19))(\\d{3}|\\d{4})(\\d{4})$";
+        /** 파일네임에 적합하지 않은것 */
+        String regularExpressionVFilename = "\\\\/|[&{}?=/\\\\: <>*|\\]\\[\\\"\\']";
+        /** 자연수가 아닌것 */
+        String regularExpressionNotdecimal = "\\D";
+        /** Password로 사용가능한 문자열 */
+        String regularExpressionPassword = "(((?=.*[a-z])|(?=.*[A-Z])).{8,20})";
+        /** 엔터가 포함되어 있지 않은 ""로 둘러 쌓여있는 문자열 */
+        String regularExpressionWrodNotCR = "(\\\"[^\\\"\\r]+\\\")";
     }
 }

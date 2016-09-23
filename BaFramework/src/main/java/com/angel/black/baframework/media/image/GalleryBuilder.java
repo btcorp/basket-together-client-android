@@ -1,4 +1,4 @@
-package com.angel.black.baframework.media;
+package com.angel.black.baframework.media.image;
 
 import android.app.Activity;
 import android.database.Cursor;

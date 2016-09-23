@@ -111,7 +111,7 @@ public class RecruitPostListActivity extends BaseListActivity implements View.On
         fab.setRippleColor(getResources().getColor(R.color.colorPrimaryDark));
         fab.setOnClickListener(this);
         fab.setTag(TAG_FAB);
-        int size = (int) ScreenUtil.convertDpToPixel(this, 48);
+        int size = ScreenUtil.convertDpToPixel(this, 48);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(size, size, Gravity.RIGHT|Gravity.BOTTOM);
 
         params.bottomMargin = size/3;
