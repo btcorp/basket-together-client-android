@@ -5,7 +5,7 @@ import com.angel.black.baframework.network.HttpAPIRequester;
 import com.angel.black.baframework.network.ImageUploaderTask;
 import com.angel.black.baskettogether.core.network.ServerURLInfo;
 import com.angel.black.baskettogether.core.network.UserProfileImageUploader;
-import com.angel.black.baskettogether.user.UserHelper;
+import com.angel.black.baskettogether.user.UserInfoManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,7 +25,7 @@ public class UserAPI {
         new HttpAPIRequester(activity, true, ServerURLInfo.API_USER_LOGOUT, "GET", new HttpAPIRequester.OnAPIResponseListener() {
             @Override
             public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
-                UserHelper.removeUserInfo(activity);
+                UserInfoManager.removeUserInfo(activity);
             }
 
             @Override
@@ -46,7 +46,7 @@ public class UserAPI {
                     long uid = response.getLong("user_id");
                     String nickname = response.getString("nickname");
                     String imgUrl = response.getString("picture_url");
-                    UserHelper.saveUserInfo(activity, token, id, pwd, nickname, imgUrl, uid);
+                    UserInfoManager.saveUserInfo(activity, token, id, pwd, nickname, imgUrl, uid);
 
                     if(notifier != null) {
                         notifier.onSuccess(response);
@@ -84,7 +84,7 @@ public class UserAPI {
 
     public static void editUserInfo(BaseActivity activity, String nickname, String phoneNum, String selectedImagePath, final ImageUploaderTask.ImageUploadListener imageUploadListener) {
         ImageUploaderTask imageUploaderTask = new ImageUploaderTask(activity,
-                new UserProfileImageUploader(UserHelper.userUid, nickname, phoneNum, selectedImagePath));
+                new UserProfileImageUploader(UserInfoManager.userUid, nickname, phoneNum, selectedImagePath));
         imageUploaderTask.setImageUploadListener(imageUploadListener);
         imageUploaderTask.uploadImage();
     }

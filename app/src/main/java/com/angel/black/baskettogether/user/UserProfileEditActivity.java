@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -13,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
-import com.angel.black.baframework.core.base.BaseActivity;
 import com.angel.black.baframework.intent.IntentConstants;
 import com.angel.black.baframework.intent.IntentExecutor;
 import com.angel.black.baframework.logger.BaLog;
@@ -22,15 +20,23 @@ import com.angel.black.baframework.network.ImageUploaderTask;
 import com.angel.black.baframework.security.PermissionConstants;
 import com.angel.black.baframework.ui.dialog.DialogClickListener;
 import com.angel.black.baframework.ui.dialog.PermissionConfirmationDialog;
-import com.angel.black.baframework.util.ImageUtil;
+import com.angel.black.baframework.util.UriUtil;
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.api.UserAPI;
+import com.angel.black.baskettogether.core.MyApplication;
+import com.angel.black.baskettogether.core.base.BtBaseActivity;
+import com.angel.black.baskettogether.core.intent.IntentConst;
 import com.angel.black.baskettogether.core.view.imageview.RoundedImageView;
+import com.angel.black.baskettogether.image.ImagePickActivity;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.ArrayList;
 
 /**
  * Created by KimJeongHun on 2016-09-18.
  */
-public class UserProfileEditActivity extends BaseActivity implements View.OnClickListener, PermissionConfirmationDialog.OnPermissionConfirmationDialogListener {
+public class UserProfileEditActivity extends BtBaseActivity implements View.OnClickListener, PermissionConfirmationDialog.OnPermissionConfirmationDialogListener {
     private RoundedImageView mProfileImgView;
     private EditText mEditNickName;
     private EditText mEditPhoneNum;
@@ -46,6 +52,12 @@ public class UserProfileEditActivity extends BaseActivity implements View.OnClic
 
         mEditNickName = (EditText) findViewById(R.id.edit_nickname);
         mEditPhoneNum = (EditText) findViewById(R.id.edit_phone_num);
+
+        ImageLoader.getInstance().displayImage(MyApplication.serverUrl + UserInfoManager.userProfileImgUrl, mProfileImgView,
+                MyApplication.mDefaultDisplayImgOpts);
+
+        String nickname = getIntent().getStringExtra(IntentConst.KEY_EXTRA_USER_NICKNAME);
+        mEditNickName.setText(nickname);
     }
 
     @Override
@@ -97,19 +109,23 @@ public class UserProfileEditActivity extends BaseActivity implements View.OnClic
                         R.string.request_write_storage_permission, false);
                 return;
             } else {
-                IntentExecutor.executeGalleryPick(this);
+                IntentExecutor.executeCustomGalleryPick(this, ImagePickActivity.class, 1);
             }
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == IntentConstants.REQUEST_PICK_GALLERY) {
-                Uri selectedImageUri = data.getData();
-                mSelectedImagePath = ImageUtil.getRealImagePath(this, selectedImageUri);
+                ArrayList<String> imagePathList = data.getStringArrayListExtra(IntentConstants.KEY_IMAGE_PATH_LIST);
 
-                mProfileImgView.setImageURI(selectedImageUri);
+                mSelectedImagePath = imagePathList.get(0);
+
+                ImageLoader imageLoader = ImageLoader.getInstance();
+                imageLoader.displayImage(UriUtil.filePath2Uri(mSelectedImagePath), mProfileImgView,
+                        DisplayImageOptions.createSimple());
             }
         }
     }
@@ -128,22 +144,22 @@ public class UserProfileEditActivity extends BaseActivity implements View.OnClic
                 });
             } else {
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    IntentExecutor.executeGalleryPick(this);
+                    IntentExecutor.executeCustomGalleryPick(this, ImagePickActivity.class, 1);
                 }
             }
         }
     }
 
     @Override
-    public void onAllowedPermissionConfirm(String permission) {
-        BaLog.d("permission=" + permission);
-        if (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+    public void onAllowedPermissionConfirm(int permissionRequestCode) {
+        BaLog.d("permissionRequestCode=" + permissionRequestCode);
+        if (permissionRequestCode == PermissionConstants.REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION) {
 
         }
     }
 
     @Override
-    public void onDenyedPermissionConfirm(String permisson) {
+    public void onDenyedPermissionConfirm(int permissionRequestCode) {
 
     }
 }

@@ -13,4 +13,8 @@ public class UriUtil {
     public static String assets2uri(String assets_image) {
         return "assets://" + assets_image;
     }
+
+    public static String filePath2Uri(String filePath) {
+        return "file://" + filePath;
+    }
 }

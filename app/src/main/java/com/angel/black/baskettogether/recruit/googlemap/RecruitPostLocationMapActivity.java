@@ -16,12 +16,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.angel.black.baframework.core.base.BaseActivity;
 import com.angel.black.baframework.logger.BaLog;
 import com.angel.black.baframework.security.PermissionConstants;
 import com.angel.black.baframework.ui.dialog.DialogClickListener;
 import com.angel.black.baframework.util.StringUtil;
 import com.angel.black.baskettogether.R;
+import com.angel.black.baskettogether.core.base.BtBaseActivity;
 import com.angel.black.baskettogether.core.intent.IntentConst;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -38,7 +38,7 @@ import java.util.Locale;
 /**
  * Created by KimJeongHun on 2016-09-17.
  */
-public class RecruitPostLocationMapActivity extends BaseActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerDragListener {
+public class RecruitPostLocationMapActivity extends BtBaseActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerDragListener {
     private static final double SEOUL_CITY_HALL_LATITUDE = 37.566367;
     private static final double SEOUL_CITY_HALL_LONGITUDE = 126.977929;
 

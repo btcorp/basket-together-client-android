@@ -1,45 +1,37 @@
 package com.angel.black.baframework.media.image.fragment;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.angel.black.baframework.R;
 import com.angel.black.baframework.core.base.BaseActivity;
 import com.angel.black.baframework.core.base.BaseFragment;
 import com.angel.black.baframework.logger.BaLog;
+import com.angel.black.baframework.media.image.BaseImagePickActivity;
 import com.angel.black.baframework.media.image.GalleryBuilder;
-import com.angel.black.baframework.media.image.ImagesPickerActivity;
 import com.angel.black.baframework.security.PermissionConstants;
 import com.angel.black.baframework.ui.dialog.PermissionConfirmationDialog;
-import com.angel.black.baframework.util.BaPackageManager;
 import com.angel.black.baframework.util.ScreenUtil;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -59,7 +51,7 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
     private GalleryImagePickListener mGalleryImagePickListener;
     private GalleryImageDisplayer mGalleryImageDisplayer;
     private View mEmptyView;
-    private ProgressBar mLoadingProgress;
+//    private ProgressBar mLoadingProgress;
 
     /** 현재 선택된 갤러리 폴더 id. 디폴트 - 전체앨범*/
     private long mGallaryBucketId;
@@ -75,8 +67,8 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
     /** 갤러리 아이템 클릭 락 */
     private boolean mLockItemClick;
 
-    /** 한개 이미지를 바꾸는 모드 여부 */
-    private boolean mOneImageChange;
+//    /** 한개 이미지를 바꾸는 모드 여부 */
+//    private boolean mOneImageChange;
 
     public void setLockItemClick(boolean lockItemClick) {
         this.mLockItemClick = lockItemClick;
@@ -120,6 +112,8 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
     public void onAttach(Context context) {
         super.onAttach(context);
         BaLog.i();
+
+        showProgress();
         mGalleryImagePickListener = (GalleryImagePickListener) getActivity();
         mGalleryImageDisplayer = (GalleryImageDisplayer) getActivity();
     }
@@ -137,8 +131,9 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
             mCanSelectCount = 6;
         }
 
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestWriteStoragePermission();
+        if (!checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, R.string.request_write_storage_permission_for_gallery,
+                    PermissionConstants.REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION, true);
             return;
         }
     }
@@ -151,7 +146,6 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
 
         mPhotoGridview = (GridView) view.findViewById(R.id.photo_gridview);
         mEmptyView = view.findViewById(R.id.txt_empty_gallery);
-        mLoadingProgress = (ProgressBar) view.findViewById(R.id.loading_progress);
 
         if(mGridAdapter == null) {
             mGridAdapter = new GalleryGridAdapter((BaseActivity) getActivity(), mGallaryBucketId);
@@ -162,8 +156,10 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
 
         BaLog.i("mInitialLoadedGallery=" + mInitialLoadedGallery);
 
-        loadGalleryAlbums();
-        initGallery();
+        if(checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            loadGalleryAlbums();
+            initGallery();
+        }
 
         return view;
     }
@@ -173,27 +169,16 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
         super.onViewCreated(view, savedInstanceState);
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
-    public void requestWriteStoragePermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            PermissionConfirmationDialog.newInstance(getResources().getString(R.string.request_write_storage_permission_for_gallery),
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionConstants.REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION, true)
-                    .show(getActivity().getSupportFragmentManager(), PermissionConfirmationDialog.TAG);
-        } else {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PermissionConstants.REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION);
-        }
-    }
-
-
     @Override
-    public void onAllowedPermissionConfirm(String permission) {
+    public void onAllowedPermissionConfirm(int permissionRequestCode) {
 
     }
 
     @Override
-    public void onDenyedPermissionConfirm(String permisson) {
-        if(permisson.equals(Manifest.permission.CAMERA)) {
-//            showGallery();
+    public void onDenyedPermissionConfirm(int permissionRequestCode) {
+        if(permissionRequestCode == PermissionConstants.REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION) {
+//            getActivity().finish();
+            ((BaseImagePickActivity) getActivity()).onDenyedPermissionConfirmDialog();
         }
     }
 
@@ -237,9 +222,9 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
 
     private void initGallery() {
         BaLog.i();
-        ((ImagesPickerActivity) getActivity()).setMode(MODE_GALLERY);
+        ((BaseImagePickActivity) getActivity()).setMode(MODE_GALLERY);
 
-        if(ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+        if(checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             loadGalleryImages();
         }
     }
@@ -284,7 +269,6 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
         loadGalleryImages();
     }
 
-
     public void updateDeletedImages(ArrayList<String> delImagePathList) {
         mGridAdapter.updateSelected(delImagePathList);
     }
@@ -295,10 +279,9 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
         if(mLockItemClick) return;
 
         if (mGridAdapter.preTrySelected(position) > mCanSelectCount) {
-            if(mOneImageChange) {
+            if(mCanSelectCount == 1) {
                 // 한장만 선택가능한 모드일때
                 mGridAdapter.clearSelectedInfo();
-                mCanSelectCount = 1;
             } else {
                 String msg = String.format(getResources().getString(R.string.overflow_img_cnt), Integer.toString(mCanSelectCount));
                 ((BaseActivity) getActivity()).showToast(msg);
@@ -349,6 +332,7 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
 
     @Override
     public void onBuildGalleryAlbumList(ArrayList<GalleryBuilder.GalleryBucketItemInfo> albumList) {
+        ((BaseImagePickActivity) getActivity()).makeGalleryAlbumView(albumList);
         BaLog.i();
 
     }
@@ -370,14 +354,14 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
             }
         }
 
+        hideProgress();
+
         // 최초 갤러리 데이터 표시는 한번 갤러리 표시가 초기화 되면 함
         // 왜냐하면 최초 액티비티 초기화 시에는 갤러리 아이템 뷰의 사이즈가 0으로 리턴돼서
         // 썸네일 사이즈로 캐시가 안됨
         // 따라서 액티비티가 초기화 되고 onWindowFocusChanged 에서 최초 갤러리 표시함
         if(mInitialLoadedGallery) {     // 이미 한번 갤러리 표시 초기화된 상태에서 다시 갤러리 앨범 불러왔을 때
-            mLoadingProgress.setVisibility(View.GONE);
             mGridAdapter.notifyDataSetChanged();
-
             scrollToTop();      // 갤러리 폴더가 바뀌었으므로 제일 상위로 스크롤
         } else {
             mGridAdapter.notifyDataSetChanged();
@@ -430,10 +414,6 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
         BaLog.i();
     }
 
-    public void stopImageLoader() {
-//        ((BaseActivity) getActivity()).mImageLoader.stop();
-    }
-
     /**
      * 최초 한번 갤러리가 로드 되었는지 여부
      * @return
@@ -455,15 +435,16 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
             if(mGridAdapter.getCount() <= 0) {
                 mGalleryHandler.sendEmptyMessageDelayed(0, 1000);
             } else {
-                mLoadingProgress.setVisibility(View.GONE);
+//                mLoadingProgress.setVisibility(View.GONE);
+                hideProgress();
                 mGridAdapter.notifyDataSetChanged();
                 mInitialLoadedGallery = true;
             }
         }
     };
 
-    public void setOneImageChange(boolean value) {
-        this.mOneImageChange = value;
+    public boolean isCanSelectOneImage() {
+        return mCanSelectCount == 1;
     }
 
     public interface GalleryImagePickListener {
@@ -556,7 +537,6 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
                 if (imgView.getTag() == null || !imgView.getTag().equals(uri)) {
                     BaLog.d("mGridImg width=" + width + ", height=" + height);
 
-//                    mActivity.mImageLoader.displayImage(uri, imgView, mActivity.mOptions);
                     //TODO 이미지 로더 실제로 표시
                     mGalleryImageDisplayer.onDisplayImage(uri, imgView);
 
@@ -603,7 +583,7 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
 
         private void selectImage(ImageView imgView, CheckBox check, boolean select, int selectSequenceIndex) {
             if(select) {
-                if(mOneImageChange) {
+                if(mCanSelectCount == 1) {
                     check.setBackgroundResource(android.R.drawable.checkbox_on_background);
                 } else {
 //                    check.setBackgroundResource(mSeqImgIds[selectSequenceIndex]);
@@ -825,83 +805,4 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
             }
         }
     }
-
-    public class GalleryAlbumAdapter extends ArrayAdapter<GalleryBuilder.GalleryBucketItemInfo> {
-        public GalleryAlbumAdapter(Context context, int resource, int textViewResourceId, List<GalleryBuilder.GalleryBucketItemInfo> objects) {
-            super(context, resource, textViewResourceId, objects);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View view;
-            TextView text;
-
-            if (convertView == null) {
-                view = getActivity().getLayoutInflater().inflate(R.layout.spinner_item_gallery_album, parent, false);
-            } else {
-                view = convertView;
-            }
-
-            text = (TextView) view.findViewById(R.id.tv_spitem);
-
-            GalleryBuilder.GalleryBucketItemInfo item = getItem(position);
-            text.setText(item.name);
-
-            return view;
-        }
-
-        @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder;
-            if(convertView == null) {
-                convertView = getActivity().getLayoutInflater().inflate(R.layout.spinner_dropdown_gallery_album_item, null);
-
-                holder = new ViewHolder();
-                holder.mThumbnail = (ImageView) convertView.findViewById(R.id.gallery_album_thumbnail);
-                holder.mAlbumName = (TextView) convertView.findViewById(R.id.gallery_album_name);
-
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-
-            GalleryBuilder.GalleryBucketItemInfo item = getItem(position);
-            String uri = Uri.decode(Uri.fromFile(new File(item.path)).toString());
-
-//            mImageLoader.displayImage(uri, holder.mThumbnail, mOptions);
-            mGalleryImageDisplayer.onDisplayImage(uri, holder.mThumbnail);
-
-
-            holder.mAlbumName.setText(item.name + " ( " + item.count + " )");
-
-            return convertView;
-        }
-
-        /**
-         * 현재 갤러리 앨범 리스트 중에 "프리마켓" 앨범이 있는지 조사한다.
-         * @return
-         */
-        public boolean containPublicAppAlbum() {
-            String appAlbumPath = BaPackageManager.getPublicAppAlbumPath(getActivity());
-
-            int count = getCount();
-            for(int i = 0; i < count; i++) {
-                GalleryBuilder.GalleryBucketItemInfo item = getItem(i);
-
-                if(item.path.contains(appAlbumPath)) {
-                    BaLog.d("Contain 프리마켓 앨범!!");
-                    return true;
-                }
-            }
-
-            BaLog.d("not contain 프리마켓 앨범!!");
-            return false;
-        }
-
-        class ViewHolder {
-            ImageView mThumbnail;
-            TextView mAlbumName;
-        }
-    }
-
 }

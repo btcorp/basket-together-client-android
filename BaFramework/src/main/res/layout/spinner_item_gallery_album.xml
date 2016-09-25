@@ -12,6 +12,6 @@
         android:singleLine="true"
         android:layout_gravity="center"
         android:gravity="center"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@android:color/white"
         android:textAlignment="gravity" />
 </LinearLayout>

@@ -16,7 +16,7 @@
             <!--&lt;!&ndash;</intent-filter>&ndash;&gt;-->
         <!--&lt;!&ndash;</activity>&ndash;&gt;-->
 
-        <!--<activity android:name="com.angel.black.baframework.media.image.ImagesPickerActivity" >-->
+        <!--<activity android:name="com.angel.black.baframework.media.image.BaseImagePickActivityy" >-->
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN" />-->
                 <!--<category android:name="android.intent.category.LAUNCHER" />-->

@@ -28,7 +28,8 @@
             android:ellipsize="end"
             android:maxLines="2"
             android:clickable="false"
-            android:focusable="false"/>
+            android:focusable="false"
+            android:textColor="@android:color/white"/>
 
     </RelativeLayout>
 

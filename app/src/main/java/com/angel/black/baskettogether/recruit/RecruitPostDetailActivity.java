@@ -7,20 +7,20 @@ import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.angel.black.baframework.core.base.BaseActivity;
 import com.angel.black.baframework.logger.BaLog;
 import com.angel.black.baframework.ui.dialog.DialogClickListener;
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.api.APICallSuccessNotifier;
 import com.angel.black.baskettogether.api.RecruitAPI;
 import com.angel.black.baskettogether.common.view.CommentInputView;
+import com.angel.black.baskettogether.core.base.BtBaseActivity;
 import com.angel.black.baskettogether.core.intent.IntentConst;
 import com.angel.black.baskettogether.recruit.fragment.RecruitPostDetailFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class RecruitPostDetailActivity extends BaseActivity implements CommentInputView.CommentActionListener {
+public class RecruitPostDetailActivity extends BtBaseActivity implements CommentInputView.CommentActionListener {
     private long mPostId;
 
     private Menu mOptionsMenu;                  // 툴바 수정, 삭제 메뉴

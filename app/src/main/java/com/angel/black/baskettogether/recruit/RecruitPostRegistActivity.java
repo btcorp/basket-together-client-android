@@ -13,7 +13,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.angel.black.baframework.core.base.BaseActivity;
 import com.angel.black.baframework.logger.BaLog;
 import com.angel.black.baframework.ui.dialog.DatePickerDialogFragment;
 import com.angel.black.baframework.ui.dialog.TimePickerDialogFragment;
@@ -22,6 +21,7 @@ import com.angel.black.baframework.util.StringUtil;
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.api.APICallSuccessNotifier;
 import com.angel.black.baskettogether.api.RecruitAPI;
+import com.angel.black.baskettogether.core.base.BtBaseActivity;
 import com.angel.black.baskettogether.core.intent.IntentConst;
 import com.angel.black.baskettogether.recruit.googlemap.LocationInfo;
 import com.angel.black.baskettogether.recruit.googlemap.RecruitPostLocationMapActivity;
@@ -33,7 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class RecruitPostRegistActivity extends BaseActivity implements DatePickerDialogFragment.OnDatePickListener, TimePickerDialogFragment.OnTimePickListener{
+public class RecruitPostRegistActivity extends BtBaseActivity implements DatePickerDialogFragment.OnDatePickListener, TimePickerDialogFragment.OnTimePickListener{
     private EditText mEditTitle;
     private EditText mEditContent;
     private ImageButton mBtnPickDate;

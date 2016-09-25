@@ -4,12 +4,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 
-import com.angel.black.baframework.core.base.BaseActivity;
 import com.angel.black.baframework.logger.BaLog;
 import com.angel.black.baframework.util.StringUtil;
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.api.APICallSuccessNotifier;
 import com.angel.black.baskettogether.api.UserAPI;
+import com.angel.black.baskettogether.core.base.BtBaseActivity;
 import com.angel.black.baskettogether.core.preference.KeyConst;
 import com.angel.black.baskettogether.login.LoginActivity;
 import com.angel.black.baskettogether.recruit.RecruitPostListActivity;
@@ -21,7 +21,7 @@ import org.json.JSONObject;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class IntroActivity extends BaseActivity {
+public class IntroActivity extends BtBaseActivity {
 
     private static final int INTRO_DELAY_MILLIS = 1000;
     private final Handler mHideHandler = new Handler();

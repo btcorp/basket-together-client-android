@@ -16,4 +16,5 @@ public class IntentConst {
     public static final String KEY_EXTRA_MAP_LONGITUDE = "longitude";
     public static final String KEY_EXTRA_MAP_ADDRESS = "address";
     public static final String KEY_EXTRA_MAP_MODE = "mapMode";
+    public static final String KEY_EXTRA_USER_NICKNAME = "userNickname";
 }

@@ -14,9 +14,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
-import com.angel.black.baframework.core.base.BaseListActivity;
 import com.angel.black.baframework.core.base.BaseListFragment;
 import com.angel.black.baframework.logger.BaLog;
 import com.angel.black.baframework.util.ScreenUtil;
@@ -24,12 +21,15 @@ import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.api.APICallSuccessNotifier;
 import com.angel.black.baskettogether.api.UserAPI;
 import com.angel.black.baskettogether.core.MyApplication;
+import com.angel.black.baskettogether.core.base.BtBaseListActivity;
 import com.angel.black.baskettogether.core.intent.IntentConst;
 import com.angel.black.baskettogether.core.view.imageview.RoundedImageView;
 import com.angel.black.baskettogether.login.LoginActivity;
 import com.angel.black.baskettogether.recruit.fragment.RecruitPostListFragment;
-import com.angel.black.baskettogether.user.UserHelper;
+import com.angel.black.baskettogether.user.UserInfoManager;
 import com.angel.black.baskettogether.user.UserProfileEditActivity;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +37,7 @@ import org.json.JSONObject;
 /**
  * Created by KimJeongHun on 2016-06-06.
  */
-public class RecruitPostListActivity extends BaseListActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
+public class RecruitPostListActivity extends BtBaseListActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG_FAB = "fab";
 
     private ImageLoader mImageLoader;
@@ -71,29 +71,33 @@ public class RecruitPostListActivity extends BaseListActivity implements View.On
 
         View headerView = mNaviView.getHeaderView(0);
         TextView txtNickName = (TextView) headerView.findViewById(R.id.user_nickname);
-        txtNickName.setText(UserHelper.userNickName);
+        txtNickName.setText(UserInfoManager.userNickName);
 
         Button btnEditUserInfo = (Button) headerView.findViewById(R.id.btn_edit_user_info);
         btnEditUserInfo.setOnClickListener(this);
 
         final RoundedImageView userImgView = (RoundedImageView) headerView.findViewById(R.id.user_profile_img);
 
-        ((MyApplication) getApplication()).getImageLoader().get(MyApplication.serverUrl + UserHelper.userProfileImgUrl,
-                new ImageLoader.ImageListener() {
-                    @Override
-                    public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
-                        BaLog.i("uri=" + imageContainer.getRequestUrl() + ", bitmap=" + imageContainer.getBitmap());
-                        if(imageContainer.getBitmap() == null) {
-                            return;
-                        }
-                        userImgView.setImageBitmap(imageContainer.getBitmap());
-                    }
+        ImageLoader imageLoader = ImageLoader.getInstance();
 
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
+        imageLoader.displayImage(MyApplication.serverUrl + UserInfoManager.userProfileImgUrl, userImgView,
+                DisplayImageOptions.createSimple());
 
-                    }
-                });
+//                new ImageLoader.ImageListener() {
+//                    @Override
+//                    public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
+//                        BaLog.i("uri=" + imageContainer.getRequestUrl() + ", bitmap=" + imageContainer.getBitmap());
+//                        if(imageContainer.getBitmap() == null) {
+//                            return;
+//                        }
+//                        userImgView.setImageBitmap(imageContainer.getBitmap());
+//                    }
+//
+//                    @Override
+//                    public void onErrorResponse(VolleyError volleyError) {
+//
+//                    }
+//                });
 
 
 
@@ -127,7 +131,9 @@ public class RecruitPostListActivity extends BaseListActivity implements View.On
         if(v.getTag() != null && v.getTag().equals(TAG_FAB)) {
             startActivityForResult(RecruitPostRegistActivity.class, IntentConst.REQUEST_REGIST_RECRUIT_POST);
         } else if (v.getId() == R.id.btn_edit_user_info) {
-            startActivity(UserProfileEditActivity.class);
+            Intent intent = new Intent(this, UserProfileEditActivity.class);
+            intent.putExtra(IntentConst.KEY_EXTRA_USER_NICKNAME, UserInfoManager.userNickName);
+            startActivity(intent);
         }
     }
 

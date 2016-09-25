@@ -7,7 +7,7 @@ import com.angel.black.baframework.core.base.BaseActivity;
  */
 public class ImageAPI {
     public static void uploadUserProfileImage(BaseActivity activity, String imgFileName) {
-//        ImageUploaderTask imageUploaderTask = new ImageUploaderTask(activity, new UserProfileImageUploader(UserHelper.userUid, imgFileName));
+//        ImageUploaderTask imageUploaderTask = new ImageUploaderTask(activity, new UserProfileImageUploader(UserInfoManager.userUid, imgFileName));
 //        imageUploaderTask.uploadImage();
     }
 }

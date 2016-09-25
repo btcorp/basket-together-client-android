@@ -3,7 +3,7 @@ package com.angel.black.baskettogether.core.network;
 import android.util.Log;
 
 import com.angel.black.baframework.network.GeoPictureUploader;
-import com.angel.black.baskettogether.user.UserHelper;
+import com.angel.black.baskettogether.user.UserInfoManager;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -47,6 +47,6 @@ public class UserProfileImageUploader extends GeoPictureUploader implements GeoP
 
     @Override
     public void setExtraHeader(HttpURLConnection conn) {
-        conn.setRequestProperty("Token", UserHelper.userAccessToken);
+        conn.setRequestProperty("Token", UserInfoManager.userAccessToken);
     }
 }

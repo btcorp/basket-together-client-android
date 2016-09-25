@@ -102,7 +102,10 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
 
             case R.id.btn_sign_up_at_login:
                 startActivity(SignUpActivity.class);
+
+                //TEST
 //                startActivity(RecruitPostRegistActivity.class);
+//                IntentExecutor.executeCustomGalleryPick(getActivity(), ImagePickActivity.class, 4);
                 break;
         }
     }

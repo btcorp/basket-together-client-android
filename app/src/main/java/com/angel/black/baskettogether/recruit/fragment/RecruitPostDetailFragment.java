@@ -23,7 +23,7 @@ import com.angel.black.baskettogether.core.intent.IntentConst;
 import com.angel.black.baskettogether.recruit.RecruitPostDetailActivity;
 import com.angel.black.baskettogether.recruit.googlemap.LocationInfo;
 import com.angel.black.baskettogether.recruit.googlemap.RecruitPostLocationMapActivity;
-import com.angel.black.baskettogether.user.UserHelper;
+import com.angel.black.baskettogether.user.UserInfoManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -138,7 +138,7 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
             for (int i = 0; i < attendList.length(); i++) {
                 JSONObject attendInfo = attendList.getJSONObject(i);
 
-                if(UserHelper.userUid == attendInfo.getLong("user_id")) {
+                if(UserInfoManager.userUid == attendInfo.getLong("user_id")) {
                     return true;
                 }
             }
@@ -150,7 +150,7 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
     }
 
     private void setData(JSONObject response) throws JSONException {
-        mIsMyPost = response.optLong("author_id") == UserHelper.userUid;
+        mIsMyPost = response.optLong("author_id") == UserInfoManager.userUid;
 
         if(mIsMyPost) {
             ((RecruitPostDetailActivity) getBaseActivity()).showOptionsMenuItems();

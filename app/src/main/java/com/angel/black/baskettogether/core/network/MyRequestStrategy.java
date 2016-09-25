@@ -4,9 +4,7 @@ import com.angel.black.baframework.logger.BaLog;
 import com.angel.black.baframework.network.HttpAPIRequester;
 import com.angel.black.baframework.util.StringUtil;
 import com.angel.black.baskettogether.core.MyApplication;
-import com.angel.black.baskettogether.user.UserHelper;
-
-import org.apache.http.client.methods.HttpRequestBase;
+import com.angel.black.baskettogether.user.UserInfoManager;
 
 import java.net.HttpURLConnection;
 
@@ -20,33 +18,28 @@ public class MyRequestStrategy implements HttpAPIRequester.HttpRequestStrategy {
     }
 
     @Override
-    public void setHeader(HttpRequestBase httpRequestBase) {
-        httpRequestBase.setHeader("Accept", "application/json");
-        BaLog.d("setHeader(Accept, application/json)");
-        httpRequestBase.setHeader("Content-type", "application/json");
-        BaLog.d("setHeader(Content-type, application/json)");
+    public void setHeader(HttpURLConnection conn, String method) {
+        if(method.equals("GET")) {
+            conn.setRequestProperty("Accept", "application/json");
+            BaLog.d("setHeader(Accept, application/json)");
+            conn.setRequestProperty("Content-type", "application/json");
+            BaLog.d("setHeader(Content-type, application/json)");
 
-        if (isNeedUserAuthToken()) {
-            httpRequestBase.setHeader("Token", UserHelper.userAccessToken);
-            BaLog.d("setHeader(Token, " + UserHelper.userAccessToken + ")");
+        } else {
+            conn.setRequestProperty("Accept", "application/json");                          // 서버 응답 컨텐츠 타입
+            BaLog.d("setHeader(Accept, application/json)");
+            conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");   // 요청 컨텐츠 타입. 데이터는 포스트데이터(폼) 에 넣음
+            BaLog.d("setHeader(Content-type, application/x-www-form-urlencoded)");
         }
-    }
-
-    @Override
-    public void setHeader(HttpURLConnection conn) {
-        conn.setRequestProperty("Accept", "application/json");                          // 서버 응답 컨텐츠 타입
-        BaLog.d("setHeader(Accept, application/json)");
-        conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");   // 요청 컨텐츠 타입
-        BaLog.d("setHeader(Content-type, application/x-www-form-urlencoded)");
 
         if (isNeedUserAuthToken()) {
-            conn.setRequestProperty("Token", UserHelper.userAccessToken);
-            BaLog.d("setHeader(Token, " + UserHelper.userAccessToken + ")");
+            conn.setRequestProperty("Token", UserInfoManager.userAccessToken);
+            BaLog.d("setHeader(Token, " + UserInfoManager.userAccessToken + ")");
         }
     }
 
     private boolean isNeedUserAuthToken() {
-        return !StringUtil.isEmptyString(UserHelper.userAccessToken);
+        return !StringUtil.isEmptyString(UserInfoManager.userAccessToken);
     }
 
 }

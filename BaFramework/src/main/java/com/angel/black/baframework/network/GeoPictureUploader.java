@@ -64,16 +64,19 @@ public abstract class GeoPictureUploader {
         }
         catch (MalformedURLException mue) {
             // Log.e(Tag, "error: " + mue.getMessage(), mue);
+            mue.printStackTrace();
             System.out.println("GeoPictureUploader.uploadPicture: Malformed URL: " + mue.getMessage());
             return ReturnCode.http400;
         }
         catch (IOException ioe) {
             // Log.e(Tag, "error: " + ioe.getMessage(), ioe);
+            ioe.printStackTrace();
             System.out.println("GeoPictureUploader.uploadPicture: IOE: " + ioe.getMessage());
             return ReturnCode.http500;
         }
         catch (Exception e) {
             // Log.e(Tag, "error: " + ioe.getMessage(), ioe);
+            e.printStackTrace();
             System.out.println("GeoPictureUploader.uploadPicture: unknown: " + e.getMessage());
             return ReturnCode.unknown;
         }

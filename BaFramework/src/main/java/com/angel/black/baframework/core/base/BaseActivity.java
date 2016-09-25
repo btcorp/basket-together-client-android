@@ -156,6 +156,12 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         Toast.makeText(this, msgResId, Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * 툴바 메뉴 아이템 클릭 콜백
+     * 툴바가 있을 때는 이 메소드를 오버라이드 한다.
+     * @param item
+     * @return
+     */
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         return false;
@@ -194,4 +200,9 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        BaLog.d("requestCode=" + requestCode + ", resultCode=" + resultCode, data);
+    }
 }

@@ -27,8 +27,6 @@ public class PermissionConfirmationDialog extends DialogFragment {
     private static final String ARG_REQUEST_CODE = "requestCode";
     private static final String ARG_IS_ACTIVITY_FINISH_ON_CANCEL = "isActFinish";
 
-    public static final int REQUEST_PERMISSION = 100;
-
     public static PermissionConfirmationDialog newInstance(String message, String permission, int requestCode, boolean isActFinish) {
         PermissionConfirmationDialog dialog = new PermissionConfirmationDialog();
         Bundle args = new Bundle();
@@ -56,7 +54,7 @@ public class PermissionConfirmationDialog extends DialogFragment {
                         ActivityCompat.requestPermissions((Activity) getContext(), new String[]{getArguments().getString(ARG_PERMISSION)}, getArguments().getInt(ARG_REQUEST_CODE));
 
                         if(listener != null) {
-                            listener.onAllowedPermissionConfirm(getArguments().getString(ARG_PERMISSION));
+                            listener.onAllowedPermissionConfirm(getArguments().getInt(ARG_REQUEST_CODE));
                         }
                     }
                 })
@@ -70,7 +68,7 @@ public class PermissionConfirmationDialog extends DialogFragment {
                         }
 
                         if(listener != null) {
-                            listener.onDenyedPermissionConfirm(getArguments().getString(ARG_PERMISSION));
+                            listener.onDenyedPermissionConfirm(getArguments().getInt(ARG_REQUEST_CODE));
                         }
 
                         if(getArguments().getBoolean(ARG_IS_ACTIVITY_FINISH_ON_CANCEL)) {
@@ -85,7 +83,7 @@ public class PermissionConfirmationDialog extends DialogFragment {
      * 퍼미션 요청 이유 설명하는 팝업의 허용/거부 리스너
      */
     public interface OnPermissionConfirmationDialogListener {
-        void onAllowedPermissionConfirm(String permission);
-        void onDenyedPermissionConfirm(String permisson);
+        void onAllowedPermissionConfirm(int permissionRequestCode);
+        void onDenyedPermissionConfirm(int permissionRequestCode);
     }
 }

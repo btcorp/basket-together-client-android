@@ -13,7 +13,6 @@ import com.angel.black.baframework.network.util.NetworkUtil;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
@@ -99,12 +98,14 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequest
             URL connectURL = new URL(serverUrl + APIUrl);
             conn = (HttpURLConnection) connectURL.openConnection();
 
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
-            conn.setUseCaches(false);
             conn.setRequestMethod(method);
+            conn.setDoInput(true);
+            conn.setDoOutput(method.equals("POST") || method.equals("PUT"));
+            conn.setUseCaches(false);
 
-            mHttpRequestStrategy.setHeader(conn);
+            BaLog.d("setRequestMethod=" + method);
+
+            mHttpRequestStrategy.setHeader(conn, method);
 
             conn.connect();
 
@@ -382,7 +383,6 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequest
 
     public interface HttpRequestStrategy {
         String getServerUrl();
-        void setHeader(HttpRequestBase httpRequestBase);
-        void setHeader(HttpURLConnection conn);
+        void setHeader(HttpURLConnection conn, String method);
     }
 }
