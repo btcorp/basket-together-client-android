@@ -17,8 +17,8 @@ import com.angel.black.baframework.util.StringUtil;
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.api.APICallSuccessNotifier;
 import com.angel.black.baskettogether.api.UserAPI;
+import com.angel.black.baskettogether.image.CameraTestActivity;
 import com.angel.black.baskettogether.recruit.RecruitPostListActivity;
-import com.angel.black.baskettogether.signup.SignUpActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -101,11 +101,11 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
                 break;
 
             case R.id.btn_sign_up_at_login:
-                startActivity(SignUpActivity.class);
+//                startActivity(SignUpActivity.class);
 
                 //TEST
 //                startActivity(RecruitPostRegistActivity.class);
-//                IntentExecutor.executeCustomGalleryPick(getActivity(), ImagePickActivity.class, 4);
+                startActivity(CameraTestActivity.class);
                 break;
         }
     }

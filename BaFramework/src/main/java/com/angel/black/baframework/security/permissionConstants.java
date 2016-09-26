@@ -6,4 +6,5 @@ package com.angel.black.baframework.security;
 public class PermissionConstants {
     public static final int REQUEST_LOCATION_PERMISSION = 100;
     public static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION = 101;
+    public static final int REQUEST_CAMERA_PERMISSION = 102;
 }
