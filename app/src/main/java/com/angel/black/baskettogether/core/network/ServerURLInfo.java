@@ -4,8 +4,8 @@ package com.angel.black.baskettogether.core.network;
  * Created by KimJeongHun on 2016-05-19.
  */
 public class ServerURLInfo {
-//    public static final String DEV_SERVER_URL = "http://52.78.69.17:8000/";    // 공식 개발
-    public static final String DEV_SERVER_URL = "http://0f80a6f1.ngrok.io/";
+    public static final String DEV_SERVER_URL = "http://52.78.69.17:8000/";    // 공식 개발
+//    public static final String DEV_SERVER_URL = "http://0f80a6f1.ngrok.io/";
     public static final String PRODUCT_SERVER_URL = "";
 
     public static final String API_USER_SIGNUP = "accounts/signup/";

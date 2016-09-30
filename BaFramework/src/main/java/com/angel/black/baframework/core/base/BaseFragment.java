@@ -117,12 +117,13 @@ public class BaseFragment extends Fragment {
      */
     @TargetApi(Build.VERSION_CODES.M)
     public void requestPermission(String permission, int permissionReqReasonMsgId, int permissionRequestCode, boolean finishIfCancel) {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permission)) {
+        if (shouldShowRequestPermissionRationale(permission)) {
             PermissionConfirmationDialog.newInstance(getResources().getString(permissionReqReasonMsgId),
                     permission, permissionRequestCode, finishIfCancel)
                     .show(getActivity().getSupportFragmentManager(), PermissionConfirmationDialog.TAG);
         } else {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{permission}, permissionRequestCode);
+//            ActivityCompat.requestPermissions(getActivity(), new String[]{permission}, permissionRequestCode);
+            requestPermissions(new String[]{permission}, permissionRequestCode);
         }
     }
 }

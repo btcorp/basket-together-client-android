@@ -43,16 +43,17 @@ public class CameraTestActivity extends BaseActivity implements CameraFragment.C
 
     @Override
     public void onStartCameraOpen() {
-
+        BaLog.i();
     }
 
     @Override
     public void onFailCameraOpen() {
-
+        BaLog.i();
     }
 
     @Override
     public void onSuccessCameraOpen() {
+        BaLog.i();
         hideProgress();
     }
 }

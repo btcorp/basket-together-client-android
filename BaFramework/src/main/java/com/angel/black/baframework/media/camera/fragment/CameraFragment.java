@@ -16,12 +16,15 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.angel.black.baframework.R;
+import com.angel.black.baframework.content.ContentProviderManager;
 import com.angel.black.baframework.core.base.BaseActivity;
 import com.angel.black.baframework.core.base.BaseFragment;
 import com.angel.black.baframework.logger.BaLog;
 import com.angel.black.baframework.media.camera.CameraPictureFileBuilder;
 import com.angel.black.baframework.media.camera.view.CameraViewCompat;
 import com.angel.black.baframework.security.PermissionConstants;
+import com.angel.black.baframework.ui.dialog.PermissionConfirmationDialog;
+import com.angel.black.baframework.util.BitmapUtil;
 
 import java.io.FileNotFoundException;
 
@@ -29,35 +32,29 @@ import java.io.FileNotFoundException;
  * Created by KimJeongHun on 2016-07-01.
  */
 public class CameraFragment extends BaseFragment implements CameraViewCompat.CameraActionCallback,
-        CameraViewCompat.CameraOpenCallback {
+        CameraViewCompat.CameraOpenCallback, PermissionConfirmationDialog.OnPermissionConfirmationDialogListener {
 
-    /** 사진을 더 촬영할 수 있는 수 */
     private static final String ARG_CAN_TAKE_COUNT = "canTakeCount";
+    private static final String ARG_SUPPORT_FRONT_CAMERA = "supportFront";
+    private static final String ARG_SUPPORT_FLASH = "supportFlash";
+    private static final String ARG_OPEN_PUBLIC_ALBUM = "openPublic";
+    private static final String ARG_THUMBNAIL_WIDTH = "thumbWidth";
+    private static final String ARG_THUMBNAIL_HEIGHT = "thumbHeight";
 
     private ViewGroup mLayoutCameraView;
     private CameraViewCompat mCameraView;
     private Button mTakePictureButton;
 
-    public void setTakePictureButton(Button btnTakePicture) {
-        mTakePictureButton = btnTakePicture;
-        mTakePictureButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    mCameraView.takePicture();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    showToast(R.string.error_camera);
-                }
-            }
-        });
-    }
-
     private CameraActivityCallback cameraActivityCallback;
 
     private boolean isBuildingFile;
     private boolean mLockCameraTake;        // 카메라 촬영 락
+    /** 사진을 더 촬영할 수 있는 수 */
     private int mCanTakeCount;
+    /** SD카드내의 공개 앨범에 보일지 여부 */
+    private boolean mOpenPublic;
+    private int mThumbnailWidth;
+    private int mThumbnailHeight;
 
     public static CameraFragment newInstance(int canTakeCount) {
         CameraFragment instance = new CameraFragment();
@@ -142,18 +139,24 @@ public class CameraFragment extends BaseFragment implements CameraViewCompat.Cam
         super.onViewCreated(view, savedInstanceState);
         BaLog.i();
 
-        createCameraView();
+        if (checkPermission(Manifest.permission.CAMERA) && checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            createCameraView();
 
 //        ((RegistProductImagesActivity) getActivity()).setMode(RegistProductImagesActivity.MODE_CAMERA);
 
-        Bundle args = getArguments();
-        if(args != null) {
-            mCanTakeCount = getArguments().getInt(ARG_CAN_TAKE_COUNT);
-        } else {
-            mCanTakeCount = 1;
-        }
+            Bundle args = getArguments();
+            if(args != null) {
+                mCanTakeCount = args.getInt(ARG_CAN_TAKE_COUNT);
+                mOpenPublic = args.getBoolean(ARG_OPEN_PUBLIC_ALBUM);
+                mThumbnailWidth = args.getInt(ARG_THUMBNAIL_WIDTH);
+                mThumbnailHeight = args.getInt(ARG_THUMBNAIL_HEIGHT);
+            } else {
+                mCanTakeCount = 1;
+                mOpenPublic = false;
+            }
 
-        cameraActivityCallback.onDisplayCameraPreview();
+            cameraActivityCallback.onDisplayCameraPreview();
+        }
     }
 
     @Override
@@ -164,6 +167,7 @@ public class CameraFragment extends BaseFragment implements CameraViewCompat.Cam
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         BaLog.i("pemissions=" + permissions.length + ", grantResults=" + grantResults.length);
         if (requestCode == PermissionConstants.REQUEST_CAMERA_PERMISSION) {
             if (grantResults.length != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
@@ -198,9 +202,19 @@ public class CameraFragment extends BaseFragment implements CameraViewCompat.Cam
     }
 
     @Override
-    public void onSuccessSavePictureImageToFile(CameraPictureFileBuilder.BuildImageResult buildImageResult) {
+    public void onSuccessSavePictureImageToFile(final CameraPictureFileBuilder.BuildImageResult buildImageResult) {
         BaLog.i();
         isBuildingFile = false;
+
+        if(mOpenPublic) {
+            new Thread() {
+                @Override
+                public void run() {
+                    ContentProviderManager.addContentProvider(getContext(), buildImageResult,
+                            BitmapUtil.buildThumbnail(buildImageResult, mThumbnailWidth, mThumbnailHeight));
+                }
+            }.start();
+        }
 
         cameraActivityCallback.onSuccessTakenPictureAndSaveFile(buildImageResult);
     }
@@ -283,6 +297,32 @@ public class CameraFragment extends BaseFragment implements CameraViewCompat.Cam
         if(mCameraView != null) {
             mCameraView.releaseCamera();
         }
+    }
+
+
+    public void setTakePictureButton(Button btnTakePicture) {
+        mTakePictureButton = btnTakePicture;
+        mTakePictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    mCameraView.takePicture();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showToast(R.string.error_camera);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onAllowedPermissionConfirm(int permissionRequestCode) {
+        openCamera();
+    }
+
+    @Override
+    public void onDenyedPermissionConfirm(int permissionRequestCode) {
+        getActivity().finish();
     }
 
     public interface CameraActivityCallback {

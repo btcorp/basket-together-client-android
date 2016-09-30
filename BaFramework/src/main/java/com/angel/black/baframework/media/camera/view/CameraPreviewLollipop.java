@@ -564,19 +564,21 @@ public class CameraPreviewLollipop extends SurfaceView implements SurfaceHolder.
 //            return;
 //        }
 
-        CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
-        try {
-            if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
-                throw new RuntimeException("Time out waiting to lock camera opening.");
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
+            try {
+                if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
+                    throw new RuntimeException("Time out waiting to lock camera opening.");
+                }
+
+                String cameraId = mCameraId;
+                manager.openCamera(cameraId, mStateCallback, mBackgroundHandler);
+
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Interrupted while trying to lock camera opening.", e);
             }
-
-            String cameraId =  mCameraId;
-            manager.openCamera(cameraId, mStateCallback, mBackgroundHandler);
-
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Interrupted while trying to lock camera opening.", e);
         }
     }
 
