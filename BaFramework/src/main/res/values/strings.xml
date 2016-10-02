@@ -3,6 +3,8 @@
 
     <!-- 단문 명령 단어 모음 -->
     <string name="complete">완료</string>
+    <string name="edit">편집</string>
+    <string name="camera">카메라</string>
 
     <!-- 네트워크 에러 메시지 -->
     <string name="error_not_connected_network">네트워크 연결을 확인해주세요.</string>
@@ -19,5 +21,6 @@
     <string name="error_camera">카메라 오류가 발생했습니다. 다시 시도해주세요.</string>
     <string name="no_more_can_take_camera">더 이상 찍을 수 없습니다.</string>
     <string name="request_write_storage_permission">저장공간 접근 권한을 필요로 합니다.</string>
+
 
 </resources>

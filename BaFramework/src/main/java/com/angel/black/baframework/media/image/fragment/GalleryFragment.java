@@ -49,9 +49,8 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
     private GridView mPhotoGridview;
     private GalleryGridAdapter mGridAdapter;
     private GalleryImagePickListener mGalleryImagePickListener;
-    private GalleryImageDisplayer mGalleryImageDisplayer;
+    private ImageDisplayer mImageDisplayer;
     private View mEmptyView;
-//    private ProgressBar mLoadingProgress;
 
     /** 현재 선택된 갤러리 폴더 id. 디폴트 - 전체앨범*/
     private long mGallaryBucketId;
@@ -115,7 +114,7 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
 
         showProgress();
         mGalleryImagePickListener = (GalleryImagePickListener) getActivity();
-        mGalleryImageDisplayer = (GalleryImageDisplayer) getActivity();
+        mImageDisplayer = (ImageDisplayer) getActivity();
     }
 
     @Override
@@ -222,14 +221,14 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
 
     private void initGallery() {
         BaLog.i();
-        ((BaseImagePickActivity) getActivity()).setMode(MODE_GALLERY);
+        ((BaseImagePickActivity) getActivity()).setMode(BaseImagePickActivity.Mode.GALLERY);
 
         if(checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             loadGalleryImages();
         }
     }
 
-    private void loadGalleryAlbums() {
+    public void loadGalleryAlbums() {
         BaLog.i();
         new GalleryBuilder(getActivity(), this).setType(GalleryBuilder.TYPE_ALBUM_LIST).build();
     }
@@ -453,8 +452,11 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
         void onUnPickGalleryImage(GalleryBuilder.GalleryBucketItemInfo item);
     }
 
-    public interface GalleryImageDisplayer {
-        void onDisplayImage(String uri, ImageView imgView, Object... extras);
+    /**
+     * 갤러리 이미지 표시 인터페이스
+     */
+    public interface ImageDisplayer {
+        void displayImage(String uri, ImageView imgView, Object... extras);
     }
 
     public class GalleryGridAdapter extends BaseAdapter {
@@ -538,7 +540,7 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
                     BaLog.d("mGridImg width=" + width + ", height=" + height);
 
                     //TODO 이미지 로더 실제로 표시
-                    mGalleryImageDisplayer.onDisplayImage(uri, imgView);
+                    mImageDisplayer.displayImage(uri, imgView);
 
                     imgView.setTag(uri);
                 }

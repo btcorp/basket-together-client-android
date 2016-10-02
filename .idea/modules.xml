@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/BaFramework/BaFramework.iml" filepath="$PROJECT_DIR$/BaFramework/BaFramework.iml" />
       <module fileurl="file://$PROJECT_DIR$/BasketTogether.iml" filepath="$PROJECT_DIR$/BasketTogether.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/basket-together-client-android.iml" filepath="$PROJECT_DIR$/basket-together-client-android.iml" />
     </modules>
   </component>
 </project>

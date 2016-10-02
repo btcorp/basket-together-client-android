@@ -13,7 +13,7 @@ import com.angel.black.baframework.util.BitmapUtil;
 /**
  * Created by KimJeongHun on 2016-09-30.
  */
-public class ContentProviderManager {
+public class ContentProviderHelper {
     /**
      * 카메라로 찍은 사진 데이터를 컨텐트 프로바이더에 저장한다.(썸네일 데이터도 같이)
      *

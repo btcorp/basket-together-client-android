@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.angel.black.baframework.R;
 import com.angel.black.baframework.logger.BaLog;
 
+import java.io.File;
 import java.util.List;
 
 
@@ -229,5 +230,16 @@ public class BaPackageManager {
 
     public static String getPublicAppAlbumName(Context mContext) {
         return mContext.getString(R.string.app_name);
+    }
+
+    public static String getTempImagePath(Context context) {
+        String tempPath = context.getFilesDir().getAbsolutePath() + "/temp/";
+
+        File tempDir = new File(tempPath);
+        if(!tempDir.exists()) {
+            tempDir.mkdir();
+        }
+
+        return tempDir.getAbsolutePath();
     }
 }

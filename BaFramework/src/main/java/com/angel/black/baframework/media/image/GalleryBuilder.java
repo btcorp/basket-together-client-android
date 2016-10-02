@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 
+import com.angel.black.baframework.media.image.fragment.PreviewsFragment;
+
 import java.util.ArrayList;
 
 /**
@@ -342,6 +344,12 @@ public class GalleryBuilder {
         @Override
         public String toString() {
             return "id=" + id + ", name=" + name + ", path=" + path;
+        }
+
+        public static GalleryBucketItemInfo createInstance(PreviewsFragment.PreviewData previewData) {
+            GalleryBucketItemInfo galleryBucketItemInfo = new GalleryBucketItemInfo();
+            galleryBucketItemInfo.path = previewData.imagePath;
+            return galleryBucketItemInfo;
         }
     }
 

@@ -13,11 +13,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.angel.black.baframework.core.base.BaseFragment;
+import com.angel.black.baframework.media.image.BaseImagePickWithCameraActivity;
 import com.angel.black.baframework.util.StringUtil;
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.api.APICallSuccessNotifier;
 import com.angel.black.baskettogether.api.UserAPI;
-import com.angel.black.baskettogether.image.CameraTestActivity;
 import com.angel.black.baskettogether.recruit.RecruitPostListActivity;
 
 import org.json.JSONException;
@@ -105,7 +105,8 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
 
                 //TEST
 //                startActivity(RecruitPostRegistActivity.class);
-                startActivity(CameraTestActivity.class);
+//                startActivity(CameraTestActivity.class);
+                startActivity(BaseImagePickWithCameraActivity.class);
                 break;
         }
     }

@@ -3,7 +3,7 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/spinner_album"
-        android:title="ActionBar Spinner"
+        android:title="앨범"
         app:actionViewClass="android.widget.Spinner"
         app:showAsAction="always" />
     <item

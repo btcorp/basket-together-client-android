@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <FrameLayout
+        android:id="@+id/layout_img_preview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/img_preview"
+            android:layout_width="50dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/white"
+            android:scaleType="centerCrop"
+            android:cropToPadding="true"
+            android:clickable="false"
+            android:focusable="false"/>
+
+        <ProgressBar
+            android:id="@+id/loading_progress_bar"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:visibility="visible"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/btn_del_preview_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="8dp"
+        android:paddingBottom="8dp">
+
+        <ImageButton
+            android:id="@+id/btn_del_preview"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_edit_cell_delete"
+            android:background="@android:color/transparent"
+            android:clickable="false"
+            android:focusable="false"
+            android:duplicateParentState="true"/>
+
+    </FrameLayout>
+
+
+</RelativeLayout>

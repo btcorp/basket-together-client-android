@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
@@ -87,6 +88,34 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             mToolbar.setNavigationOnClickListener(naviClick);
             mToolbar.setOnMenuItemClickListener(this);
         }
+    }
+
+    public void addFragment(int resId, Fragment fragment, String tag, boolean addToBackStack) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.add(resId, fragment, tag);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        if(addToBackStack)
+            ft.addToBackStack(null);
+        ft.commitAllowingStateLoss();
+    }
+
+    public void replaceFragment(int resId, Fragment fragment, String tag, boolean addToBackStack, boolean isAni) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        if(isAni)
+            ft.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out, R.anim.slide_left_in, R.anim.slide_right_out);
+        if(addToBackStack)
+            ft.addToBackStack(null);
+        ft.replace(resId, fragment, tag);
+        ft.commitAllowingStateLoss();
+    }
+
+    protected void removeFragment(String tag) {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+//		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+//        ft.setCustomAnimations(R.anim.slide_down_to_up, R.anim.slide_up_to_down);
+        ft.remove(fm.findFragmentByTag(tag));
+        ft.commitAllowingStateLoss();
     }
 
     protected void startActivity(Class clazz) {

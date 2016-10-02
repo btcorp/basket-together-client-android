@@ -15,4 +15,8 @@
 
     <style name="EmptyListText"
         />
+
+    <style name="WhiteTextButton.Borderless" parent="Base.Widget.AppCompat.Button.Borderless" >
+        <item name="android:textColor">@android:color/white</item>
+    </style>
 </resources>

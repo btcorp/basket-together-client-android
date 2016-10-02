@@ -16,7 +16,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.angel.black.baframework.R;
-import com.angel.black.baframework.content.ContentProviderManager;
+import com.angel.black.baframework.content.ContentProviderHelper;
 import com.angel.black.baframework.core.base.BaseActivity;
 import com.angel.black.baframework.core.base.BaseFragment;
 import com.angel.black.baframework.logger.BaLog;
@@ -24,6 +24,7 @@ import com.angel.black.baframework.media.camera.CameraPictureFileBuilder;
 import com.angel.black.baframework.media.camera.view.CameraViewCompat;
 import com.angel.black.baframework.security.PermissionConstants;
 import com.angel.black.baframework.ui.dialog.PermissionConfirmationDialog;
+import com.angel.black.baframework.util.BaPackageManager;
 import com.angel.black.baframework.util.BitmapUtil;
 
 import java.io.FileNotFoundException;
@@ -63,6 +64,14 @@ public class CameraFragment extends BaseFragment implements CameraViewCompat.Cam
         instance.setArguments(args);
 
         return instance;
+    }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        BaLog.i();
+        cameraActivityCallback = (CameraActivityCallback) getActivity();
     }
 
     @Override
@@ -121,19 +130,6 @@ public class CameraFragment extends BaseFragment implements CameraViewCompat.Cam
         return anim;
     }
 
-    private void createCameraView() {
-        if(mCameraView == null) {
-            mCameraView = CameraViewCompat.createInstance(CameraFragment.this, mLayoutCameraView);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        BaLog.i();
-        cameraActivityCallback = (CameraActivityCallback) getActivity();
-    }
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -141,8 +137,6 @@ public class CameraFragment extends BaseFragment implements CameraViewCompat.Cam
 
         if (checkPermission(Manifest.permission.CAMERA) && checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             createCameraView();
-
-//        ((RegistProductImagesActivity) getActivity()).setMode(RegistProductImagesActivity.MODE_CAMERA);
 
             Bundle args = getArguments();
             if(args != null) {
@@ -155,7 +149,17 @@ public class CameraFragment extends BaseFragment implements CameraViewCompat.Cam
                 mOpenPublic = false;
             }
 
-            cameraActivityCallback.onDisplayCameraPreview();
+            if(mOpenPublic) {
+                mCameraView.setDestFilePath(BaPackageManager.getPublicAppAlbumPath(getContext()));
+            } else {
+                mCameraView.setDestFilePath(BaPackageManager.getTempImagePath(getContext()));
+            }
+        }
+    }
+
+    private void createCameraView() {
+        if(mCameraView == null) {
+            mCameraView = CameraViewCompat.createInstance(CameraFragment.this, mLayoutCameraView);
         }
     }
 
@@ -210,7 +214,7 @@ public class CameraFragment extends BaseFragment implements CameraViewCompat.Cam
             new Thread() {
                 @Override
                 public void run() {
-                    ContentProviderManager.addContentProvider(getContext(), buildImageResult,
+                    ContentProviderHelper.addContentProvider(getContext(), buildImageResult,
                             BitmapUtil.buildThumbnail(buildImageResult, mThumbnailWidth, mThumbnailHeight));
                 }
             }.start();
@@ -249,9 +253,13 @@ public class CameraFragment extends BaseFragment implements CameraViewCompat.Cam
         getBaseActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if(cameraActivityCallback != null) {
+                    cameraActivityCallback.onDisplayCameraPreview();
+                }
                 hideProgress();
             }
         });
+
 
         // 카메라 오픈이 성공했는데 프리뷰가 시작되고 있지 않다면, 프리뷰 시작
         if(!mCameraView.isShowingPreview()) {

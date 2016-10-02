@@ -22,6 +22,10 @@ import com.angel.black.baframework.logger.BaLog;
 import com.angel.black.baframework.media.image.fragment.GalleryFragment;
 import com.angel.black.baframework.util.BaPackageManager;
 import com.angel.black.baframework.util.ScreenUtil;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,21 +35,54 @@ import java.util.List;
  * Created by KimJeongHun on 2016-09-23.
  */
 public class BaseImagePickActivity extends BaseActivity implements
-        GalleryFragment.GalleryImageDisplayer, GalleryFragment.GalleryImagePickListener, AdapterView.OnItemSelectedListener {
+        GalleryFragment.ImageDisplayer, GalleryFragment.GalleryImagePickListener, AdapterView.OnItemSelectedListener {
+    protected ImageLoader mImageLoader;
+    protected DisplayImageOptions mDipslayImageOptions;
+
     protected GalleryFragment mGalleryFragment;
-    private int mMode;
-    private Spinner mSpinnerAlbum;
-    private GalleryAlbumAdapter mGalleryAlbumAdapter;
-    private SelectedImageInfo mSelectedImageInfo;
+    protected Mode mMode;
+
+    protected Spinner mSpinnerAlbum;
+    protected GalleryAlbumAdapter mGalleryAlbumAdapter;
+    protected SelectedImageInfo mSelectedImageInfo;
+
+    /**
+     * 현재 등록(선택)된 이미지(아이템) 수
+     */
+    protected int mCurRegisteredItemCount;
+
+    public enum Mode {
+        GALLERY, CAMERA
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_image_pick);
+        setContentView();
+
+        mImageLoader = ImageLoader.getInstance();
+
+        mDipslayImageOptions = new DisplayImageOptions.Builder()
+                .showImageOnLoading(getResources().getDrawable(R.color.light_gray))
+                .imageScaleType(ImageScaleType.EXACTLY)
+                .considerExifParams(true)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .displayer(new FadeInBitmapDisplayer(300))
+                .build();
 
         mSelectedImageInfo = new SelectedImageInfo();
-        mGalleryFragment = (GalleryFragment) getSupportFragmentManager().findFragmentById(R.id.gallery_fragment);
+
+        initGalleryFragment();
+    }
+
+    protected void initGalleryFragment() {
+        mGalleryFragment = (GalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_gallery);
         initGalleryPickOptions();
+    }
+
+    protected void setContentView() {
+        setContentView(R.layout.activity_image_pick);
     }
 
     protected void initGalleryPickOptions() {
@@ -62,15 +99,14 @@ public class BaseImagePickActivity extends BaseActivity implements
     }
 
     protected void onClickComplete() {
-        finishWithReturnData();
+        finishWithReturnData(mSelectedImageInfo.getSelectedImagePathList());
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_gallery_for_toolbar, menu);
+        getMenuInflater().inflate(R.menu.activity_base_image_pick, menu);
 
-
-        MenuItem menuItem = menu.findItem(R.id.spinner_album);
+        MenuItem menuItem = menu.findItem(R.id.menu_gallery_camera);
         mSpinnerAlbum = (Spinner) MenuItemCompat.getActionView(menuItem);
 
         return true;
@@ -86,16 +122,21 @@ public class BaseImagePickActivity extends BaseActivity implements
         return false;
     }
 
-    public void setMode(int mode) {
+    public void setMode(Mode mode) {
         this.mMode = mode;
+        onModeChanged(mode);
+    }
+
+    protected void onModeChanged(Mode mode) {
+
     }
 
     /**
      * 테스트용. 실제 상속하는 액티비티단에서 오버라이드 해서 이미지 표시 방식을 바꾼다.
      */
     @Override
-    public void onDisplayImage(String uri, ImageView imgView, Object... extras) {
-        imgView.setImageURI(Uri.parse(uri));
+    public void displayImage(String uri, ImageView imgView, Object... extras) {
+        mImageLoader.displayImage(uri, imgView, mDipslayImageOptions);
     }
 
     @Override
@@ -116,10 +157,14 @@ public class BaseImagePickActivity extends BaseActivity implements
         layoutParams.width = ScreenUtil.convertDpToPixel(this, 200);
         mSpinnerAlbum.setLayoutParams(layoutParams);
 
-        mGalleryAlbumAdapter = new GalleryAlbumAdapter(this, R.layout.spinner_item_gallery_album, R.id.tv_spitem, albumList);
-        mGalleryAlbumAdapter.setDropDownViewResource(R.layout.spinner_dropdown_gallery_album_item);
-        mSpinnerAlbum.setAdapter(mGalleryAlbumAdapter);
-        mSpinnerAlbum.setOnItemSelectedListener(this);
+        if(mGalleryAlbumAdapter == null) {
+            mGalleryAlbumAdapter = new GalleryAlbumAdapter(this, R.layout.spinner_item_gallery_album, R.id.tv_spitem, albumList);
+            mGalleryAlbumAdapter.setDropDownViewResource(R.layout.spinner_dropdown_gallery_album_item);
+            mSpinnerAlbum.setAdapter(mGalleryAlbumAdapter);
+            mSpinnerAlbum.setOnItemSelectedListener(this);
+        } else {
+            mGalleryAlbumAdapter.notifyDataSetChanged();
+        }
 
 //        spinner.setSelection(findIndexGalleryAlbum(mCurrentGalleryAlbumId));
     }
@@ -149,11 +194,15 @@ public class BaseImagePickActivity extends BaseActivity implements
 
     /**
      * 등록대상 이미지들의 패스 리스트를 호출액티비티에 반환하고 종료한다.
+     * @param imagePathList
      */
-    private void finishWithReturnData() {
+    protected void finishWithReturnData(ArrayList<String> imagePathList) {
         Intent returnData = new Intent();
-
-        returnData.putStringArrayListExtra(IntentConstants.KEY_IMAGE_PATH_LIST, mSelectedImageInfo.getSelectedImagePathList());
+        returnData.putStringArrayListExtra(IntentConstants.KEY_IMAGE_PATH_LIST, imagePathList);
+//        if(mOneImageChangeIndex >= 0) {
+//            // 이미지 변경으로 호출되어 1장만 선택했을 때 변경 대상 인덱스 알려줌
+//            returnData.putExtra(IntentConstants.KEY_IMAGE_CHANGE_INDEX, mOneImageChangeIndex);
+//        }
         setResult(RESULT_OK, returnData);
         finish();
     }
@@ -201,7 +250,7 @@ public class BaseImagePickActivity extends BaseActivity implements
             String uri = Uri.decode(Uri.fromFile(new File(item.path)).toString());
 
 //            mImageLoader.displayImage(uri, holder.mThumbnail, mOptions);
-            onDisplayImage(uri, holder.mThumbnail);
+            displayImage(uri, holder.mThumbnail);
 
             holder.mAlbumName.setText(item.name + " ( " + item.count + " )");
 

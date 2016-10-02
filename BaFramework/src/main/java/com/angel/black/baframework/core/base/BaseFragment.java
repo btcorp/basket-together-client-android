@@ -20,7 +20,7 @@ import com.angel.black.baframework.ui.dialog.PermissionConfirmationDialog;
  * Created by KimJeongHun on 2016-06-24.
  */
 public class BaseFragment extends Fragment {
-    protected final String TAG = this.getClass().getSimpleName();
+    public final String TAG = this.getClass().getSimpleName();
 
     protected ViewGroup getActivityContentsLayout() {
         return getBaseActivity().getContentsLayout();

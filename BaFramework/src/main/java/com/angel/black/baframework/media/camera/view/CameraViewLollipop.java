@@ -131,6 +131,11 @@ public class CameraViewLollipop extends CameraViewCompat {
     }
 
     @Override
+    public void setDestFilePath(String destFilePath) {
+        mCameraPreview.setDestFilePath(destFilePath);
+    }
+
+    @Override
     public boolean isFrontCamera() {
         return mCameraPreview.isFrontCamera();
     }

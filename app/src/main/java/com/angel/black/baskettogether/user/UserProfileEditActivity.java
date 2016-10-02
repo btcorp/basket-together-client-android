@@ -15,6 +15,7 @@ import android.widget.EditText;
 import com.angel.black.baframework.intent.IntentConstants;
 import com.angel.black.baframework.intent.IntentExecutor;
 import com.angel.black.baframework.logger.BaLog;
+import com.angel.black.baframework.media.image.BaseImagePickActivity;
 import com.angel.black.baframework.network.GeoPictureUploader;
 import com.angel.black.baframework.network.ImageUploaderTask;
 import com.angel.black.baframework.security.PermissionConstants;
@@ -27,7 +28,6 @@ import com.angel.black.baskettogether.core.MyApplication;
 import com.angel.black.baskettogether.core.base.BtBaseActivity;
 import com.angel.black.baskettogether.core.intent.IntentConst;
 import com.angel.black.baskettogether.core.view.imageview.RoundedImageView;
-import com.angel.black.baskettogether.image.ImagePickActivity;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -109,7 +109,7 @@ public class UserProfileEditActivity extends BtBaseActivity implements View.OnCl
                         R.string.request_write_storage_permission, false);
                 return;
             } else {
-                IntentExecutor.executeCustomGalleryPick(this, ImagePickActivity.class, 1);
+                IntentExecutor.executeCustomGalleryPick(this, BaseImagePickActivity.class, 1);
             }
         }
     }
@@ -144,7 +144,7 @@ public class UserProfileEditActivity extends BtBaseActivity implements View.OnCl
                 });
             } else {
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    IntentExecutor.executeCustomGalleryPick(this, ImagePickActivity.class, 1);
+                    IntentExecutor.executeCustomGalleryPick(this, BaseImagePickActivity.class, 1);
                 }
             }
         }

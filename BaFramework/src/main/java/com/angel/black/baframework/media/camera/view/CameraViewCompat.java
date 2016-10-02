@@ -116,6 +116,8 @@ public abstract class CameraViewCompat implements View.OnClickListener {
         }
     }
 
+    public abstract void setDestFilePath(String destFilePath);
+
 //    public void setCameraSizeToSquare() {
 //        if(BuildUtil.isAboveHoneyComb()) {
 //            mParentCameraPreview.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {

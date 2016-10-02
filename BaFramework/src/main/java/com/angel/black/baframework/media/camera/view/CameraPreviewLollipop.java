@@ -47,7 +47,6 @@ import android.widget.Toast;
 import com.angel.black.baframework.R;
 import com.angel.black.baframework.logger.BaLog;
 import com.angel.black.baframework.media.camera.CameraPictureFileBuilder;
-import com.angel.black.baframework.util.BaPackageManager;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -179,10 +178,10 @@ public class CameraPreviewLollipop extends SurfaceView implements SurfaceHolder.
     private CameraCharacteristics mCameraCharacteristics;
     private ImageReader mImageReader;
 
-    private Bitmap mTakenPictureImageBitmap;
-
     private CameraViewCompat.CameraActionCallback mCameraActionCallback;
     private CameraViewCompat.CameraOpenCallback mCameraOpenCallback;
+
+    private String mDestFilePath;
 
     /** 프리뷰 화면이 초기화 중인지 여부 */
     private boolean initializingPreview = false;
@@ -191,6 +190,14 @@ public class CameraPreviewLollipop extends SurfaceView implements SurfaceHolder.
     private boolean isFrontCamera = false;
 
     private int flashMode = CameraViewCompat.FLASH_MODE_OFF;
+
+    /** 저장할 사진 파일 사이즈(해상도) */
+    private Size mLargestPictureSize;
+    private Bitmap mTakenPictureImageBitmap;
+
+    public void setDestFilePath(String destFilePath) {
+        mDestFilePath = destFilePath;
+    }
 
     public int getFlashMode() {
         return flashMode;
@@ -203,9 +210,6 @@ public class CameraPreviewLollipop extends SurfaceView implements SurfaceHolder.
     public boolean isFrontCamera() {
         return isFrontCamera;
     }
-
-    /** 저장할 사진 파일 사이즈(해상도) */
-    private Size mLargestPictureSize;
 
     public void setCameraActionCallback(CameraViewCompat.CameraActionCallback cameraActionCallback) {
         this.mCameraActionCallback = cameraActionCallback;
@@ -907,7 +911,7 @@ public class CameraPreviewLollipop extends SurfaceView implements SurfaceHolder.
         }
 
         CameraPictureFileBuilder builder = new CameraPictureFileBuilder(mContext,
-                BaPackageManager.getPublicAppAlbumPath(mContext), true,
+                mDestFilePath, true,
                 isFrontCamera,
                 new Handler(getContext().getMainLooper()) {
                     @Override

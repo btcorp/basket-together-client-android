@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/container_gallery_camera"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/fragment_previews" >
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/bottombar"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="74dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary">
+
+        <ImageButton
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:id="@+id/btn_camera_gallery"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_centerInParent="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_camera_alt_white_24dp"
+            android:onClick="onClick"/>
+
+        <ImageButton
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:id="@+id/btn_take_pic"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_centerInParent="true"
+            android:visibility="invisible"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_take_camera"
+            android:onClick="onClick"/>
+
+        <Button
+            style="@style/WhiteTextButton.Borderless"
+            android:id="@+id/btn_edit"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_centerInParent="true"
+            android:text="@string/edit"
+            android:onClick="onClick"
+            android:clickable="false"
+            android:focusable="false"/>
+
+    </LinearLayout>
+
+    <fragment
+        android:id="@id/fragment_previews"
+        android:name="com.angel.black.baframework.media.image.fragment.PreviewsFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottombar"/>
+
+</RelativeLayout>
