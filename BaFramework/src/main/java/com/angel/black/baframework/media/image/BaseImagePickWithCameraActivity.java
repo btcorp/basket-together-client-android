@@ -111,7 +111,29 @@ public class BaseImagePickWithCameraActivity extends BaseImagePickActivity imple
         } else if(v.getId() == R.id.btn_take_pic) {
             mCameraFragment.takePicture();
         } else if(v.getId() == R.id.btn_edit) {
+            if (mPreviewsFragment.isAnimating())
+                return;
 
+            if (mPreviewsFragment.getAttachedPreviewCount() <= 0) {
+                showToast(R.string.msg_select_photo);
+                return;
+            }
+
+            if (mPreviewsFragment.isLoadingPreviewImage()) {
+                showToast(R.string.image_loading);
+                return;
+            }
+
+
+            Intent intent = new Intent(this, BaseImageEditActivity.class);
+            intent.putStringArrayListExtra(IntentConstants.KEY_IMAGE_PATH_LIST, mPreviewsFragment.getPreviewImagePathList());
+
+//            if (mMaxImageCount == 1 || mOneImageChangeIndex >= 0) {
+//                // 상품사진 한장 변경인 경우
+//                intent.putExtra(BaseIntent.KEY_IMAGE_EDIT_HIDE_ORDERING, true);
+//            }
+
+            startActivityForResult(intent, IntentConstants.REQUEST_EDIT_IMAGE);
         }
     }
 

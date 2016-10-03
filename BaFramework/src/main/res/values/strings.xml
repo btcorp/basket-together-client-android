@@ -5,6 +5,10 @@
     <string name="complete">완료</string>
     <string name="edit">편집</string>
     <string name="camera">카메라</string>
+    <string name="original">원본</string>
+    <string name="crop">자르기</string>
+    <string name="rotate">회전</string>
+    <string name="order_change">순서 변경</string>
 
     <!-- 네트워크 에러 메시지 -->
     <string name="error_not_connected_network">네트워크 연결을 확인해주세요.</string>
@@ -22,5 +26,13 @@
     <string name="no_more_can_take_camera">더 이상 찍을 수 없습니다.</string>
     <string name="request_write_storage_permission">저장공간 접근 권한을 필요로 합니다.</string>
 
+    <!-- 이미지 & 갤러리 관련 -->
+    <string name="msg_select_photo">사진을 선택해주세요.</string>
+    <string name="image_loading">이미지 로딩중입니다.</string>
+    <string name="error_build_bitmap">이미지를 저장하지 못했습니다.</string>
+    <string name="fail_crop">이미지 자르는 도중 문제가 발생했습니다.</string>
+    <string name="not_support_feature_on_device">이 기능은 지원되지 않습니다.</string>
+    <string name="select_order">순서를 선택하세요.</string>
+    <string name="msg_select_seq_all">순서를 모두 선택하여 주세요.</string>
 
 </resources>

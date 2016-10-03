@@ -638,7 +638,7 @@ public class PreviewsFragment extends BaseFragment {
     }
 
     /**
-     * RegistProductImagePreviewView 에 셋팅할 Tag 오브젝트 (프리뷰 아이템에 대한 정보를 담음)
+     * PreviewView 에 셋팅할 Tag 오브젝트 (프리뷰 아이템에 대한 정보를 담음)
      */
     public class PreviewTag {
         public int index;

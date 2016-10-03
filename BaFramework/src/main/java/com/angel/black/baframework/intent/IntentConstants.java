@@ -14,4 +14,5 @@ public class IntentConstants {
     public static final String KEY_IMAGE_COUNT = "imageCount";
     public static final String KEY_INITIAL_IMAGE_INDEX = "initialImageIndex";
 
+    public static final String KEY_IMAGE_EDIT_HIDE_ORDERING = "hideOrdering";
 }
