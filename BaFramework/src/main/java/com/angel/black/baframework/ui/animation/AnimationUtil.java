@@ -14,8 +14,8 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.RotateAnimation;
 
 import com.angel.black.baframework.R;
-import com.angel.black.baframework.logger.BaLog;
 import com.angel.black.baframework.core.base.BaseActivity;
+import com.angel.black.baframework.logger.BaLog;
 import com.angel.black.baframework.util.BuildUtil;
 
 /**
@@ -301,19 +301,18 @@ public class AnimationUtil {
      * @param activity
      * @param views
      */
-    public static void startViewAppearSlideTopBottomAnim(BaseActivity activity, View... views) {
+    public static void startViewAppearSlideTopBottomAnim(BaseActivity activity, final View... views) {
         BaLog.i();
-        final View[] viewArr = views.clone();
 
         final Animation slideDownAnim = AnimationUtils.loadAnimation(activity, R.anim.slide_top_in);
         final Animation slideUpAnim = AnimationUtils.loadAnimation(activity, R.anim.slide_bottom_in);
         slideUpAnim.setDuration(300);
         slideDownAnim.setDuration(300);
-        slideUpAnim.setAnimationListener(new Animation.AnimationListener() {
+        slideDownAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                viewArr[0].setVisibility(View.VISIBLE);
-                viewArr[1].setVisibility(View.VISIBLE);
+                views[0].setVisibility(View.VISIBLE);
+                views[1].setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -325,11 +324,11 @@ public class AnimationUtil {
             public void onAnimationRepeat(Animation animation) {
             }
         });
-        viewArr[0].post(new Runnable() {
+        views[0].post(new Runnable() {
             @Override
             public void run() {
-                viewArr[0].startAnimation(slideDownAnim);
-                viewArr[1].startAnimation(slideUpAnim);
+                views[0].startAnimation(slideDownAnim);
+                views[1].startAnimation(slideUpAnim);
             }
         });
     }
@@ -339,35 +338,39 @@ public class AnimationUtil {
      * @param activity
      * @param views
      */
-    public static void startViewDisAppearSlideTopBottomAnim(BaseActivity activity, View... views) {
+    public static void startViewDisAppearSlideTopBottomAnim(BaseActivity activity, final View... views) {
         BaLog.i();
-        final View[] viewArr = views.clone();
+
+        BaLog.d(views);
 
         final Animation slideDownAnim = AnimationUtils.loadAnimation(activity, R.anim.slide_bottom_out);
         final Animation slideUpAnim = AnimationUtils.loadAnimation(activity, R.anim.slide_top_out);
         slideUpAnim.setDuration(300);
         slideDownAnim.setDuration(300);
-        slideUpAnim.setAnimationListener(new Animation.AnimationListener() {
+        slideDownAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-
+                BaLog.i();
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                viewArr[0].setVisibility(View.GONE);
-                viewArr[1].setVisibility(View.GONE);
+                BaLog.i();
+                views[0].setVisibility(View.GONE);
+                views[1].setVisibility(View.GONE);
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) {
             }
         });
-        viewArr[0].post(new Runnable() {
+
+        views[0].post(new Runnable() {
             @Override
             public void run() {
-                viewArr[0].startAnimation(slideUpAnim);
-                viewArr[1].startAnimation(slideDownAnim);
+                BaLog.i();
+                views[0].startAnimation(slideUpAnim);
+                views[1].startAnimation(slideDownAnim);
             }
         });
     }

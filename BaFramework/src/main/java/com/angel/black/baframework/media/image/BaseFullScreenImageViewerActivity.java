@@ -64,8 +64,8 @@ public class BaseFullScreenImageViewerActivity extends BaseActivity implements P
         final int count = getIntent().getIntExtra(IntentConstants.KEY_IMAGE_COUNT, 1);
         final int initialImgIdx = getIntent().getIntExtra(IntentConstants.KEY_INITIAL_IMAGE_INDEX, 0);
 
+        initToolbarWithOnBackPressed();
         setTitle(initialImgIdx + 1 + " / " + count);
-//        , 0, R.drawable.top_btn_close, R.string.del, 0, this, this);
 
         mImageLoader = ImageLoader.getInstance();
 
@@ -126,10 +126,10 @@ public class BaseFullScreenImageViewerActivity extends BaseActivity implements P
 
             if (mPreviewsFragment.getView().getVisibility() == View.VISIBLE) {
                 // 숨김 애니메이션
-                AnimationUtil.startViewDisAppearSlideTopBottomAnim(this, mToolbar.getRootView(), mPreviewsFragment.getView());
+                AnimationUtil.startViewDisAppearSlideTopBottomAnim(this, mToolbar, mPreviewsFragment.getView());
             } else {
                 // 보임 애니메이션
-                AnimationUtil.startViewAppearSlideTopBottomAnim(this, mToolbar.getRootView(), mPreviewsFragment.getView());
+                AnimationUtil.startViewAppearSlideTopBottomAnim(this, mToolbar, mPreviewsFragment.getView());
             }
 
             // 0.5초 락걸고 해제
@@ -291,6 +291,7 @@ public class BaseFullScreenImageViewerActivity extends BaseActivity implements P
 
     @Override
     public void onBackPressed() {
+        BaLog.i();
         Intent returnIntent = new Intent(); // 삭제된 이미지 패스 리스트 반환
         returnIntent.putStringArrayListExtra(IntentConstants.KEY_IMAGE_PATH_LIST, mDelImagePathList);
 

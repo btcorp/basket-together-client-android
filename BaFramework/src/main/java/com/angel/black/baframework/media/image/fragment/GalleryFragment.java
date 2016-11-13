@@ -2,6 +2,7 @@ package com.angel.black.baframework.media.image.fragment;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,7 +26,10 @@ import com.angel.black.baframework.logger.BaLog;
 import com.angel.black.baframework.media.image.BaseImagePickActivity;
 import com.angel.black.baframework.media.image.GalleryBuilder;
 import com.angel.black.baframework.security.PermissionConstants;
+import com.angel.black.baframework.ui.dialog.DialogClickListener;
 import com.angel.black.baframework.ui.dialog.PermissionConfirmationDialog;
+import com.angel.black.baframework.util.BaPackageManager;
+import com.angel.black.baframework.util.FileUtil;
 import com.angel.black.baframework.util.ScreenUtil;
 
 import java.io.File;
@@ -39,7 +43,7 @@ import java.util.Set;
  * Created by KimJeongHun on 2016-07-01.
  */
 public class GalleryFragment extends BaseFragment implements AdapterView.OnItemClickListener, GalleryBuilder.GalleryBuildListener,
-                    PermissionConfirmationDialog.OnPermissionConfirmationDialogListener {
+        PermissionConfirmationDialog.OnPermissionConfirmationDialogListener {
     private static final String ARG_GALLERY_BUCKET_ID = "galleryBucketId";
     private static final String ARG_CAN_SELECT_COUNT = "canSelectCount";
 
@@ -156,7 +160,6 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
         BaLog.i("mInitialLoadedGallery=" + mInitialLoadedGallery);
 
         if(checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            loadGalleryAlbums();
             initGallery();
         }
 
@@ -188,30 +191,35 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
             if (grantResults.length != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 // 퍼미션 거부
                 if (permissions[0].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-//                    showOkDialogNotCancelable(0, R.string.error_write_storage_not_granted_permission, new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            finish();
-//                        }
-//                    });
+                    getBaseActivity().showAlertDialogNotCancelable(R.string.error_write_storage_not_granted_permission,
+                            new DialogClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    getActivity().finish();
+                                }
+                            });
                 } else if (permissions[0].equals(Manifest.permission.CAMERA)) {
-//                    showGallery();
+                    initGallery();
                 }
             } else {
                 // 퍼미션 허용
                 if (permissions[0].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     // 저장공간 접근 허용 후에 파일접근을 테스트로 해보아서 에러나는 경우 앱 재시작 시킴
 
-//                    if(FileUtil.testFileAccess(this)) {
-//                        loadGalleryAlbums();
-//                        mGalleryFragment.loadGalleryImages();
-//                    } else {
-//                        showDialogAppRestart(R.string.app_restart_for_permission_on_save_image_file);
-//                    }
+                    if(FileUtil.testFileAccess(getContext())) {
+                        initGallery();
+                    } else {
+                        showAlertDialog(R.string.app_restart_for_permission_on_save_image_file, new DialogClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                BaPackageManager.restartApp(getContext());
+                            }
+                        });
+                    }
                 }
-//                  else if (permissions[0].equals(Manifest.permission.CAMERA)) {
+                else if (permissions[0].equals(Manifest.permission.CAMERA)) {
 //                    mCameraFragment.openCamera();
-//                }
+                }
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -223,9 +231,8 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
         BaLog.i();
         ((BaseImagePickActivity) getActivity()).setMode(BaseImagePickActivity.Mode.GALLERY);
 
-        if(checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            loadGalleryImages();
-        }
+        loadGalleryAlbums();
+        loadGalleryImages();
     }
 
     public void loadGalleryAlbums() {
@@ -333,7 +340,6 @@ public class GalleryFragment extends BaseFragment implements AdapterView.OnItemC
     public void onBuildGalleryAlbumList(ArrayList<GalleryBuilder.GalleryBucketItemInfo> albumList) {
         ((BaseImagePickActivity) getActivity()).makeGalleryAlbumView(albumList);
         BaLog.i();
-
     }
 
     @Override

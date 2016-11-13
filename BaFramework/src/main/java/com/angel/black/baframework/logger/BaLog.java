@@ -306,8 +306,6 @@ public class BaLog {
     }
 
     private static String DUMP_array(Object o) {
-
-        //@formatter:off
         if (o == null)
             return "null";
 
@@ -327,9 +325,8 @@ public class BaLog {
             else throw new AssertionError();
         } else
             return Arrays.toString((Object[]) o);
-        //@formatter:on
-
     }
+
     private static String DUMP(Class<?> cls) {
         if (cls == null)
             return "null_Class<?>";

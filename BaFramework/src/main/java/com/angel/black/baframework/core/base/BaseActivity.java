@@ -76,9 +76,18 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         }
     }
 
-    protected void hideToolbar() {
+    protected void initToolbarWithOnBackPressed() {
+        initToolbar(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+    }
+
+    protected void initToolbar(View.OnClickListener naviClick) {
         if(mToolbar != null) {
-            mToolbar.setVisibility(View.GONE);
+            mToolbar.setNavigationOnClickListener(naviClick);
         }
     }
 
@@ -86,7 +95,12 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         if(mToolbar != null) {
             mToolbar.setNavigationIcon(naviDrawableResId);
             mToolbar.setNavigationOnClickListener(naviClick);
-            mToolbar.setOnMenuItemClickListener(this);
+        }
+    }
+
+    protected void hideToolbar() {
+        if(mToolbar != null) {
+            mToolbar.setVisibility(View.GONE);
         }
     }
 

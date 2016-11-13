@@ -161,6 +161,7 @@ public class BaseImageEditActivity extends BaseActivity implements
 
         mImageEditInfoList = createImageEditInfo(mImagePathList);
 
+        initToolbarWithOnBackPressed();
         setTitle("1 / " + mImagePathList.size());
 
         mCropImageView = (CropImageView) findViewById(R.id.crop_image_view);

@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.angel.black.baframework.ui.dialog.AlertDialogFragment;
+import com.angel.black.baframework.ui.dialog.DialogClickListener;
 import com.angel.black.baframework.ui.dialog.PermissionConfirmationDialog;
 
 /**
@@ -52,6 +53,14 @@ public class BaseFragment extends Fragment {
     protected void showOkDialog(String message) {
         AlertDialogFragment dialogFragment = AlertDialogFragment.newInstance(null, message);
         dialogFragment.show(getActivity().getSupportFragmentManager(), "okDialog");
+    }
+
+    public void showAlertDialog(int msgResId, DialogClickListener positiveClick) {
+        getBaseActivity().showAlertDialog(msgResId, positiveClick);
+    }
+
+    public void showAlertDialog(String message, DialogClickListener positiveClick) {
+        getBaseActivity().showAlertDialog(message, positiveClick);
     }
 
     public void showToast(String message) {
