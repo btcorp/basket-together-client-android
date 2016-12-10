@@ -53,10 +53,10 @@ public abstract class GeoPictureUploader {
             dataOutputStream.close();
 
             String response = getResponse(conn);
-            BaLog.i("GeoPictureUploader", response);
             int responseCode = conn.getResponseCode();
+            BaLog.i("GeoPictureUploader", "responseCode=" + responseCode + ", response+" + response);
 
-            if (responseCode == 200) {
+            if (responseCode == 200 || responseCode == 201) {
                 return ReturnCode.succ;
             } else {
                 return ReturnCode.http500;

@@ -19,7 +19,7 @@ import com.angel.black.baframework.ui.dialog.TimePickerDialogFragment;
 import com.angel.black.baframework.util.CalendarUtil;
 import com.angel.black.baframework.util.StringUtil;
 import com.angel.black.baskettogether.R;
-import com.angel.black.baskettogether.api.APICallSuccessNotifier;
+import com.angel.black.baframework.network.APICallResponseNotifier;
 import com.angel.black.baskettogether.api.RecruitAPI;
 import com.angel.black.baskettogether.core.base.BtBaseActivity;
 import com.angel.black.baskettogether.core.intent.IntentConst;
@@ -129,12 +129,22 @@ public class RecruitPostRegistActivity extends BtBaseActivity implements DatePic
             RecruitAPI.registRecruitPost(this, mEditTitle.getText().toString().trim(),
                     mEditContent.getText().toString().trim(), mSpinPeopleNum.getSelectedItemPosition() + 1,
                     recruitDateTime, getPlaceLatLng(), mTxtAddress1.getText().toString().trim(),
-                    mEditAddress2.getText().toString().trim(), new APICallSuccessNotifier() {
+                    mEditAddress2.getText().toString().trim(), new APICallResponseNotifier() {
                         @Override
-                        public void onSuccess(JSONObject response) {
+                        public void onSuccess(String APIUrl, JSONObject response) {
                             showToast("글등록 성공");
                             setResult(RESULT_OK);
                             finish();
+                        }
+
+                        @Override
+                        public void onFail(String APIUrl, String errCode, String errMessage) {
+
+                        }
+
+                        @Override
+                        public void onError(String apiUrl, int retCode, String message, Throwable cause) {
+
                         }
                     });
         } catch(JSONException e) {

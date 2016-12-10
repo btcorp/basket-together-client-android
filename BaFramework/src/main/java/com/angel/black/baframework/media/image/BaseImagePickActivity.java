@@ -106,7 +106,7 @@ public class BaseImagePickActivity extends BaseActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_base_image_pick, menu);
 
-        MenuItem menuItem = menu.findItem(R.id.menu_gallery_camera);
+        MenuItem menuItem = menu.findItem(R.id.spinner_album);
         mSpinnerAlbum = (Spinner) MenuItemCompat.getActionView(menuItem);
 
         return true;

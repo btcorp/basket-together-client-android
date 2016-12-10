@@ -84,6 +84,19 @@ public class FileUtil {
         }
     }
 
+    public static String createTempImageFile(String tempDirPath) {
+        File newFile = new File(tempDirPath, System.currentTimeMillis() + ".jpg");
+
+        try {
+            newFile.createNewFile();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return newFile.toString();
+    }
+
     static class ImageFileSaver extends AsyncTask<Bitmap, Void, String> {
         BaseActivity mActivity;
         String mDestFilePath;

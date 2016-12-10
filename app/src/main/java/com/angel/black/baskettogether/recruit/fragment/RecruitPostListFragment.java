@@ -133,21 +133,28 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment
 
     @Override
     public void requestList() {
+        BaLog.i("mCurPage=" + mCurPage);
+
         boolean showLoading = true;
         if(mCurItemCount > 0) showLoading = false;
 
         new HttpAPIRequester(this, showLoading, String.format(ServerURLInfo.API_RECRUIT_POSTS_GET, mCurPage), "GET",
                 new HttpAPIRequester.OnAPIResponseListener() {
                     @Override
-                    public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
-                        BaLog.i("retCode=" + retCode + ", response=" + response);
+                    public void onSuccessResponse(String APIUrl, JSONObject response) throws JSONException {
+                        BaLog.i("response=" + response);
                         populateList(response.getJSONArray("post_list"));
                         setPagination(response.getInt("total_count"));
-                        refreshComplete(true);
+                        setLoadComplete(true);
                     }
 
                     @Override
-                    public void onErrorResponse(String APIUrl, int retCode, String message, Throwable cause) {
+                    public void onErrorResponse(String APIUrl, String errCode, String errMessage) {
+                        setLoadComplete(false);
+                    }
+
+                    @Override
+                    public void onError(String APIUrl, int retCode, String message, Throwable cause) {
                         //TODO 테스트 용
                         mRecyclerView.postDelayed(new Runnable() {
                             @Override
@@ -156,21 +163,10 @@ public class RecruitPostListFragment extends BaseSwipeRefreshListFragment
                                 isCanLoadMore = true;
                             }
                         }, 1000);
-                        refreshComplete(false);
+                        setLoadComplete(false);
                     }
                 }).execute((JSONObject) null);
     }
-
-//    private void populatePostList(final JSONArray response) {
-//        BaLog.d("populatePostList >> response=" + response);
-//        if(mCurPage > 1) {
-//            mRecyclerViewAdapter.addDataset(response);
-//        } else {
-//            mRecyclerViewAdapter.setDataset(response);
-//        }
-//
-//        mCurItemCount += response.length();
-//    }
 
     private void goDetail(int position, long id) {
         BaLog.d("position=" + position + ", id=" + id);

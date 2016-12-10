@@ -13,12 +13,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.angel.black.baframework.core.base.BaseFragment;
-import com.angel.black.baframework.media.image.BaseImagePickWithCameraActivity;
 import com.angel.black.baframework.util.StringUtil;
 import com.angel.black.baskettogether.R;
-import com.angel.black.baskettogether.api.APICallSuccessNotifier;
+import com.angel.black.baframework.network.APICallResponseNotifier;
 import com.angel.black.baskettogether.api.UserAPI;
-import com.angel.black.baskettogether.recruit.RecruitPostListActivity;
+import com.angel.black.baskettogether.recruit.RecruitPostListMainActivity;
+import com.angel.black.baskettogether.signup.SignUpActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,7 +82,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
             hideCurrentFocusKeyboard();
             try {
                 if(false) {  //TODO 테스트
-                    startActivity(RecruitPostListActivity.class, true);
+                    startActivity(RecruitPostListMainActivity.class, true);
                 } else {
                     requestLogin(id, password);
                 }
@@ -101,12 +101,12 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
                 break;
 
             case R.id.btn_sign_up_at_login:
-//                startActivity(SignUpActivity.class);
+                startActivity(SignUpActivity.class);
 
                 //TEST
 //                startActivity(RecruitPostRegistActivity.class);
 //                startActivity(CameraTestActivity.class);
-                startActivity(BaseImagePickWithCameraActivity.class);
+//                startActivity(BaseImagePickWithCameraActivity.class);
                 break;
         }
     }
@@ -127,11 +127,21 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener 
     }
 
     private void requestLogin(final String id, final String pwd) throws JSONException{
-        UserAPI.login(getBaseActivity(), id, pwd, new APICallSuccessNotifier() {
+        UserAPI.login(getBaseActivity(), id, pwd, new APICallResponseNotifier() {
             @Override
-            public void onSuccess(JSONObject response) {
+            public void onSuccess(String APIUrl, JSONObject response) {
                 showToast("로그인 성공");
-                startActivity(RecruitPostListActivity.class, true);
+                startActivity(RecruitPostListMainActivity.class, true);
+            }
+
+            @Override
+            public void onFail(String APIUrl, String errCode, String errMessage) {
+
+            }
+
+            @Override
+            public void onError(String apiUrl, int retCode, String message, Throwable cause) {
+
             }
         });
     }

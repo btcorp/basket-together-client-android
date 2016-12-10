@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -16,11 +17,15 @@ import com.angel.black.baframework.intent.IntentConstants;
 import com.angel.black.baframework.intent.IntentExecutor;
 import com.angel.black.baframework.logger.BaLog;
 import com.angel.black.baframework.media.image.BaseImagePickActivity;
+import com.angel.black.baframework.media.image.util.AUILUtil;
+import com.angel.black.baframework.network.APICallResponseNotifier;
 import com.angel.black.baframework.network.GeoPictureUploader;
 import com.angel.black.baframework.network.ImageUploaderTask;
 import com.angel.black.baframework.security.PermissionConstants;
 import com.angel.black.baframework.ui.dialog.DialogClickListener;
 import com.angel.black.baframework.ui.dialog.PermissionConfirmationDialog;
+import com.angel.black.baframework.util.BaPackageManager;
+import com.angel.black.baframework.util.FileUtil;
 import com.angel.black.baframework.util.UriUtil;
 import com.angel.black.baskettogether.R;
 import com.angel.black.baskettogether.api.UserAPI;
@@ -28,8 +33,10 @@ import com.angel.black.baskettogether.core.MyApplication;
 import com.angel.black.baskettogether.core.base.BtBaseActivity;
 import com.angel.black.baskettogether.core.intent.IntentConst;
 import com.angel.black.baskettogether.core.view.imageview.RoundedImageView;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -53,11 +60,67 @@ public class UserProfileEditActivity extends BtBaseActivity implements View.OnCl
         mEditNickName = (EditText) findViewById(R.id.edit_nickname);
         mEditPhoneNum = (EditText) findViewById(R.id.edit_phone_num);
 
-        ImageLoader.getInstance().displayImage(MyApplication.serverUrl + UserInfoManager.userProfileImgUrl, mProfileImgView,
-                MyApplication.mDefaultDisplayImgOpts);
-
         String nickname = getIntent().getStringExtra(IntentConst.KEY_EXTRA_USER_NICKNAME);
         mEditNickName.setText(nickname);
+
+        requestUserInfo();
+    }
+
+    private void requestUserInfo() {
+        UserAPI.requestUserInfo(this, new APICallResponseNotifier() {
+            @Override
+            public void onSuccess(String APIUrl, JSONObject response) {
+                BaLog.i("response=" + response);
+
+                String pictureUrl = response.optString("picture_url");
+                String nickName = response.optString("nickname");
+                UserInfoManager.saveUserInfo(UserProfileEditActivity.this,
+                        nickName,
+                        pictureUrl);
+
+                displayProfileImage(MyApplication.serverUrl + pictureUrl);
+                String phoneNo = response.optString("phone_no");
+
+                mEditNickName.setText(nickName);
+                mEditPhoneNum.setText(phoneNo);
+            }
+
+            @Override
+            public void onFail(String APIUrl, String errCode, String errMessage) {
+
+            }
+
+            @Override
+            public void onError(String apiUrl, int retCode, String message, Throwable cause) {
+
+            }
+        });
+    }
+
+    private void displayProfileImage(String imageUrl) {
+        ImageLoader.getInstance().displayImage(imageUrl, mProfileImgView,
+                MyApplication.mDefaultDisplayImgOpts, new SimpleImageLoadingListener() {
+                    @Override
+                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                        BaLog.d(imageUri + " is loaded!");
+                        FileUtil.saveImageFile(UserProfileEditActivity.this, loadedImage,
+                                FileUtil.createTempImageFile(
+                                        BaPackageManager.getTempImagePath(UserProfileEditActivity.this)),
+                                new FileUtil.ImageFileBuildListener() {
+                                    @Override
+                                    public void onSuccessImageFileBuild(String filepath) {
+                                        BaLog.i("filePath=" + filepath);
+
+                                        mSelectedImagePath = filepath;
+                                    }
+
+                                    @Override
+                                    public void onFailImageFileBuild(String filepath, String errMsg) {
+                                        BaLog.i("filePath=" + filepath + ", errMsg=" + errMsg);
+                                    }
+                                });
+                    }
+                });
     }
 
     @Override
@@ -85,12 +148,16 @@ public class UserProfileEditActivity extends BtBaseActivity implements View.OnCl
             return;
         }
 
-
         UserAPI.editUserInfo(this, nickname, phoneNum, mSelectedImagePath, new ImageUploaderTask.ImageUploadListener() {
             @Override
             public void onUploadComplete(GeoPictureUploader.ReturnCode result) {
                 BaLog.i("result=" + result);
 
+                if(result.equals(GeoPictureUploader.ReturnCode.succ)) {
+                    AUILUtil.deleteImageCache(mSelectedImagePath);
+                }
+
+                requestUserInfo();
             }
         });
 
@@ -123,9 +190,7 @@ public class UserProfileEditActivity extends BtBaseActivity implements View.OnCl
 
                 mSelectedImagePath = imagePathList.get(0);
 
-                ImageLoader imageLoader = ImageLoader.getInstance();
-                imageLoader.displayImage(UriUtil.filePath2Uri(mSelectedImagePath), mProfileImgView,
-                        DisplayImageOptions.createSimple());
+                displayProfileImage(UriUtil.filePath2Uri(mSelectedImagePath));
             }
         }
     }
@@ -161,5 +226,12 @@ public class UserProfileEditActivity extends BtBaseActivity implements View.OnCl
     @Override
     public void onDenyedPermissionConfirm(int permissionRequestCode) {
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        FileUtil.deleteTempImageFiles(this);
     }
 }

@@ -9,6 +9,7 @@ import com.angel.black.baframework.core.base.BaseFragment;
 import com.angel.black.baframework.core.base.BaseListActivity;
 import com.angel.black.baframework.logger.BaLog;
 import com.angel.black.baframework.network.util.NetworkUtil;
+import com.angel.black.baframework.util.StringUtil;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpDelete;
@@ -36,11 +37,16 @@ import java.util.Vector;
  * Created by KimJeongHun on 2016-06-06.
  */
 public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequester.APICallResult> {
+    private static final String STATUS_CODE_SUCCESS = "0000";
     private final String NOT_CONNECTED_NETWORK = "NotConnectNetwork";
 
     // 커스텀 에러코드
-    public static final int ERROR_CODE_JSON_PARSING = 80000;
-    public static final int ERROR_CODE_NULL_RESULT = 80001;
+    public static final int ERROR_UNKNOWN_RESPONSE = 999;
+
+    public static final int ERROR_CODE_JSON_PARSING = 997;
+    public static final int ERROR_CODE_NULL_RESULT = 998;
+
+    public static final String ERROR_CODE_UNKNOWN = "9999";
 
     public static final String NO_HTTP_RESPONSE = "NoHttpResponse";
 
@@ -91,7 +97,7 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequest
     @Override
     public APICallResult doInBackground(JSONObject... params) {
         HttpURLConnection conn = null;
-        int retCode = 0;
+//        String retCode = ERROR_CODE_UNKNOWN;
 
         String serverUrl = mHttpRequestStrategy.getServerUrl();
         try {
@@ -133,7 +139,6 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequest
             BaLog.w("API response=" + response);
 
             return new APICallResult(responseCode, responseMsg, response);
-
 
 //            HttpClient httpClient = new DefaultHttpClient();
 //            HttpRequestBase httpRequest = null;
@@ -186,12 +191,89 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequest
 //            }
         } catch (Exception e) {
             e.printStackTrace();
-            onAPIResponseListener.onErrorResponse(APIUrl, retCode, e.getMessage(), e.getCause());
-            return new APICallResult(retCode, e.getMessage(), NO_HTTP_RESPONSE);
+//            onAPIResponseListener.onErrorResponse(APIUrl, retCode, e.getMessage(), e.getCause());
+
+            return new APICallResult(ERROR_UNKNOWN_RESPONSE, e.getMessage(), NO_HTTP_RESPONSE);
         } finally {
             if(conn != null) {
                 conn.disconnect();
             }
+        }
+    }
+
+
+    @Override
+    protected void onPostExecute(APICallResult result) {
+        if(activity instanceof BaseListActivity && !showCenterLoading) {
+            ((BaseListActivity) activity).hideLoadingFooter();
+        } else if(activity instanceof BaseActivity && showCenterLoading) {
+            activity.hideProgress();
+        }
+
+        if (HttpHostConnectException.class.getSimpleName().equals(result.resultString)) {
+            if(!activity.isFinishing()) {
+                activity.showOkDialog(R.string.error_not_responsed_server);
+            }
+            return;
+        }
+
+        try {
+            if(!(result.responseCode == HttpURLConnection.HTTP_OK
+                    || result.responseCode == HttpURLConnection.HTTP_CREATED
+                    || result.responseCode == HttpURLConnection.HTTP_NO_CONTENT)) {
+                // 200, 201, 204 응답외의 것들은 모두 에러 처리!!
+                onAPIResponseListener.onError(APIUrl, result.responseCode, result.resultString, null);
+                return;
+            }
+
+            String resultString = result.resultString;
+            JSONObject jsonResult = new JSONObject(resultString);
+            String statusCode = jsonResult.getString("statusCode");
+            String errMessage = jsonResult.getString("errorMessage");
+            String dataString = jsonResult.getString("data");
+
+            BaLog.d("statusCode=" + statusCode + ", errMessage=" + errMessage + ", dataString=" + dataString);
+
+            if (resultString.startsWith("{")) {
+                if(STATUS_CODE_SUCCESS.equals(statusCode)) {
+                    JSONObject jsonResponseData = null;
+
+                    if(!StringUtil.isEmptyString(dataString)) {
+                        if(dataString.startsWith("[")) {
+                            // 어레이 형식
+                            dataString = "{\"json_array\":" + dataString + "}";
+                            BaLog.d("appended Result=" + dataString);
+                        }
+
+                        jsonResponseData = new JSONObject(dataString);
+                    }
+
+                    onAPIResponseListener.onSuccessResponse(APIUrl, jsonResponseData);
+                } else {
+                    onAPIResponseListener.onErrorResponse(APIUrl, statusCode, errMessage);
+                }
+
+            } else if (resultString.startsWith("[")) {
+//                resultString = "{\"json_array\":[{\"comments_count\": 0, \"title\": \"hello\", \"author_id\": 1, \"comments\":["
+//                + "{\"list\":[{\"test\": \"a\"}, {\"test\": \"a\"}, {\"test\": \"a\"}]}], \"recruit_status\": \"\", \"author_name\": \"test\", \"content\": \"alskdf\", \"registered_date\": \"2016-06-19T10:31:04.724Z\", \"id\": 1, \"recruit_count\": 6, \"attend_count\": 0}, {\"comments_count\": 0, \"title\": \"hh\", \"author_id\": 1, \"comments\": [], \"recruit_status\": \"\", \"author_name\": \"test\", \"content\": \"ff\", \"registered_date\": \"2016-06-19T11:26:22.978Z\", \"id\": 2, \"recruit_count\": 4, \"attend_count\": 0}, {\"comments_count\": 0, \"title\": \"jj\", \"author_id\": 1, \"comments\": [], \"recruit_status\": \"\", \"author_name\": \"test\", \"content\": \"gg\", \"registered_date\": \"2016-06-19T11:27:00.959Z\", \"id\": 3, \"recruit_count\": 4, \"attend_count\": 0}]}";
+
+//                resultString = "{\"json_array\":" + resultString + "}";
+//                BaLog.d("appended Result=" + resultString);
+//                JSONObject jsonResult = new JSONObject(resultString);
+//
+//                // "json_array" 라는 키값으로 묶어서 jsonObject 로 전달
+//                onAPIResponseListener.onSuccessResponse(APIUrl, jsonResult);
+
+            } else if (resultString.equals(NO_HTTP_RESPONSE)) {
+                onAPIResponseListener.onSuccessResponse(APIUrl, null);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            onAPIResponseListener.onError(APIUrl, ERROR_CODE_JSON_PARSING, "result is not valid JSON", e.getCause());
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            onAPIResponseListener.onError(APIUrl, ERROR_CODE_NULL_RESULT, "result is null", e.getCause());
         }
     }
 
@@ -277,57 +359,6 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequest
 //        }
     }
 
-    @Override
-    protected void onPostExecute(APICallResult result) {
-        if(activity instanceof BaseListActivity && !showCenterLoading) {
-            ((BaseListActivity) activity).hideLoadingFooter();
-        } else if(activity instanceof BaseActivity && showCenterLoading) {
-            activity.hideProgress();
-        }
-
-        if (HttpHostConnectException.class.getSimpleName().equals(result.resultString)) {
-            if(!activity.isFinishing()) {
-                activity.showOkDialog(R.string.error_not_responsed_server);
-            }
-            return;
-        }
-
-        try {
-            if(!(result.responseCode == HttpURLConnection.HTTP_OK
-                    || result.responseCode == HttpURLConnection.HTTP_CREATED
-                    || result.responseCode == HttpURLConnection.HTTP_NO_CONTENT)) {
-                // 200, 201, 204 응답외의 것들은 모두 에러 처리!!
-                onAPIResponseListener.onErrorResponse(APIUrl, result.responseCode, result.resultString, null);
-                return;
-            }
-
-            String resultString = result.resultString;
-
-            if (resultString.startsWith("{")) {
-                JSONObject jsonResult = new JSONObject(resultString);
-                onAPIResponseListener.onResponse(APIUrl, result.responseCode, jsonResult);
-            } else if (resultString.startsWith("[")) {
-//                resultString = "{\"json_array\":[{\"comments_count\": 0, \"title\": \"hello\", \"author_id\": 1, \"comments\":["
-//                + "{\"list\":[{\"test\": \"a\"}, {\"test\": \"a\"}, {\"test\": \"a\"}]}], \"recruit_status\": \"\", \"author_name\": \"test\", \"content\": \"alskdf\", \"registered_date\": \"2016-06-19T10:31:04.724Z\", \"id\": 1, \"recruit_count\": 6, \"attend_count\": 0}, {\"comments_count\": 0, \"title\": \"hh\", \"author_id\": 1, \"comments\": [], \"recruit_status\": \"\", \"author_name\": \"test\", \"content\": \"ff\", \"registered_date\": \"2016-06-19T11:26:22.978Z\", \"id\": 2, \"recruit_count\": 4, \"attend_count\": 0}, {\"comments_count\": 0, \"title\": \"jj\", \"author_id\": 1, \"comments\": [], \"recruit_status\": \"\", \"author_name\": \"test\", \"content\": \"gg\", \"registered_date\": \"2016-06-19T11:27:00.959Z\", \"id\": 3, \"recruit_count\": 4, \"attend_count\": 0}]}";
-
-                resultString = "{\"json_array\":" + resultString + "}";
-                BaLog.d("appended Result=" + resultString);
-                JSONObject jsonResult = new JSONObject(resultString);
-
-                // "json_array" 라는 키값으로 묶어서 jsonObject 로 전달
-                onAPIResponseListener.onResponse(APIUrl, result.responseCode, jsonResult);
-            } else if (resultString.equals(NO_HTTP_RESPONSE)) {
-                onAPIResponseListener.onResponse(APIUrl, result.responseCode, null);
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-            onAPIResponseListener.onErrorResponse(APIUrl, ERROR_CODE_JSON_PARSING, "result is not valid JSON", e.getCause());
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            onAPIResponseListener.onErrorResponse(APIUrl, ERROR_CODE_NULL_RESULT, "result is null", e.getCause());
-        }
-    }
 
     private HttpGet makeHttpGet(String url) {
         Vector<NameValuePair> nameValue = new Vector<NameValuePair>();
@@ -365,8 +396,38 @@ public class HttpAPIRequester extends AsyncTask<JSONObject, Void, HttpAPIRequest
     }
 
     public interface OnAPIResponseListener {
-        void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException;
-        void onErrorResponse(String APIUrl, int retCode, String message, Throwable cause);
+        void onSuccessResponse(String APIUrl, JSONObject response) throws JSONException;
+        void onErrorResponse(String APIUrl, String errCode, String errMessage);
+        void onError(String APIUrl, int responseCode, String errMessage, Throwable cause);
+    }
+
+    public static class DefaultAPICallReponseNotifier implements OnAPIResponseListener {
+        private APICallResponseNotifier notifier;
+
+        public DefaultAPICallReponseNotifier(APICallResponseNotifier notifier) {
+            this.notifier = notifier;
+        }
+
+        @Override
+        public void onSuccessResponse(String APIUrl, JSONObject response) throws JSONException {
+            if(notifier != null) {
+                notifier.onSuccess(APIUrl, response);
+            }
+        }
+
+        @Override
+        public void onErrorResponse(String APIUrl, String errCode, String errMessage) {
+            if(notifier != null) {
+                notifier.onFail(APIUrl, errCode, errMessage);
+            }
+        }
+
+        @Override
+        public void onError(String APIUrl, int retCode, String message, Throwable cause) {
+            if(notifier != null) {
+                notifier.onError(APIUrl, retCode, message, cause);
+            }
+        }
     }
 
     class APICallResult {

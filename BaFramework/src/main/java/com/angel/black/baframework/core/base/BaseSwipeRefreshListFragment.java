@@ -38,13 +38,11 @@ public abstract class BaseSwipeRefreshListFragment extends BaseListFragment impl
         requestList();
     }
 
-    protected void refreshComplete(boolean success) {
+    protected void setLoadComplete(boolean success) {
         if(mSwipeRefreshLayout.isRefreshing()) {
             mSwipeRefreshLayout.setRefreshing(false);
-
-            if(success) {
-                isCanLoadMore = true;
-            }
         }
+
+        isCanLoadMore = true;
     }
 }

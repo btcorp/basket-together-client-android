@@ -42,7 +42,12 @@ public class ImageUploaderTask {
 			mActivity.hideProgress();
 
 			BaLog.e(":::::::::: onPostExecute result : " + result);
-			mImageUploadListener.onUploadComplete(result);
+
+			if(result.equals(GeoPictureUploader.ReturnCode.succ)) {
+				mImageUploadListener.onUploadComplete(result);
+			} else {
+				mActivity.showToast("이미지 업로드 도중 문제가 발생했습니다.");
+			}
 		}
 	}
 

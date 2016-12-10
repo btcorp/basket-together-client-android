@@ -10,7 +10,7 @@ import android.view.MenuItem;
 import com.angel.black.baframework.logger.BaLog;
 import com.angel.black.baframework.ui.dialog.DialogClickListener;
 import com.angel.black.baskettogether.R;
-import com.angel.black.baskettogether.api.APICallSuccessNotifier;
+import com.angel.black.baframework.network.APICallResponseNotifier;
 import com.angel.black.baskettogether.api.RecruitAPI;
 import com.angel.black.baskettogether.common.view.CommentInputView;
 import com.angel.black.baskettogether.core.base.BtBaseActivity;
@@ -69,11 +69,21 @@ public class RecruitPostDetailActivity extends BtBaseActivity implements Comment
                 public void onClick(DialogInterface dialog, int which) {
                     BaLog.d("글 삭제 OK 버튼 클릭");
 
-                    RecruitAPI.deleteRecruitPost(RecruitPostDetailActivity.this, mPostId, new APICallSuccessNotifier() {
+                    RecruitAPI.deleteRecruitPost(RecruitPostDetailActivity.this, mPostId, new APICallResponseNotifier() {
                         @Override
-                        public void onSuccess(JSONObject response) {
+                        public void onSuccess(String APIUrl, JSONObject response) {
                             setResult(IntentConst.RESULT_DELETED);
                             finish();
+                        }
+
+                        @Override
+                        public void onFail(String APIUrl, String errCode, String errMessage) {
+
+                        }
+
+                        @Override
+                        public void onError(String apiUrl, int retCode, String message, Throwable cause) {
+
                         }
                     });
                 }
@@ -100,15 +110,25 @@ public class RecruitPostDetailActivity extends BtBaseActivity implements Comment
     private void requestRegistComment() throws JSONException {
         String content = mCmntInputView.getInputedComment();
 
-        RecruitAPI.registCommentToRecruit(this, mPostId, content, new APICallSuccessNotifier() {
+        RecruitAPI.registCommentToRecruit(this, mPostId, content, new APICallResponseNotifier() {
             @Override
-            public void onSuccess(JSONObject response) {
+            public void onSuccess(String APIUrl, JSONObject response) {
                 // 댓글등록 성공
                 hideCurrentFocusKeyboard();
                 mCmntInputView.setCommentText("");
                 showToast("댓글 등록 성공");
 
                 mPostDetailFragment.requestGetComments();
+            }
+
+            @Override
+            public void onFail(String APIUrl, String errCode, String errMessage) {
+
+            }
+
+            @Override
+            public void onError(String apiUrl, int retCode, String message, Throwable cause) {
+
             }
         });
     }

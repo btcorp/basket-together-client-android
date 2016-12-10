@@ -12,9 +12,9 @@ import com.angel.black.baframework.core.base.BaseFragment;
 import com.angel.black.baframework.network.HttpAPIRequester;
 import com.angel.black.baframework.util.StringUtil;
 import com.angel.black.baskettogether.R;
-import com.angel.black.baskettogether.api.APICallSuccessNotifier;
+import com.angel.black.baframework.network.APICallResponseNotifier;
 import com.angel.black.baskettogether.api.UserAPI;
-import com.angel.black.baskettogether.recruit.RecruitPostListActivity;
+import com.angel.black.baskettogether.recruit.RecruitPostListMainActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,7 +70,7 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
     private void requestSignUp(final String id, final String pwd, final String nickname) throws JSONException{
         UserAPI.signUp(getBaseActivity(), id, pwd, nickname, new HttpAPIRequester.OnAPIResponseListener() {
             @Override
-            public void onResponse(String APIUrl, int retCode, JSONObject response) {
+            public void onSuccessResponse(String APIUrl, JSONObject response) {
                 try {
                     requestLogin(id, pwd);
                 } catch (JSONException e) {
@@ -79,18 +79,33 @@ public class SignUpFragment extends BaseFragment implements View.OnClickListener
             }
 
             @Override
-            public void onErrorResponse(String APIUrl, int retCode, String message, Throwable cause) {
+            public void onErrorResponse(String APIUrl, String errCode, String errMessage) {
+
+            }
+
+            @Override
+            public void onError(String APIUrl, int retCode, String message, Throwable cause) {
 
             }
         });
     }
 
-    private void requestLogin(String id, String pwd) throws JSONException{
-        UserAPI.login(getBaseActivity(), id, pwd, new APICallSuccessNotifier() {
+    private void requestLogin(String id, String pwd) throws JSONException {
+        UserAPI.login(getBaseActivity(), id, pwd, new APICallResponseNotifier() {
             @Override
-            public void onSuccess(JSONObject response) {
+            public void onSuccess(String APIUrl, JSONObject response) {
                 showToast("로그인 성공");
-                startActivity(RecruitPostListActivity.class);
+                startActivity(RecruitPostListMainActivity.class);
+            }
+
+            @Override
+            public void onFail(String APIUrl, String errCode, String errMessage) {
+
+            }
+
+            @Override
+            public void onError(String apiUrl, int retCode, String message, Throwable cause) {
+
             }
         });
     }

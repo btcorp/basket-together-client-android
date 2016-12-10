@@ -11,7 +11,7 @@ public class ServerURLInfo {
     public static final String API_USER_SIGNUP = "accounts/signup/";
     public static final String API_USER_LOGIN = "accounts/login/";
     public static final String API_USER_LOGOUT = "accounts/logout/";
-    public static final String API_USER_INFO_EDIT = "accounts/profile/";        // 유저정보 수정 POST
+    public static final String API_USER_INFO = "accounts/profile/";        // 유저정보 수정 멀티파트, 유저정보 가져오기 GET
 
     public static final String API_RECRUIT_POST_REGIST = "recruit/post/add/";
     public static final String API_RECRUIT_POSTS_GET = "recruit/posts/page-" + "%1$d" + "/";

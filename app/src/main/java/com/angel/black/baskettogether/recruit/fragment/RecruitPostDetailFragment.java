@@ -17,7 +17,7 @@ import com.angel.black.baframework.ui.view.recyclerview.AbsRecyclerViewHolder;
 import com.angel.black.baframework.ui.view.recyclerview.RecyclerViewAdapterData;
 import com.angel.black.baframework.util.CalendarUtil;
 import com.angel.black.baskettogether.R;
-import com.angel.black.baskettogether.api.APICallSuccessNotifier;
+import com.angel.black.baframework.network.APICallResponseNotifier;
 import com.angel.black.baskettogether.api.RecruitAPI;
 import com.angel.black.baskettogether.core.intent.IntentConst;
 import com.angel.black.baskettogether.recruit.RecruitPostDetailActivity;
@@ -72,15 +72,25 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
 
     @Override
     public void requestList() {
-        RecruitAPI.getRecruitPostDetail(getBaseActivity(), String.valueOf(mPostId), new APICallSuccessNotifier() {
+        RecruitAPI.getRecruitPostDetail(getBaseActivity(), String.valueOf(mPostId), new APICallResponseNotifier() {
             @Override
-            public void onSuccess(JSONObject response) {
+            public void onSuccess(String APIUrl, JSONObject response) {
                 try {
                     setData(response);
                 } catch (JSONException e) {
                     e.printStackTrace();
                     showOkDialog("모집글 데이터를 가져오는 중 문제가 발생했습니다.");
                 }
+            }
+
+            @Override
+            public void onFail(String APIUrl, String errCode, String errMessage) {
+
+            }
+
+            @Override
+            public void onError(String apiUrl, int retCode, String message, Throwable cause) {
+
             }
         });
     }
@@ -302,12 +312,22 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
      * 참가신청 취소
      */
     private void requestAttendCancelToRecruit() {
-        RecruitAPI.cancelAttendToRecruit(getBaseActivity(), mPostId, new APICallSuccessNotifier() {
+        RecruitAPI.cancelAttendToRecruit(getBaseActivity(), mPostId, new APICallResponseNotifier() {
             @Override
-            public void onSuccess(JSONObject response) {
+            public void onSuccess(String APIUrl, JSONObject response) {
                 requestList();
 
                 showToast(R.string.succ_recruit_req_attend_canceled);
+            }
+
+            @Override
+            public void onFail(String APIUrl, String errCode, String errMessage) {
+
+            }
+
+            @Override
+            public void onError(String apiUrl, int retCode, String message, Throwable cause) {
+
             }
         });
     }
@@ -316,13 +336,23 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
      * 참가신청
      */
     private void requestAttendToRecruit() {
-        RecruitAPI.requestAttendToRecruit(getBaseActivity(), mPostId, new APICallSuccessNotifier() {
+        RecruitAPI.requestAttendToRecruit(getBaseActivity(), mPostId, new APICallResponseNotifier() {
             @Override
-            public void onSuccess(JSONObject response) {
+            public void onSuccess(String APIUrl, JSONObject response) {
                 //TODO 참가신청 성공 후 모집글 데이터 재요청
                 requestList();
 
                 showToast(R.string.succ_recruit_req_attend);
+            }
+
+            @Override
+            public void onFail(String APIUrl, String errCode, String errMessage) {
+
+            }
+
+            @Override
+            public void onError(String apiUrl, int retCode, String message, Throwable cause) {
+
             }
         });
     }
@@ -343,9 +373,9 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
      * 댓글 조회 API 요청
      */
     public void requestGetComments() {
-        RecruitAPI.getRecruitPostComments(getBaseActivity(), mPostId, new APICallSuccessNotifier() {
+        RecruitAPI.getRecruitPostComments(getBaseActivity(), mPostId, new APICallResponseNotifier() {
             @Override
-            public void onSuccess(JSONObject response) {
+            public void onSuccess(String APIUrl, JSONObject response) {
                 showToast("댓글 조회 SUccess");
 
                 try {
@@ -356,6 +386,16 @@ public class RecruitPostDetailFragment extends BaseListFragment implements
                     e.printStackTrace();
                     showToast("댓글 조회 후 데이터 교체 실패");
                 }
+            }
+
+            @Override
+            public void onFail(String APIUrl, String errCode, String errMessage) {
+
+            }
+
+            @Override
+            public void onError(String apiUrl, int retCode, String message, Throwable cause) {
+
             }
         });
     }

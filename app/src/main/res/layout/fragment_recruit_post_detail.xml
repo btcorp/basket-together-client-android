@@ -25,7 +25,8 @@
         <Button
             android:id="@+id/btn_attender_count"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorAccent"/>
 
         <Button
             android:id="@+id/btn_request_attend"
@@ -57,6 +58,7 @@
 
     <!-- 글등록 시간 -->
     <TextView
+        style="@style/RecruitPostDetailRegDate"
         android:id="@+id/post_reg_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -70,6 +72,7 @@
         android:orientation="horizontal">
 
         <TextView
+            style="@style/RecruitPostDetailSectionTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/recruit_time"/>
@@ -87,6 +90,7 @@
         android:layout_marginTop="8dp" >
 
         <TextView
+            style="@style/RecruitPostDetailSectionTitle"
             android:id="@+id/label_recruit_place"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -99,8 +103,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
             android:text="@string/location_check" />
 
         <TextView
@@ -130,12 +134,11 @@
         android:layout_marginTop="8dp"
         android:orientation="vertical">
 
-        <ImageView
+        <com.angel.black.baskettogether.core.view.imageview.RoundedImageView
             android:id="@+id/post_author_image"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/ic_person_white_24dp"
-            android:background="#ff0000"/>
+            android:src="@drawable/ic_person_white_24dp" />
 
         <TextView
             android:id="@+id/post_author"

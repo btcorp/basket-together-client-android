@@ -79,6 +79,13 @@ public abstract class BaseListFragment extends BaseFragment {
 
         BaLog.d("mCurItemCount=" + mCurItemCount + ", mCurPage=" + mCurPage + ", mTotalItemCount=" + mTotalItemCount);
     }
+
+    public void initPagination() {
+        mCurPage = 1;
+        mTotalItemCount = 0;
+        mCurItemCount = 0;
+    }
+
     public class MyRecyclerViewAdapterWithHeader extends MyRecyclerViewAdapter {
 
         public MyRecyclerViewAdapterWithHeader(RecyclerViewAdapterData recyclerViewAdapterData) {
@@ -242,11 +249,15 @@ public abstract class BaseListFragment extends BaseFragment {
 
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//            BaLog.i();
+//            BaLog.i("dy=" + dy);
+
             if(dy > 0) {
                 visibleItemCount = mLayoutManager.getChildCount();
                 totalItemCount = mLayoutManager.getItemCount();
                 pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
+
+//                BaLog.i("isCanLoadMore=" + isCanLoadMore + ", mCurItemCount=" + mCurItemCount + ", mTotalImteCount=" + mTotalItemCount
+//                + ", visibleItemCount=" + visibleItemCount + ", pastVisibleItems=" + pastVisiblesItems);
 
                 if (isCanLoadMore && mCurItemCount < mTotalItemCount) {
                     if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount) {

@@ -11,8 +11,7 @@
         android:layout_width="@dimen/default_profile_image_size"
         android:layout_height="@dimen/default_profile_image_size"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/ic_person_white_24dp"
-        android:background="@color/black_overlay"/>
+        android:src="@drawable/ic_person_white_24dp" />
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"

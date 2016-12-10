@@ -44,6 +44,16 @@ public class UserInfoManager {
         pm.saveString(KeyConst.SAVED_USER_NICKNAME, nickname);
     }
 
+    public static void saveUserInfo(BaseActivity activity, String nickname, String profileImgUrl) {
+        userNickName = nickname;
+        userProfileImgUrl = profileImgUrl;
+
+        BaLog.e("saved nickname=" + nickname + ", profileImgUrl=" + profileImgUrl);
+
+        MyPreferenceManager pm = activity.getPreferenceManager();
+        pm.saveString(KeyConst.SAVED_USER_NICKNAME, nickname);
+    }
+
     /**
      * 자동 로그인 설정 되있는지 여부 반환
      * @return

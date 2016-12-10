@@ -1,6 +1,7 @@
 package com.angel.black.baskettogether.api;
 
 import com.angel.black.baframework.core.base.BaseActivity;
+import com.angel.black.baframework.network.APICallResponseNotifier;
 import com.angel.black.baframework.network.HttpAPIRequester;
 import com.angel.black.baframework.network.ImageUploaderTask;
 import com.angel.black.baskettogether.core.network.ServerURLInfo;
@@ -21,26 +22,31 @@ public class UserAPI {
         new HttpAPIRequester(activity, true, ServerURLInfo.API_USER_SIGNUP, "POST", responseListener).execute(joinData);
     }
 
-    public static void logout(final BaseActivity activity, final APICallSuccessNotifier notifier) throws JSONException {
+    public static void logout(final BaseActivity activity, final APICallResponseNotifier notifier) throws JSONException {
         new HttpAPIRequester(activity, true, ServerURLInfo.API_USER_LOGOUT, "GET", new HttpAPIRequester.OnAPIResponseListener() {
             @Override
-            public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
+            public void onSuccessResponse(String APIUrl, JSONObject response) throws JSONException {
                 UserInfoManager.removeUserInfo(activity);
             }
 
             @Override
-            public void onErrorResponse(String APIUrl, int retCode, String message, Throwable cause) {
+            public void onErrorResponse(String APIUrl, String errCode, String errMessage) {
+
+            }
+
+            @Override
+            public void onError(String APIUrl, int retCode, String message, Throwable cause) {
 
             }
         }).execute((JSONObject) null);
     }
 
-    public static void login(final BaseActivity activity, final String id, final String pwd, final APICallSuccessNotifier notifier) throws JSONException {
+    public static void login(final BaseActivity activity, final String id, final String pwd, final APICallResponseNotifier notifier) throws JSONException {
         JSONObject loginData = buildRequestLoginData(id, pwd);
 
         new HttpAPIRequester(activity, true, ServerURLInfo.API_USER_LOGIN, "POST", new HttpAPIRequester.OnAPIResponseListener() {
             @Override
-            public void onResponse(String APIUrl, int retCode, JSONObject response) throws JSONException {
+            public void onSuccessResponse(String APIUrl, JSONObject response) throws JSONException {
                 try {
                     String token = response.getString("token");
                     long uid = response.getLong("user_id");
@@ -49,7 +55,7 @@ public class UserAPI {
                     UserInfoManager.saveUserInfo(activity, token, id, pwd, nickname, imgUrl, uid);
 
                     if(notifier != null) {
-                        notifier.onSuccess(response);
+                        notifier.onSuccess(APIUrl, response);
                     }
                 } catch (JSONException e) {
                     activity.showOkDialog(response.toString());
@@ -57,7 +63,12 @@ public class UserAPI {
             }
 
             @Override
-            public void onErrorResponse(String APIUrl, int retCode, String message, Throwable throwable) {
+            public void onErrorResponse(String APIUrl, String errCode, String errMessage) {
+
+            }
+
+            @Override
+            public void onError(String APIUrl, int retCode, String message, Throwable throwable) {
 
             }
         }).execute(loginData);
@@ -84,8 +95,14 @@ public class UserAPI {
 
     public static void editUserInfo(BaseActivity activity, String nickname, String phoneNum, String selectedImagePath, final ImageUploaderTask.ImageUploadListener imageUploadListener) {
         ImageUploaderTask imageUploaderTask = new ImageUploaderTask(activity,
-                new UserProfileImageUploader(UserInfoManager.userUid, nickname, phoneNum, selectedImagePath));
+                new UserProfileImageUploader(nickname, phoneNum, selectedImagePath));
         imageUploaderTask.setImageUploadListener(imageUploadListener);
         imageUploaderTask.uploadImage();
+    }
+
+    public static void requestUserInfo(BaseActivity activity, final APICallResponseNotifier notifier) {
+
+        new HttpAPIRequester(activity, true, ServerURLInfo.API_USER_INFO, "GET",
+                new HttpAPIRequester.DefaultAPICallReponseNotifier(notifier)).execute((JSONObject) null);
     }
 }

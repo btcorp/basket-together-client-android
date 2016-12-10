@@ -7,12 +7,12 @@ import android.view.View;
 import com.angel.black.baframework.logger.BaLog;
 import com.angel.black.baframework.util.StringUtil;
 import com.angel.black.baskettogether.R;
-import com.angel.black.baskettogether.api.APICallSuccessNotifier;
+import com.angel.black.baframework.network.APICallResponseNotifier;
 import com.angel.black.baskettogether.api.UserAPI;
 import com.angel.black.baskettogether.core.base.BtBaseActivity;
 import com.angel.black.baskettogether.core.preference.KeyConst;
 import com.angel.black.baskettogether.login.LoginActivity;
-import com.angel.black.baskettogether.recruit.RecruitPostListActivity;
+import com.angel.black.baskettogether.recruit.RecruitPostListMainActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,11 +77,21 @@ public class IntroActivity extends BtBaseActivity {
     }
 
     private void requestLogin(final String id, final String pwd) throws JSONException {
-        UserAPI.login(this, id, pwd, new APICallSuccessNotifier() {
+        UserAPI.login(this, id, pwd, new APICallResponseNotifier() {
             @Override
-            public void onSuccess(JSONObject response) {
+            public void onSuccess(String APIUrl, JSONObject response) {
                 showToast("로그인 성공");
-                startActivity(RecruitPostListActivity.class, true);
+                startActivity(RecruitPostListMainActivity.class, true);
+            }
+
+            @Override
+            public void onFail(String APIUrl, String errCode, String errMessage) {
+
+            }
+
+            @Override
+            public void onError(String apiUrl, int retCode, String message, Throwable cause) {
+
             }
         });
     }

@@ -20,7 +20,7 @@ public class UserProfileImageUploader extends GeoPictureUploader implements GeoP
     private String phoneNum;
     private String imgFilename;
 
-    public UserProfileImageUploader(long userId, String nickname, String phoneNum, String imgFilename) {
+    public UserProfileImageUploader(String nickname, String phoneNum, String imgFilename) {
         this.nickname = nickname;
         this.phoneNum = phoneNum;
         this.imgFilename = imgFilename;
@@ -30,7 +30,7 @@ public class UserProfileImageUploader extends GeoPictureUploader implements GeoP
 
     @Override
     protected String getFileUploadUrl() {
-        return ServerURLInfo.DEV_SERVER_URL + ServerURLInfo.API_USER_INFO_EDIT;
+        return ServerURLInfo.DEV_SERVER_URL + ServerURLInfo.API_USER_INFO;
     }
 
     @Override
