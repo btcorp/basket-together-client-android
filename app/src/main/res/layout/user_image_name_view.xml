@@ -18,20 +18,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/profile_empty"
             android:focusable="false"/>
 
         <ImageView
             android:id="@+id/user_image_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/bg_imgframe1_small"
             android:scaleType="centerCrop"/>
 
     </RelativeLayout>
 
     <TextView
-        style="@style/main_user_name"
         android:id="@+id/user_name"
         android:layout_width="54dp"
         android:layout_height="wrap_content"
