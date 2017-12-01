@@ -8,7 +8,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    tools:context=".recruit.RecruitPostDetailActivity" >
+    tools:context="com.blackangel.baskettogether.recruit.RecruitPostDetailActivity" >
 
     <TextView
         style="@style/recruit_post_detail_title"
@@ -134,7 +134,7 @@
         android:layout_marginTop="8dp"
         android:orientation="vertical">
 
-        <com.angel.black.baskettogether.core.view.imageview.RoundedImageView
+        <com.blackangel.baskettogether.core.view.imageview.RoundedImageView
             android:id="@+id/post_author_image"
             android:layout_width="48dp"
             android:layout_height="48dp"

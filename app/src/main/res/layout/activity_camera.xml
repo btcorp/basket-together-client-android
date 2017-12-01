@@ -5,7 +5,7 @@
 
     <fragment
         android:id="@+id/camera_fragment"
-        android:name="com.angel.black.baframework.media.camera.fragment.CameraFragment"
+        android:name="com.blackangel.baframework.media.camera.fragment.CameraFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
     

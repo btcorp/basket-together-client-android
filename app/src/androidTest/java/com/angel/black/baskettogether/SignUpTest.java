@@ -1,11 +1,11 @@
-package com.angel.black.baskettogether;
+package com.blackangel.baskettogether;
 
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.ActivityTestCase;
 import android.test.suitebuilder.annotation.LargeTest;
 
-import com.angel.black.baskettogether.signup.SignUpActivity;
+import com.blackangel.baskettogether.signup.SignUpActivity;
 
 import org.junit.Before;
 import org.junit.Rule;

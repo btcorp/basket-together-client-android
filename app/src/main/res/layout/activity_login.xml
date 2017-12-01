@@ -18,7 +18,7 @@
 
         <fragment
             android:id="@+id/login_fragment"
-            android:name="com.angel.black.baskettogether.login.LoginFragment"
+            android:name="com.blackangel.baskettogether.login.LoginFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>

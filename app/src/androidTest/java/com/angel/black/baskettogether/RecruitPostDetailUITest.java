@@ -1,4 +1,4 @@
-package com.angel.black.baskettogether;
+package com.blackangel.baskettogether;
 
 /**
  * Created by KimJeongHun on 2016-09-04.

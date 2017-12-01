@@ -1,2 +1,1 @@
-include ':BaFramework'
 include ':app'

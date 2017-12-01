@@ -6,9 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".recruit.RecruitPostDetailActivity">
+    tools:context="com.blackangel.baskettogether.recruit.RecruitPostDetailActivity">
 
-    <com.angel.black.baskettogether.common.view.CommentInputView
+    <com.blackangel.baskettogether.common.view.CommentInputView
         android:id="@+id/comment_input_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,7 +16,7 @@
 
     <fragment
         android:id="@+id/recruit_post_detail_fragment"
-        android:name="com.angel.black.baskettogether.recruit.fragment.RecruitPostDetailFragment"
+        android:name="com.blackangel.baskettogether.recruit.fragment.RecruitPostDetailFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"

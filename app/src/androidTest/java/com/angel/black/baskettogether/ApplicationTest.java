@@ -1,4 +1,4 @@
-package com.angel.black.baskettogether;
+package com.blackangel.baskettogether;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

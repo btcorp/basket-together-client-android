@@ -1,7 +1,7 @@
-package com.angel.black.baskettogether;
+package com.blackangel.baskettogether;
 
-import com.angel.black.baskettogether.util.CipherUtil;
-import com.angel.black.baskettogether.util.MyLog;
+import com.blackangel.baskettogether.util.CipherUtil;
+import com.blackangel.baskettogether.util.MyLog;
 
 import org.junit.Test;
 

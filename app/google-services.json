@@ -41,7 +41,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:263153639284:android:c857f26d680e54ad",
         "android_client_info": {
-          "package_name": "com.angel.black.baskettogether"
+          "package_name": "com.blackangel.baskettogether"
         }
       },
       "oauth_client": [
@@ -49,7 +49,7 @@
           "client_id": "263153639284-p01ack2efvskkt36lje3n5oflm83elip.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.angel.black.baskettogether",
+            "package_name": "com.blackangel.baskettogether",
             "certificate_hash": "E0407978FEF64B79EA4AF0494684168D7D39082B"
           }
         },

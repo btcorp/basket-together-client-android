@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.angel.black.baskettogether.core.view.imageview.RoundedImageView
+    <com.blackangel.baskettogether.core.view.imageview.RoundedImageView
         android:id="@+id/attendee_image"
         android:layout_width="@dimen/recruit_post_attendee_image_size"
         android:layout_height="@dimen/recruit_post_attendee_image_size"
