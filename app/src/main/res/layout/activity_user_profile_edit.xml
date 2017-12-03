@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:padding="16dp" >
 
-    <com.blackangel.baskettogether.core.view.imageview.RoundedImageView
+    <com.blackangel.baskettogether.app.view.imageview.RoundedImageView
         android:id="@+id/user_profile_img"
         android:layout_width="@dimen/default_profile_image_size"
         android:layout_height="@dimen/default_profile_image_size"

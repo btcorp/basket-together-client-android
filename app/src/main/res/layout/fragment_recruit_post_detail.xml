@@ -134,7 +134,7 @@
         android:layout_marginTop="8dp"
         android:orientation="vertical">
 
-        <com.blackangel.baskettogether.core.view.imageview.RoundedImageView
+        <com.blackangel.baskettogether.app.view.imageview.RoundedImageView
             android:id="@+id/post_author_image"
             android:layout_width="48dp"
             android:layout_height="48dp"

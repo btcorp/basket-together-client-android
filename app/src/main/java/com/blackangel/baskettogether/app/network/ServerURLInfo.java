@@ -1,4 +1,4 @@
-package com.blackangel.baskettogether.core.network;
+package com.blackangel.baskettogether.app.network;
 
 /**
  * Created by KimJeongHun on 2016-05-19.

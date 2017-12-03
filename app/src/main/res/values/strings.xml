@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Basket Together</string>
+    <string name="facebook_app_id">745897808937595</string>
 
     <string name="title_activity_recruit_post_regist">모집 글 등록</string>
     <string name="title_activity_recruit_post_list">팀 모집글 목록</string>

@@ -5,7 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.test.ActivityTestCase;
 import android.test.suitebuilder.annotation.LargeTest;
 
-import com.blackangel.baskettogether.signup.SignUpActivity;
+import com.blackangel.baskettogether.intro.IntroActivity;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -27,7 +27,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 @LargeTest
 public class SignUpTest extends ActivityTestCase {
     @Rule
-    public ActivityTestRule<SignUpActivity> mActivityRule = new ActivityTestRule<>(SignUpActivity.class);
+    public ActivityTestRule<IntroActivity> mActivityRule = new ActivityTestRule<>(IntroActivity.class);
 
     @Before
     public void setUp() {

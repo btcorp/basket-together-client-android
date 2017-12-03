@@ -1,4 +1,4 @@
-package com.blackangel.baskettogether.core.intent;
+package com.blackangel.baskettogether.app.intent;
 
 /**
  * Created by KimJeongHun on 2016-06-06.

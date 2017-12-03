@@ -29,15 +29,24 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDmm6rzDTZPzClaIbUGtpQqUy__gMpHORU"/>
 
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
+        <activity android:name="com.facebook.FacebookActivity"
+                  android:configChanges=
+                      "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+                  android:label="@string/app_name" />
+
         <service
-            android:name="com.blackangel.baskettogether.core.fcm.MyFirebaseMessagingService">
+            android:name="com.blackangel.baskettogether.app.fcm.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
 
         <service
-            android:name="com.blackangel.baskettogether.core.fcm.MyFirebaseInstanceIDService">
+            android:name="com.blackangel.baskettogether.app.fcm.MyFirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>

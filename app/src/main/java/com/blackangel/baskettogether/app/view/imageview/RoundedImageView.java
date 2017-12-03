@@ -1,4 +1,4 @@
-package com.blackangel.baskettogether.core.view.imageview;
+package com.blackangel.baskettogether.app.view.imageview;
 
 import android.content.Context;
 import android.graphics.Bitmap;

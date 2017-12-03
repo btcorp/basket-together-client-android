@@ -24,7 +24,7 @@
                 <!--android:layout_height="60dp"-->
                 <!--/>-->
 
-            <com.blackangel.baskettogether.core.view.imageview.RoundedImageView
+            <com.blackangel.baskettogether.app.view.imageview.RoundedImageView
                 android:id="@+id/user_profile_img"
                 android:layout_width="60dp"
                 android:layout_height="60dp"

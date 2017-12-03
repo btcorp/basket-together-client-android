@@ -1,4 +1,4 @@
-package com.blackangel.baskettogether.core.preference;
+package com.blackangel.baskettogether.app.preference;
 
 /**
  * Created by KimJeongHun on 2016-08-30.

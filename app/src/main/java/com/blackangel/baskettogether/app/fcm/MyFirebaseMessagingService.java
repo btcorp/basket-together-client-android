@@ -1,4 +1,4 @@
-package com.blackangel.baskettogether.core.fcm;
+package com.blackangel.baskettogether.app.fcm;
 
 import com.blackangel.baframework.logger.MyLog;
 import com.google.firebase.messaging.FirebaseMessagingService;
